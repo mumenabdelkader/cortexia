@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../thems/color_thems.dart';
 
 class CustomTextFormField extends StatelessWidget {
@@ -10,6 +9,8 @@ class CustomTextFormField extends StatelessWidget {
   final TextEditingController? controller;
   final TextInputType keyboardType;
   final String? Function(String?)? validator;
+  final Color? fillColor;
+  final Color? textColor; // اللون الموحد للنص والأيقونة
 
   const CustomTextFormField({
     Key? key,
@@ -20,10 +21,16 @@ class CustomTextFormField extends StatelessWidget {
     this.controller,
     this.keyboardType = TextInputType.text,
     this.validator,
+    this.fillColor,
+    this.textColor,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    // تحديد اللون النهائي لاستخدامه في أكثر من مكان
+    final Color activeColor = textColor ?? AppColors.textMain;
+    final Color iconColor = textColor ?? AppColors.textSecondary;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -32,7 +39,7 @@ class CustomTextFormField extends StatelessWidget {
             labelText!,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
               fontWeight: FontWeight.bold,
-              color: AppColors.textMain,
+              color: activeColor,
             ),
           ),
           const SizedBox(height: 8),
@@ -42,20 +49,22 @@ class CustomTextFormField extends StatelessWidget {
           obscureText: isPassword,
           keyboardType: keyboardType,
           validator: validator,
+          style: TextStyle(color: activeColor),
           decoration: InputDecoration(
             hintText: hintText,
             hintStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
               color: AppColors.textLight,
             ),
+            // هنا الأيقونة بتأخد نفس لون الـ textColor لو موجود
             prefixIcon: prefixIcon != null
-                ? Icon(prefixIcon, color: AppColors.textSecondary, size: 20)
+                ? Icon(prefixIcon, color: iconColor, size: 20)
                 : null,
             filled: true,
-            fillColor: const Color(0xFFEDF2F7), // نفس درجة الرمادي في الصور
+            fillColor: fillColor ?? const Color(0xFFEDF2F7),
             contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
-              borderSide: BorderSide.none, // لإلغاء الحدود التقليدية
+              borderSide: BorderSide.none,
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
@@ -63,7 +72,7 @@ class CustomTextFormField extends StatelessWidget {
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
-              borderSide: const BorderSide(color: AppColors.primaryBlue, width: 1),
+              borderSide: BorderSide(color: activeColor.withOpacity(0.5), width: 1),
             ),
             errorBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),

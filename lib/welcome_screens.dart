@@ -1,6 +1,6 @@
+import 'package:cortexia/featurs/authentication/presentation/ui/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'core/thems/color_thems.dart';  // تأكد من المسار الصحيح
-
 class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({Key? key}) : super(key: key);
 
@@ -91,7 +91,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                           curve: Curves.easeIn,
                         );
                       } else {
-                        // أكشن النهاية
+                        Navigator.push(context, MaterialPageRoute(builder: (context) =>  LoginScreen()));
                       }
                     },
                     child: Container(
