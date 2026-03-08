@@ -5,18 +5,20 @@ class CustomTextFormField extends StatelessWidget {
   final String hintText;
   final String? labelText;
   final IconData? prefixIcon;
+  final Widget? suffixIcon; // الإضافة هنا
   final bool isPassword;
   final TextEditingController? controller;
   final TextInputType keyboardType;
   final String? Function(String?)? validator;
   final Color? fillColor;
-  final Color? textColor; // اللون الموحد للنص والأيقونة
+  final Color? textColor;
 
   const CustomTextFormField({
     Key? key,
     required this.hintText,
     this.labelText,
     this.prefixIcon,
+    this.suffixIcon, // تمرير الأيقونة هنا
     this.isPassword = false,
     this.controller,
     this.keyboardType = TextInputType.text,
@@ -27,7 +29,6 @@ class CustomTextFormField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // تحديد اللون النهائي لاستخدامه في أكثر من مكان
     final Color activeColor = textColor ?? AppColors.textMain;
     final Color iconColor = textColor ?? AppColors.textSecondary;
 
@@ -55,10 +56,10 @@ class CustomTextFormField extends StatelessWidget {
             hintStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
               color: AppColors.textLight,
             ),
-            // هنا الأيقونة بتأخد نفس لون الـ textColor لو موجود
             prefixIcon: prefixIcon != null
                 ? Icon(prefixIcon, color: iconColor, size: 20)
                 : null,
+            suffixIcon: suffixIcon, // عرض الأيقونة في نهاية الحقل
             filled: true,
             fillColor: fillColor ?? const Color(0xFFEDF2F7),
             contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),

@@ -1,3 +1,4 @@
+import 'package:cortexia/featurs/patient/presentation/ui/patient_dashboard_screen.dart';
 import 'package:cortexia/featurs/patient/presentation/widgets/custom_info_card.dart';
 import 'package:flutter/material.dart';
 import 'package:cortexia/core/thems/color_thems.dart';
@@ -79,17 +80,22 @@ class PatientListScreen extends StatelessWidget {
             const SizedBox(height: 24),
 
             // 4. كروت المرضى (الآن نمرر البيانات فقط)
-            const PatientCard(
-              name: "John Anderson",
-              patientId: "PT-2024-1547",
-              status: "Stable",
-              diagnosis: "Pneumonia",
-              admissionDate: "Jan 28, 2026 (6 days)",
-              hrValue: "82",
-              tempValue: "37.2°",
-              bpValue: "120/80",
-              spo2Value: "98%",
-            ),
+             GestureDetector(
+               child: PatientCard(
+                name: "John Anderson",
+                patientId: "PT-2024-1547",
+                status: "Stable",
+                diagnosis: "Pneumonia",
+                admissionDate: "Jan 28, 2026 (6 days)",
+                hrValue: "82",
+                tempValue: "37.2°",
+                bpValue: "120/80",
+                spo2Value: "98%",
+                           ),
+               onTap: (){
+                 Navigator.of(context).push(MaterialPageRoute(builder: (context) => PatientDashboardScreen(),));
+               },
+             ),
 
             const PatientCard(
               name: "Sarah Williams",
