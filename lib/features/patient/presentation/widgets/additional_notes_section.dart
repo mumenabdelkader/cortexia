@@ -6,9 +6,9 @@ class AdditionalNotesSection extends StatelessWidget {
   final TextEditingController? controller;
 
   const AdditionalNotesSection({
-    Key? key,
+    super.key,
     this.controller,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

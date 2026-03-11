@@ -8,13 +8,13 @@ class ExaminationCategoryCard extends StatelessWidget {
   final String hintText;     // النص التوجيهي في حال عدم وجود محتوى
 
   const ExaminationCategoryCard({
-    Key? key,
+    super.key,
     required this.title,
     required this.icon,
     required this.iconColor,
     this.content,
     this.hintText = "Enter findings...",
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

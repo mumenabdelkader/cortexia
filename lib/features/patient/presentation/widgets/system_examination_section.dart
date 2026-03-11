@@ -3,7 +3,7 @@ import 'examination_section_card.dart'; // تأكد من استيراد الحا
 import 'examination_category_card.dart'; // تأكد من استيراد الكارت الصغير
 
 class SystemExaminationSection extends StatelessWidget {
-  const SystemExaminationSection({Key? key}) : super(key: key);
+  const SystemExaminationSection({super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'examination_section_card.dart';
 
 class NeurologicalExaminationSection extends StatelessWidget {
-  const NeurologicalExaminationSection({Key? key}) : super(key: key);
+  const NeurologicalExaminationSection({super.key});
 
   @override
   Widget build(BuildContext context) {

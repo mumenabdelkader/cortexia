@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class DashboardCurrentAlerts extends StatelessWidget {
-  const DashboardCurrentAlerts({Key? key}) : super(key: key);
+  const DashboardCurrentAlerts({super.key});
 
   @override
   Widget build(BuildContext context) {
