@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../thems/color_thems.dart';
+import 'package:cortexia/core/themes/color_themes.dart';
 
 class CustomTextFormField extends StatelessWidget {
   final String hintText;
@@ -14,7 +14,7 @@ class CustomTextFormField extends StatelessWidget {
   final Color? textColor;
 
   const CustomTextFormField({
-    Key? key,
+    super.key,
     required this.hintText,
     this.labelText,
     this.prefixIcon,
@@ -25,7 +25,7 @@ class CustomTextFormField extends StatelessWidget {
     this.validator,
     this.fillColor,
     this.textColor,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -73,7 +73,7 @@ class CustomTextFormField extends StatelessWidget {
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
-              borderSide: BorderSide(color: activeColor.withOpacity(0.5), width: 1),
+              borderSide: BorderSide(color: activeColor.withValues(alpha:0.5), width: 1),
             ),
             errorBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),

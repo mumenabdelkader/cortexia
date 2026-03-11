@@ -1,5 +1,6 @@
-import 'package:cortexia/core/thems/color_thems.dart';
 import 'package:flutter/material.dart';
+import 'package:cortexia/core/themes/color_themes.dart';
+
 
 class CustomElevatedButton extends StatelessWidget {
   final String text;
@@ -14,7 +15,7 @@ class CustomElevatedButton extends StatelessWidget {
   final Gradient? gradient;      // إمكانية تمرير تدرج مختلف
 
   const CustomElevatedButton({
-    Key? key,
+    super.key,
     required this.text,
     required this.onPressed,
     this.width,
@@ -23,7 +24,7 @@ class CustomElevatedButton extends StatelessWidget {
     this.backgroundColor,
     this.textColor,
     this.gradient,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +39,7 @@ class CustomElevatedButton extends StatelessWidget {
         borderRadius: BorderRadius.circular(borderRadius),
         boxShadow: [
           BoxShadow(
-            color: (backgroundColor ?? AppColors.primaryBlue).withOpacity(0.2),
+            color: (backgroundColor ?? AppColors.primaryBlue).withValues(alpha:0.2),
             blurRadius: 8,
             offset: const Offset(0, 4),
           ),

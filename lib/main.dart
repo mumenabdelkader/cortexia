@@ -1,6 +1,8 @@
-import 'package:cortexia/core/thems/text_thems.dart';
-import 'package:cortexia/welcome_screens.dart';
+import 'package:cortexia/core/routing/app_router.dart';
 import 'package:flutter/material.dart';
+
+import 'core/routing/routes.dart';
+import 'core/themes/text_themes.dart';
 
 void main() {
   runApp(const MyApp());
@@ -15,7 +17,8 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme, // ربط الثيم اللي عملناه
-      home: WelcomeScreen(),
+      initialRoute: Routes.splashScreen,
+      onGenerateRoute: AppRouter().generateRoute,
     );
   }
 }

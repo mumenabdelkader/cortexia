@@ -1,8 +1,9 @@
-import 'package:cortexia/featurs/authentication/presentation/ui/login_screen.dart';
+import 'package:cortexia/features/authentication/presentation/ui/login_screen.dart';
 import 'package:flutter/material.dart';
-import 'core/thems/color_thems.dart';  // تأكد من المسار الصحيح
+import 'package:cortexia/core/themes/color_themes.dart';
+
 class WelcomeScreen extends StatefulWidget {
-  const WelcomeScreen({Key? key}) : super(key: key);
+  const WelcomeScreen({super.key});
 
   @override
   State<WelcomeScreen> createState() => _WelcomeScreenState();
