@@ -1,5 +1,5 @@
 import 'package:cortexia/features/patient/presentation/widgets/medication_custom_card_container.dart';
-import 'package:cortexia/features/patient/presentation/widgets/medication_summary_action_card.dart';
+import 'package:cortexia/features/patient/presentation/widgets/summary_action_card.dart';
 import 'package:flutter/material.dart';
 import 'package:cortexia/core/widgets/custom_app_bar.dart';
 
