@@ -1,4 +1,6 @@
 import 'package:cortexia/featurs/patient/presentation/ui/chatbot_screen.dart';
+import 'package:cortexia/featurs/patient/presentation/ui/imaging_screen.dart';
+import 'package:cortexia/featurs/patient/presentation/ui/medications_screen.dart';
 import 'package:cortexia/featurs/patient/presentation/widgets/dashboar_patient_card.dart';
 import 'package:cortexia/featurs/patient/presentation/widgets/dashboard_action_card.dart';
 import 'package:cortexia/featurs/patient/presentation/widgets/dashboard_active_medications.dart';
@@ -34,7 +36,8 @@ class PatientDashboardScreen extends StatelessWidget {
             const SizedBox(height: 16),
             const DashboardVitalSigns(),
             const SizedBox(height: 16),
-            const DashboardActiveMedications(),
+            GestureDetector(child: const DashboardActiveMedications(),
+             onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => MedicationsScreen(),)),),
             const SizedBox(height: 20),
 
             // 2. استخدام الـ CustomElevatedButton لزر الـ AI
@@ -51,7 +54,7 @@ class PatientDashboardScreen extends StatelessWidget {
             ),
 
             const SizedBox(height: 20),
-            _buildActionGrid(),
+            _buildActionGrid(context),
             const SizedBox(height: 30),
           ],
         ),
@@ -59,7 +62,7 @@ class PatientDashboardScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildActionGrid() {
+  Widget _buildActionGrid(BuildContext context) {
     return Column(
       children: [
         Row(
@@ -101,6 +104,34 @@ class PatientDashboardScreen extends StatelessWidget {
                 subTitle: "I/O tracking",
                 icon: Icons.water_drop_outlined,
                 iconColor: Colors.green,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        Row(
+          children:  [
+            Expanded(
+              child: GestureDetector(
+                onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => ImagingScreen(),)),
+                child: DashboardActionCard(
+                  title: "Imaging",
+                  subTitle: "View records",
+                  icon: Icons.broken_image_outlined,
+                  iconColor: Colors.deepPurpleAccent,
+                ),
+              ),
+            ),
+            SizedBox(width: 12),
+            Expanded(
+              child: GestureDetector(
+                onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => MedicationsScreen(),)),
+                child: DashboardActionCard(
+                  title: "medication",
+                  subTitle: "View records",
+                  icon: Icons.medication_liquid,
+                  iconColor: Colors.red,
+                ),
               ),
             ),
           ],
