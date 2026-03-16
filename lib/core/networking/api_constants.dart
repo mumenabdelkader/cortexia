@@ -1,11 +1,13 @@
 class ApiConstants {
-  static const String baseUrl = "http://abokamelapp.runasp.net";
+  static const String baseUrl = "http://cortexaapp.runasp.net";
 
   // Auth
-  static const String login = "/api/Auth/Login";
-  static const String changePassword = "/api/Auth/ChangePassword";
-  static const String getCurrentUser = "/api/Auth/GetCurrentUser";
-  static const String getAllUsers = "/api/Auth/GetAllUsers"; // Assumed
+  static const String login = "/api/Auth/login";
+  static const String forgotPassword = "/api/Auth/forgot-password";
+  static const String resetPassword = "/api/Auth/reset-password";
+  static const String CaseHistory = "/api/admissions/{admissionId}/case-history";
+  static const String createPatientOrGetAll = "/api/Patients"; // Assumed
+
   static const String updateCustomer = "/api/mobile/Customers/UpdateCustomer";
   static String updateCustomerDashboard(String customerId) =>
       "/api/dashboard/Customers/UpdateCustomer/customer/$customerId";
