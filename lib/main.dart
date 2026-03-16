@@ -1,10 +1,15 @@
+import 'package:cortexia/core/di/dependency_injection.dart';
 import 'package:cortexia/core/routing/app_router.dart';
 import 'package:flutter/material.dart';
 
 import 'core/routing/routes.dart';
 import 'core/themes/text_themes.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // السطر ده لازم يكون موجود وقبله await
+  await setupGetIt();
   runApp(const MyApp());
 }
 
