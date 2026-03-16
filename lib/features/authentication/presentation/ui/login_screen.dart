@@ -1,4 +1,5 @@
 import 'package:cortexia/core/di/dependency_injection.dart';
+import 'package:cortexia/core/routing/routes.dart';
 import 'package:cortexia/core/widgets/custom_elevated_button.dart';
 import 'package:cortexia/core/widgets/custom_form_field.dart';
 import 'package:cortexia/features/authentication/domain/repo/repo_interface.dart';
@@ -6,7 +7,6 @@ import 'package:cortexia/features/authentication/presentation/controllers/login_
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cortexia/core/themes/color_themes.dart';
-import '../../../patient/presentation/ui/patient_list_screen.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
@@ -31,9 +31,7 @@ class LoginScreen extends StatelessWidget {
                   // التعامل مع حالات النجاح والفشل (Navigation & Popups)
                   listener: (context, state) {
                     if (state is LoginSuccess) {
-                      Navigator.of(context).pushReplacement(
-                        MaterialPageRoute(builder: (context) => const PatientListScreen()),
-                      );
+                      Navigator.pushNamed(context, Routes.mainNavigationScreen);
                     } else if (state is LoginError) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
