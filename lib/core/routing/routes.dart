@@ -46,6 +46,20 @@ class Routes {
       '/advertisements-management'; // Advertisements Management screen
   static const String filteredOrdersScreen =
       '/filtered-orders'; // Filtered Orders screen
-static const String usersManagementScreen =
+  static const String usersManagementScreen =
       '/users-management'; // Users Management screen
+  static const String clinicalNotesScreen =
+      '/clinical-notes'; // Clinical notes screen
+
+  static const String clinicalAlertsScreen =
+      '/clinical-alerts'; // Clinical alerts screen
+  static const String mainNavigationScreen =
+      '/main-navigation'; // Main navigation screen
+  static const String labResultsScreen = '/lab-results'; // Lab results screen
+  static const String medicalHistoryScreen =
+      '/medical-history'; // Medical history screen
+  static const String fluidBalanceScreen =
+      '/fluid-balance'; // Fluid balance screen
+  static const String medicationScreen = '/medication'; // Medication screen
+  static const String imagingScreen = '/imaging'; // Imaging screen
 }
