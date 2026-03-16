@@ -6,7 +6,7 @@ class AdditionalNotesSection extends StatelessWidget {
   final TextEditingController? controller;
 
   const AdditionalNotesSection({
-    super.key,
+    Key? key,
     this.controller,
   });
 

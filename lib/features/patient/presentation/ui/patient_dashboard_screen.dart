@@ -1,4 +1,7 @@
+import 'package:cortexia/core/routing/routes.dart';
 import 'package:cortexia/features/patient/presentation/ui/chatbot_screen.dart';
+import 'package:cortexia/features/patient/presentation/ui/imaging_screen.dart';
+import 'package:cortexia/features/patient/presentation/ui/medications_screen.dart';
 import 'package:cortexia/features/patient/presentation/widgets/dashboar_patient_card.dart';
 import 'package:cortexia/features/patient/presentation/widgets/dashboard_action_card.dart';
 import 'package:cortexia/features/patient/presentation/widgets/dashboard_active_medications.dart';
@@ -33,7 +36,16 @@ class PatientDashboardScreen extends StatelessWidget {
             const SizedBox(height: 16),
             const DashboardVitalSigns(),
             const SizedBox(height: 16),
-            const DashboardActiveMedications(),
+            GestureDetector(
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const MedicationsScreen(),
+                  ),
+                );
+              },
+              child: const DashboardActiveMedications(),
+            ),
             const SizedBox(height: 20),
 
             // 2. استخدام الـ CustomElevatedButton لزر الـ AI
@@ -45,12 +57,14 @@ class PatientDashboardScreen extends StatelessWidget {
                 colors: [Color(0xFF00D2FF), Color(0xFF00E5FF)],
               ),
               onPressed: () {
-                Navigator.of(context).push(MaterialPageRoute(builder: (context) => ChatbotScreen(),))    ;
-                },
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (context) => ChatbotScreen()),
+                );
+              },
             ),
 
             const SizedBox(height: 20),
-            _buildActionGrid(),
+            _buildActionGrid(context),
             const SizedBox(height: 30),
           ],
         ),
@@ -58,13 +72,15 @@ class PatientDashboardScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildActionGrid() {
+  Widget _buildActionGrid(BuildContext context) {
     return Column(
       children: [
         Row(
-          children: const [
+          children: [
             Expanded(
               child: DashboardActionCard(
+                onPressed: () =>
+                    Navigator.pushNamed(context, Routes.clinicalNotesScreen),
                 title: "Clinical Notes",
                 subTitle: "View timeline",
                 icon: Icons.description_outlined,
@@ -74,6 +90,8 @@ class PatientDashboardScreen extends StatelessWidget {
             SizedBox(width: 12),
             Expanded(
               child: DashboardActionCard(
+                onPressed: () =>
+                    Navigator.pushNamed(context, Routes.labResultsScreen),
                 title: "Lab Results",
                 subTitle: "Check reports",
                 icon: Icons.analytics_outlined,
@@ -84,9 +102,11 @@ class PatientDashboardScreen extends StatelessWidget {
         ),
         const SizedBox(height: 12),
         Row(
-          children: const [
+          children: [
             Expanded(
               child: DashboardActionCard(
+                onPressed: () =>
+                    Navigator.pushNamed(context, Routes.medicalHistoryScreen),
                 title: "Medical History",
                 subTitle: "View records",
                 icon: Icons.assignment_outlined,
@@ -96,10 +116,56 @@ class PatientDashboardScreen extends StatelessWidget {
             SizedBox(width: 12),
             Expanded(
               child: DashboardActionCard(
+                onPressed: () =>
+                    Navigator.pushNamed(context, Routes.fluidBalanceScreen),
                 title: "Fluid Balance",
                 subTitle: "I/O tracking",
                 icon: Icons.water_drop_outlined,
                 iconColor: Colors.green,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        Row(
+          children: [
+            Expanded(
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => const MedicationsScreen(),
+                    ),
+                  );
+                },
+                child: DashboardActionCard(
+                  onPressed: () =>
+                      Navigator.pushNamed(context, Routes.medicationScreen),
+                  title: "Medication",
+                  subTitle: "View records",
+                  icon: Icons.image_outlined,
+                  iconColor: Colors.purpleAccent,
+                ),
+              ),
+            ),
+            SizedBox(width: 12),
+            Expanded(
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => const ImagingScreen(),
+                    ),
+                  );
+                },
+                child: DashboardActionCard(
+                  onPressed: () =>
+                      Navigator.pushNamed(context, Routes.imagingScreen),
+                  title: "imaging",
+                  subTitle: "I/O tracking",
+                  icon: Icons.medication_liquid,
+                  iconColor: Colors.red,
+                ),
               ),
             ),
           ],

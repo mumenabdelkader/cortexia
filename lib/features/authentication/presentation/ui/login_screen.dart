@@ -3,10 +3,10 @@ import 'package:cortexia/core/widgets/custom_form_field.dart';
 import 'package:flutter/material.dart';
 import 'package:cortexia/core/themes/color_themes.dart';
 
+import '../../../patient/presentation/ui/main_navigation_screen.dart';
 
-import '../../../patient/presentation/ui/patient_list_screen.dart';
 class LoginScreen extends StatelessWidget {
-   const LoginScreen({super.key});
+  const LoginScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -15,16 +15,17 @@ class LoginScreen extends StatelessWidget {
       body: Container(
         width: double.infinity,
         height: double.infinity,
-        decoration: const BoxDecoration(
-          gradient: AppColors.appBarGradient,
-        ),
+        decoration: const BoxDecoration(gradient: AppColors.appBarGradient),
         child: Center(
           child: SingleChildScrollView(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 30.0),
               child: Container(
                 // الكارت الأبيض اللي شايل الفورم
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 40),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 40,
+                ),
                 decoration: BoxDecoration(
                   color: AppColors.white,
                   borderRadius: BorderRadius.circular(20),
@@ -59,7 +60,6 @@ class LoginScreen extends StatelessWidget {
                       labelText: "Staff ID",
                       hintText: "DR-2024-001",
                       prefixIcon: Icons.person_outline,
-
                     ),
                     const SizedBox(height: 20),
 
@@ -76,7 +76,11 @@ class LoginScreen extends StatelessWidget {
                     CustomElevatedButton(
                       text: "Sign In",
                       onPressed: () {
-                        Navigator.of(context).push(MaterialPageRoute(builder: (context) => PatientListScreen(),));
+                        Navigator.of(context).pushReplacement(
+                          MaterialPageRoute(
+                            builder: (context) => MainNavigationScreen(),
+                          ),
+                        );
                       },
                     ),
 
