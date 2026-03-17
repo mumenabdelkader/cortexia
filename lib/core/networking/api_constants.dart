@@ -184,4 +184,48 @@ class ApiConstants {
       "/api/dashboard/Products/LowStock/Count?threshold=$threshold";
   static const String getBestSellingCount =
       "/api/dashboard/Products/BestSelling/Count";
+
+  // ── Case History ───────────────────────────────────────────────────────────
+  static const String caseHistory =
+      '/api/admissions/{admissionId}/case-history';
+
+  // ── Diagnostics ────────────────────────────────────────────────────────────
+  static const String diagnosticsLabOrders = '/api/Diagnostics/lab-orders';
+  static const String diagnosticsLabResults = '/api/Diagnostics/lab-results';
+  static const String diagnosticsImaging = '/api/Diagnostics/imaging';
+  static const String diagnosticsLabOrdersByAdmission =
+      '/api/Diagnostics/lab-orders/{admissionId}';
+  static const String diagnosticsLabResultsByOrder =
+      '/api/Diagnostics/lab-results/{orderId}';
+  static const String diagnosticsImagingByAdmission =
+      '/api/Diagnostics/imaging/{admissionId}';
+
+  // ── Fluid Balance ──────────────────────────────────────────────────────────
+  static const String fluidBalance =
+      '/api/admissions/{admissionId}/fluid-balance';
+
+  // ── Intervention Procedures ────────────────────────────────────────────────
+  static const String interventionProcedures =
+      '/api/admissions/{admissionId}/intervention-procedures';
+
+  // ── Medications ────────────────────────────────────────────────────────────
+  static const String admissionMedications =
+      '/api/admissions/{admissionId}/medications';
+
+  // ── Nursing Notes ──────────────────────────────────────────────────────────
+  static const String nursingNotes =
+      '/api/admissions/{admissionId}/nursing-notes';
+
+  // ── Patients ───────────────────────────────────────────────────────────────
+  static const String patients = '/api/Patients';
+  static const String patientById = '/api/Patients/{id}';
+  static const String patientDetails = '/api/Patients/{id}/details';
+  static const String patientAdmissions = '/api/Patients/{id}/admissions';
+
+  // ── Physical Examination ───────────────────────────────────────────────────
+  static const String physicalExamination =
+      '/api/admissions/{admissionId}/physical-examination';
+
+  // ── Vital Signs ────────────────────────────────────────────────────────────
+  static const String vitalSigns = '/api/admissions/{admissionId}/vitals';
 }
