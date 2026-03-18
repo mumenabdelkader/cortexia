@@ -4,6 +4,8 @@ import 'package:cortexia/features/authentication/data/models/login_request_model
 import 'package:cortexia/features/authentication/data/models/login_response_model.dart';
 import 'package:cortexia/features/authentication/data/models/forgot_password_request_body.dart';
 import 'package:cortexia/features/authentication/data/models/forgot_password_response_body.dart';
+import 'package:cortexia/features/authentication/data/models/reset_password_request_body.dart';
+import 'package:cortexia/features/authentication/data/models/reset_password_response_body.dart';
 import 'package:cortexia/features/authentication/domain/repo/repo_interface.dart';
 import '../apis/auth_service.dart';
 
@@ -28,6 +30,17 @@ class AuthRepositoryImp implements AuthRepoInterface {
       ForgotPasswordRequestBody forgotPasswordRequest) async {
     try {
       final response = await _authService.forgotPassword(forgotPasswordRequest);
+      return ApiResult.success(response);
+    } catch (error) {
+      return ApiResult.error(ApiErrorHandler.handle(error));
+    }
+  }
+
+  @override
+  Future<ApiResult<ResetPasswordResponseBody>> resetPassword(
+      ResetPasswordRequestBody resetPasswordRequest) async {
+    try {
+      final response = await _authService.resetPassword(resetPasswordRequest);
       return ApiResult.success(response);
     } catch (error) {
       return ApiResult.error(ApiErrorHandler.handle(error));

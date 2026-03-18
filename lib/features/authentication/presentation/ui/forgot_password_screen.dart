@@ -1,4 +1,5 @@
 import 'package:cortexia/core/di/dependency_injection.dart';
+import 'package:cortexia/core/routing/routes.dart';
 import 'package:cortexia/core/widgets/custom_elevated_button.dart';
 import 'package:cortexia/core/widgets/custom_form_field.dart';
 import 'package:cortexia/features/authentication/domain/repo/repo_interface.dart';
@@ -45,7 +46,10 @@ class ForgotPasswordScreen extends StatelessWidget {
                           behavior: SnackBarBehavior.floating,
                         ),
                       );
-                      Navigator.of(context).pop(); // Return to login
+                      Navigator.of(context).pushNamed(
+                        Routes.resetPasswordScreen,
+                        arguments: context.read<ForgotPasswordCubit>().emailController.text,
+                      );
                     } else if (state is ForgotPasswordError) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
