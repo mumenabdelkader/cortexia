@@ -44,12 +44,34 @@ class ApiErrorHandler {
                   icon: Icons.security,
                   statusCode: LocalStatusCodes.badCertificate,
                 ),
-            badResponse: () => ApiErrorModel(
-                messages:
-                   [ "Server returned an unexpected response. Please try again."],
+            badResponse: () {
+              List<String> errorMessages = [];
+              if (e.response?.data is Map<String, dynamic>) {
+                final data = e.response?.data as Map<String, dynamic>;
+                if (data.containsKey('errors') && data['errors'] is Map) {
+                  final errorsMap = data['errors'] as Map;
+                  for (final key in errorsMap.keys) {
+                    if (errorsMap[key] is List) {
+                      for (var msg in errorsMap[key]) {
+                        errorMessages.add(msg.toString());
+                      }
+                    }
+                  }
+                } else if (data.containsKey('message') && data['message'] != null) {
+                  errorMessages.add(data['message'].toString());
+                } else if (data.containsKey('title') && data['title'] != null) {
+                  errorMessages.add(data['title'].toString());
+                }
+              }
+              if (errorMessages.isEmpty) {
+                errorMessages.add("Server returned an unexpected response. Please try again.");
+              }
+              return ApiErrorModel(
+                messages: errorMessages,
                 icon: Icons.warning,
-                statusCode:
-                    e.response?.statusCode ?? LocalStatusCodes.badResponse),
+                statusCode: e.response?.statusCode ?? LocalStatusCodes.badResponse,
+              );
+            },
             cancel: () => ApiErrorModel(
                   messages: ["The request was cancelled. Please try again."],
                   icon: Icons.cancel,

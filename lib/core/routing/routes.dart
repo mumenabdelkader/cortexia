@@ -25,6 +25,7 @@ class Routes {
   static const String editAccountScreen =
       '/edit-Account'; // Edit Address screen
   static const String updatePasswordScreen = '/update-password';
+  static const String forgotPasswordScreen = '/forgot-password'; // Forgot password screen
   static const String offersManagementScreen = '/offers'; // Offers screen
   static const String productsManagementScreen =
       '/products-management'; // Products Management screen

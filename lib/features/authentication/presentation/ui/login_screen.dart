@@ -2,6 +2,7 @@ import 'package:cortexia/core/di/dependency_injection.dart';
 import 'package:cortexia/core/routing/routes.dart';
 import 'package:cortexia/core/widgets/custom_elevated_button.dart';
 import 'package:cortexia/core/widgets/custom_form_field.dart';
+import 'package:cortexia/core/routing/routes.dart';
 import 'package:cortexia/features/authentication/domain/repo/repo_interface.dart';
 import 'package:cortexia/features/authentication/presentation/controllers/login_cubit.dart';
 import 'package:flutter/material.dart';
@@ -106,7 +107,24 @@ class LoginScreen extends StatelessWidget {
                                     return null;
                                   },
                                 ),
-                                const SizedBox(height: 30),
+                                const SizedBox(height: 10),
+
+                                Align(
+                                  alignment: Alignment.centerRight,
+                                  child: TextButton(
+                                    onPressed: () {
+                                      Navigator.pushNamed(context, Routes.forgotPasswordScreen);
+                                    },
+                                    child: const Text(
+                                      "Forgot Password?",
+                                      style: TextStyle(
+                                        color: AppColors.primaryBlue,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(height: 20),
 
                                 // زرار تسجيل الدخول مع حالة التحميل
                                 BlocBuilder<LoginCubit, LoginState>(
