@@ -1,12 +1,18 @@
+import 'package:cortexia/core/di/dependency_injection.dart';
 import 'package:cortexia/core/widgets/custom_elevated_button.dart';
 import 'package:cortexia/core/widgets/custom_form_field.dart';
+import 'package:cortexia/features/admission/presentation/controllers/admission_cubit.dart';
+import 'package:cortexia/features/admission/presentation/widgets/admission_form_section_container.dart';
 import 'package:cortexia/features/patient/presentation/ui/patient_list_screen.dart';
 import 'package:cortexia/features/patient/presentation/widgets/form_section_container.dart';
 import 'package:cortexia/features/patient/presentation/widgets/patient_id_header.dart';
+
 // تأكد من استيراد ملف الـ CustomAppBar الجديد هنا
 import 'package:cortexia/core/widgets/custom_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:cortexia/core/themes/color_themes.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get_it/get_it.dart';
 
 
 class NewPatientRegistrationScreen extends StatelessWidget {
@@ -68,22 +74,9 @@ class NewPatientRegistrationScreen extends StatelessWidget {
             ),
 
             // قسم تفاصيل الدخول
-            FormSectionContainer(
-              title: "Admission Details",
-              icon: Icons.login_outlined,
-              iconColor: Colors.teal,
-              children: [
-                const CustomTextFormField(
-                  labelText: "Admission Date *",
-                  hintText: "YYYY-MM-DD",
-                  prefixIcon: Icons.calendar_today,
-                ),
-                const SizedBox(height: 16),
-                const CustomTextFormField(
-                  labelText: "Ward / Room Assignment",
-                  hintText: "e.g., ICU-101, Ward-205",
-                ),
-              ],
+            BlocProvider(
+              create: (context) => AdmissionCubit(GetIt.I.get()),
+              child: AdmissionFormSectionContainer(),
             ),
 
             // قسم المعلومات الطبية
@@ -113,7 +106,8 @@ class NewPatientRegistrationScreen extends StatelessWidget {
                 // ScaffoldMessenger.of(context).showSnackBar(
                 //   const SnackBar(content: Text("Patient Registered Successfully!")),
                 // );
-                Navigator.push(context, MaterialPageRoute(builder: (context) =>PatientListScreen() ,));
+                Navigator.push(context, MaterialPageRoute(
+                  builder: (context) => PatientListScreen(),));
               },
             ),
             const SizedBox(height: 20),
