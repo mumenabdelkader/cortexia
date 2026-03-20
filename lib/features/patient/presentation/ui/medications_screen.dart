@@ -11,7 +11,7 @@ class MedicationsScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: const CustomAppBar(
-        title: "Medications & Imaging",
+        title: "Medications ",
         subtitle: "John Anderson • PT-2026-1356",
       ),
       body: ListView(

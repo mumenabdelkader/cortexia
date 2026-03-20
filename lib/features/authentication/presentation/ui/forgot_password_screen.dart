@@ -2,22 +2,30 @@ import 'package:cortexia/core/di/dependency_injection.dart';
 import 'package:cortexia/core/routing/routes.dart';
 import 'package:cortexia/core/widgets/custom_elevated_button.dart';
 import 'package:cortexia/core/widgets/custom_form_field.dart';
-import 'package:cortexia/core/routing/routes.dart';
 import 'package:cortexia/features/authentication/domain/repo/repo_interface.dart';
-import 'package:cortexia/features/authentication/presentation/controllers/login_cubit.dart';
+import 'package:cortexia/features/authentication/presentation/controllers/forgot_password_cubit.dart';
+import 'package:cortexia/features/authentication/presentation/controllers/forgot_password_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cortexia/core/themes/color_themes.dart';
 
-class LoginScreen extends StatelessWidget {
-  const LoginScreen({super.key});
+class ForgotPasswordScreen extends StatelessWidget {
+  const ForgotPasswordScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // توفير الـ Cubit للشاشة باستخدام GetIt
     return BlocProvider(
-      create: (context) => LoginCubit(locator<AuthRepoInterface>()),
+      create: (context) => ForgotPasswordCubit(locator<AuthRepoInterface>()),
       child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back, color: AppColors.white),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
+        ),
+        extendBodyBehindAppBar: true,
         body: Container(
           width: double.infinity,
           height: double.infinity,
@@ -28,12 +36,21 @@ class LoginScreen extends StatelessWidget {
             child: SingleChildScrollView(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 30.0),
-                child: BlocListener<LoginCubit, LoginState>(
-                  // التعامل مع حالات النجاح والفشل (Navigation & Popups)
+                child: BlocListener<ForgotPasswordCubit, ForgotPasswordState>(
                   listener: (context, state) {
-                    if (state is LoginSuccess) {
-                      Navigator.pushNamed(context, Routes.mainNavigationScreen);
-                    } else if (state is LoginError) {
+                    if (state is ForgotPasswordSuccess) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text("If an account with that email exists, a password reset OTP has been sent."),
+                          backgroundColor: Colors.green,
+                          behavior: SnackBarBehavior.floating,
+                        ),
+                      );
+                      Navigator.of(context).pushNamed(
+                        Routes.resetPasswordScreen,
+                        arguments: context.read<ForgotPasswordCubit>().emailController.text,
+                      );
+                    } else if (state is ForgotPasswordError) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           content: Text(state.message),
@@ -51,109 +68,70 @@ class LoginScreen extends StatelessWidget {
                     ),
                     child: Builder(
                         builder: (context) {
-                          final cubit = context.read<LoginCubit>();
+                          final cubit = context.read<ForgotPasswordCubit>();
                           return Form(
-                            key: cubit.formKey, // الفورم كي للتحقق من الحقول
+                            key: cubit.formKey,
                             child: Column(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                // الشعار (Logo)
                                 Image.asset(
                                   'assets/images/small_logo.png',
                                   height: 80,
                                   errorBuilder: (context, error, stackTrace) => const Icon(
-                                    Icons.medical_services_outlined,
+                                    Icons.lock_reset,
                                     size: 80,
                                     color: AppColors.primaryBlue,
                                   ),
                                 ),
                                 const SizedBox(height: 16),
-
                                 Text(
-                                  "Log in",
+                                  "Forgot Password",
                                   style: Theme.of(context).textTheme.displayLarge?.copyWith(
                                     color: AppColors.textMain,
-                                    fontSize: 28,
+                                    fontSize: 24,
+                                  ),
+                                ),
+                                const SizedBox(height: 12),
+                                Text(
+                                  "Enter your email address to receive a password reset code.",
+                                  textAlign: TextAlign.center,
+                                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                    color: AppColors.textLight,
                                   ),
                                 ),
                                 const SizedBox(height: 32),
-
-                                // حقل الـ Email / Staff ID
                                 CustomTextFormField(
-                                  labelText: "Staff ID / Email",
-                                  hintText: "DR-2024-001",
-                                  prefixIcon: Icons.person_outline,
+                                  labelText: "Email",
+                                  hintText: "example@example.com",
+                                  prefixIcon: Icons.email_outlined,
                                   controller: cubit.emailController,
                                   validator: (value) {
                                     if (value == null || value.isEmpty) {
-                                      return 'Please enter your ID or Email';
+                                      return 'Please enter your email';
+                                    }
+                                    if (!RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(value)) {
+                                      return 'Please enter a valid email';
                                     }
                                     return null;
                                   },
                                 ),
-                                const SizedBox(height: 20),
-
-                                // حقل الـ Password
-                                CustomTextFormField(
-                                  labelText: "Password",
-                                  hintText: "••••••••",
-                                  prefixIcon: Icons.lock_outline,
-                                  isPassword: true,
-                                  controller: cubit.passwordController,
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return 'Please enter your password';
-                                    }
-                                    return null;
-                                  },
-                                ),
-                                const SizedBox(height: 10),
-
-                                Align(
-                                  alignment: Alignment.centerRight,
-                                  child: TextButton(
-                                    onPressed: () {
-                                      Navigator.pushNamed(context, Routes.forgotPasswordScreen);
-                                    },
-                                    child: const Text(
-                                      "Forgot Password?",
-                                      style: TextStyle(
-                                        color: AppColors.primaryBlue,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(height: 20),
-
-                                // زرار تسجيل الدخول مع حالة التحميل
-                                BlocBuilder<LoginCubit, LoginState>(
+                                const SizedBox(height: 30),
+                                BlocBuilder<ForgotPasswordCubit, ForgotPasswordState>(
                                   builder: (context, state) {
-                                    if (state is LoginLoading) {
+                                    if (state is ForgotPasswordLoading) {
                                       return const CircularProgressIndicator(
                                         color: AppColors.primaryBlue,
                                       );
                                     }
                                     return CustomElevatedButton(
-                                      text: "Sign In",
+                                      text: "Send Reset Link",
                                       onPressed: () {
-                                        // التحقق محلياً قبل إرسال الطلب للسيرفر
                                         if (cubit.formKey.currentState!.validate()) {
-                                          cubit.emitLoginStates();
+                                          cubit.emitForgotPasswordStates();
                                         }
                                       },
                                     );
                                   },
-                                ),
-
-                                const SizedBox(height: 16),
-
-                                // حقوق الملكية
-                                Text(
-                                  "© 2026 MediCare Pro. HIPAA Compliant",
-                                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                                    color: AppColors.textLight,
-                                  ),
                                 ),
                               ],
                             ),
