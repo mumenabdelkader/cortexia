@@ -1,23 +1,16 @@
 // Dependency Injection
-import 'package:cortexia/features/authentication/presentation/ui/login_screen.dart';
+import 'package:cortexia/features/patient/presentation/ui/clinical_alerts_screen.dart';
 import 'package:flutter/material.dart';
 import '../../welcome_screens.dart';
+import 'package:cortexia/features/authentication/presentation/ui/forgot_password_screen.dart';
+import 'package:cortexia/features/authentication/presentation/ui/reset_password_screen.dart';
 import '../../features/patient/presentation/ui/clinical_notes_screen.dart';
 import '../../features/patient/presentation/ui/fluid_balance_screen.dart';
 import '../../features/patient/presentation/ui/lab_results_screen.dart';
-import '../../features/patient/presentation/ui/clinical_alerts_screen.dart';
 import '../../features/patient/presentation/ui/main_navigation_screen.dart';
-
 import '../../features/patient/presentation/ui/medications_screen.dart';
 import '../../features/patient/presentation/ui/imaging_screen.dart';
-import '../../features/patient/presentation/ui/chatbot_screen.dart';
-import '../../features/patient/presentation/ui/new_patient_registration_screen.dart';
-import '../../features/patient/presentation/ui/patient_dashboard_screen.dart';
-import '../../features/patient/presentation/ui/patient_list_screen.dart';
-import '../../features/patient/presentation/ui/physical_examination_screen.dart';
-import '../../features/patient/presentation/ui/profile_screen.dart';
-
-import '../../features/case_history/presentation/ui/case_history_screen.dart';
+import '../../features/patient/presentation/ui/medical_history_screen.dart';
 import 'routes.dart';
 
 class AppRouter {
@@ -32,6 +25,15 @@ class AppRouter {
       case Routes.medicalHistoryScreen:
         return MaterialPageRoute(
           builder: (_) => CaseHistoryScreen(admissionId: admissionId),
+        );
+      case Routes.forgotPasswordScreen:
+        return MaterialPageRoute(
+          builder: (_) => const ForgotPasswordScreen(),
+        );
+      case Routes.resetPasswordScreen:
+        final email = arguments as String;
+        return MaterialPageRoute(
+          builder: (_) => ResetPasswordScreen(email: email),
         );
       case Routes.clinicalNotesScreen:
         return MaterialPageRoute(builder: (_) => const ClinicalNotesScreen());
