@@ -1,4 +1,3 @@
-
 // Dependency Injection
 import 'package:cortexia/features/patient/presentation/ui/clinical_alerts_screen.dart';
 import 'package:flutter/material.dart';
@@ -17,11 +16,15 @@ import 'routes.dart';
 class AppRouter {
   Route? generateRoute(RouteSettings settings) {
     final arguments = settings.arguments;
+    final admissionId = (arguments is Map ? arguments['admissionId'] : null) as String? ?? '';
     switch (settings.name) {
       case Routes.splashScreen:
+        return MaterialPageRoute(builder: (_) => WelcomeScreen());
+      case Routes.loginScreen:
+        return MaterialPageRoute(builder: (_) => const LoginScreen());
+      case Routes.medicalHistoryScreen:
         return MaterialPageRoute(
-          builder:
-              (_) => WelcomeScreen()
+          builder: (_) => CaseHistoryScreen(admissionId: admissionId),
         );
       case Routes.forgotPasswordScreen:
         return MaterialPageRoute(
@@ -33,37 +36,37 @@ class AppRouter {
           builder: (_) => ResetPasswordScreen(email: email),
         );
       case Routes.clinicalNotesScreen:
-        return MaterialPageRoute(
-          builder: (_) => const ClinicalNotesScreen(),
-        );
+        return MaterialPageRoute(builder: (_) => const ClinicalNotesScreen());
       case Routes.fluidBalanceScreen:
-        return MaterialPageRoute(
-          builder: (_) => const FluidBalanceScreen(),
-        );
+        return MaterialPageRoute(builder: (_) => const FluidBalanceScreen());
       case Routes.labResultsScreen:
-        return MaterialPageRoute(
-          builder: (_) => const LabResultsScreen(),
-        );
+        return MaterialPageRoute(builder: (_) => const LabResultsScreen());
       case Routes.clinicalAlertsScreen:
-        return MaterialPageRoute(
-          builder: (_) => ClinicalAlertsScreen(),
-        );
+        return MaterialPageRoute(builder: (_) => const ClinicalAlertsScreen());
       case Routes.mainNavigationScreen:
-        return MaterialPageRoute(
-          builder: (_) => const MainNavigationScreen(),
-        );
+        return MaterialPageRoute(builder: (_) => const MainNavigationScreen());
       case Routes.medicationScreen:
-        return MaterialPageRoute(
-          builder: (_) => const MedicationsScreen(),
-        );
+        return MaterialPageRoute(builder: (_) => const MedicationsScreen());
       case Routes.imagingScreen:
+        return MaterialPageRoute(builder: (_) => const ImagingScreen());
+      case Routes.chatbotScreen:
+        return MaterialPageRoute(builder: (_) => const ChatbotScreen());
+      case Routes.newPatientRegistrationScreen:
         return MaterialPageRoute(
-          builder: (_) => const ImagingScreen(),
+          builder: (_) => const NewPatientRegistrationScreen(),
         );
-      case Routes.medicalHistoryScreen:
+      case Routes.patientDashboardScreen:
         return MaterialPageRoute(
-          builder: (_) => const MedicalHistoryScreen(),
+          builder: (_) => const PatientDashboardScreen(),
         );
+      case Routes.patientListScreen:
+        return MaterialPageRoute(builder: (_) => const PatientListScreen());
+      case Routes.physicalExaminationScreen:
+        return MaterialPageRoute(
+          builder: (_) => const PhysicalExaminationScreen(),
+        );
+      case Routes.profileScreen:
+        return MaterialPageRoute(builder: (_) => const ProfileScreen());
 
       default:
         return null;

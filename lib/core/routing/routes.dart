@@ -64,4 +64,11 @@ class Routes {
       '/fluid-balance'; // Fluid balance screen
   static const String medicationScreen = '/medication'; // Medication screen
   static const String imagingScreen = '/imaging'; // Imaging screen
+  // Newly mapped features
+  static const String chatbotScreen = '/chatbot';
+  static const String newPatientRegistrationScreen =
+      '/new-patient-registration';
+  static const String patientDashboardScreen = '/patient-dashboard';
+  static const String patientListScreen = '/patient-list';
+  static const String physicalExaminationScreen = '/physical-examination';
 }
