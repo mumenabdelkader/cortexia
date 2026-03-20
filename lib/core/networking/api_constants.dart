@@ -186,10 +186,6 @@ class ApiConstants {
   static const String getBestSellingCount =
       "/api/dashboard/Products/BestSelling/Count";
 
-  // ── Case History ───────────────────────────────────────────────────────────
-  static const String caseHistory =
-      '/api/admissions/{admissionId}/case-history';
-
   // ── Diagnostics ────────────────────────────────────────────────────────────
   static const String diagnosticsLabOrders = '/api/Diagnostics/lab-orders';
   static const String diagnosticsLabResults = '/api/Diagnostics/lab-results';
