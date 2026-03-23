@@ -13,7 +13,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class CaseHistoryScreen extends StatelessWidget {
   final String admissionId;
 
-  const CaseHistoryScreen({super.key, required this.admissionId});
+  const CaseHistoryScreen({super.key,  this.admissionId="ADM-A61B43BAB7AD"});
 
   @override
   Widget build(BuildContext context) {
@@ -327,6 +327,7 @@ class _CaseHistoryAddFormState extends State<_CaseHistoryAddForm> {
         maritalHistory: _maritalHistoryCtrl.text.trim(),
         specialHabits: _specialHabitsCtrl.text.trim(),
         clinicalNotes: _clinicalNotesCtrl.text.trim(),
+
       ),
     );
   }

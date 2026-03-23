@@ -5,6 +5,8 @@ import 'package:cortexia/features/patients/data/models/update_patient_command_mo
 import 'package:cortexia/features/patients/data/models/create_patient_command_model.dart';
 import 'package:cortexia/features/patients/data/models/get_all_patients_query_model.dart';
 
+import 'package:cortexia/features/patients/data/models/patient_details_response_model.dart';
+
 part 'patients_service.g.dart';
 
 @RestApi(baseUrl: ApiConstants.baseUrl)
@@ -24,7 +26,7 @@ abstract class PatientsService {
   Future<dynamic> getPatientsId({@Path('id') required String id});
 
   @GET(ApiConstants.patientDetails)
-  Future<dynamic> getPatientsIdDetails({@Path('id') required String id});
+  Future<PatientDetailsResponseModel> getPatientsIdDetails({@Path('id') required String id});
 
   @GET(ApiConstants.patientAdmissions)
   Future<dynamic> getPatientsIdAdmissions({@Path('id') required String id});

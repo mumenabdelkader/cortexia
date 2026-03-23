@@ -4,6 +4,7 @@ import 'package:cortexia/features/patients/domain/repo/repo_interface.dart';
 import 'package:cortexia/features/patients/data/models/update_patient_command_model.dart';
 import 'package:cortexia/features/patients/data/models/create_patient_command_model.dart';
 import 'package:cortexia/features/patients/data/models/get_all_patients_query_model.dart';
+import 'package:cortexia/features/patients/data/models/patient_details_response_model.dart';
 import '../apis/patients_service.dart';
 
 class PatientsRepoImp implements PatientsRepoInterface {
@@ -51,7 +52,7 @@ class PatientsRepoImp implements PatientsRepoInterface {
   }
 
   @override
-  Future<ApiResult<dynamic>> getPatientsIdDetails({required String id}) async {
+  Future<ApiResult<PatientDetailsResponseModel>> getPatientsIdDetails({required String id}) async {
     try {
       final response = await _apiService.getPatientsIdDetails(id: id);
       return ApiResult.success(response);
