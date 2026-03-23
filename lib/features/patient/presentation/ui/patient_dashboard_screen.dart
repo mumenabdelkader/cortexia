@@ -1,7 +1,7 @@
 import 'package:cortexia/core/routing/routes.dart';
+import 'package:cortexia/features/medications/presentation/ui/medications_screen.dart';
 import 'package:cortexia/features/patient/presentation/ui/chatbot_screen.dart';
 import 'package:cortexia/features/patient/presentation/ui/imaging_screen.dart';
-import 'package:cortexia/features/patient/presentation/ui/medications_screen.dart';
 import 'package:cortexia/features/patient/presentation/widgets/dashboar_patient_card.dart';
 import 'package:cortexia/features/patient/presentation/widgets/dashboard_action_card.dart';
 import 'package:cortexia/features/patient/presentation/widgets/dashboard_active_medications.dart';
@@ -92,13 +92,13 @@ class PatientDashboardScreen extends StatelessWidget {
                     const SizedBox(height: 16),
                     GestureDetector(
                       onTap: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => const MedicationsScreen(),
-                          ),
+                        Navigator.pushNamed(
+                          context,
+                          Routes.medicationScreen,
+                          arguments: {'admissionId': admission?.id},
                         );
                       },
-                      child: const DashboardActiveMedications(),
+                      child: DashboardActiveMedications(admissionId: admission?.id),
                     ),
                     const SizedBox(height: 20),
 
@@ -116,7 +116,7 @@ class PatientDashboardScreen extends StatelessWidget {
                     ),
 
                     const SizedBox(height: 20),
-                    _buildActionGrid(context),
+                    _buildActionGrid(context, admission),
                     const SizedBox(height: 30),
                   ],
                 ),
@@ -129,7 +129,7 @@ class PatientDashboardScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildActionGrid(BuildContext context) {
+  Widget _buildActionGrid(BuildContext context, dynamic admission) {
     return Column(
       children: [
         Row(
@@ -187,22 +187,13 @@ class PatientDashboardScreen extends StatelessWidget {
         Row(
           children: [
             Expanded(
-              child: GestureDetector(
-                onTap: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => const MedicationsScreen(),
-                    ),
-                  );
-                },
-                child: DashboardActionCard(
-                  onPressed: () =>
-                      Navigator.pushNamed(context, Routes.medicationScreen),
-                  title: "Medication",
-                  subTitle: "View records",
-                  icon: Icons.image_outlined,
-                  iconColor: Colors.purpleAccent,
-                ),
+              child: DashboardActionCard(
+                onPressed: () =>
+                    Navigator.pushNamed(context, Routes.medicationScreen, arguments: {'admissionId': admission?.id}),
+                title: "Medication",
+                subTitle: "View records",
+                icon: Icons.image_outlined,
+                iconColor: Colors.purpleAccent,
               ),
             ),
             SizedBox(width: 12),

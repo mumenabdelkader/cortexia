@@ -5,6 +5,14 @@ abstract class MedicationsState {}
 
 class MedicationsStateInitial extends MedicationsState {}
 class MedicationsStateLoading extends MedicationsState {}
+class MedicationsStatePrescribed extends MedicationsState {
+  final PrescribeMedicationResponseModel data;
+  MedicationsStatePrescribed({required this.data});
+}
+class MedicationsStateLoaded extends MedicationsState {
+  final List<MedicationResponseModel> medications;
+  MedicationsStateLoaded({required this.medications});
+}
 class MedicationsStateSuccess extends MedicationsState {
   final dynamic data;
   final String operation;

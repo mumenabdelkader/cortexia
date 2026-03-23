@@ -84,40 +84,48 @@ class PatientCard extends StatelessWidget {
           // كروت العلامات الحيوية (isSmall: true)
           Row(
             children: [
-              CustomInfoCard(
-                title: "HR",
-                value: hrValue,
-                icon: Icons.insights,
-                themeColor: AppColors.primaryBlue,
-                bgColor: const Color(0xFFEDF2F7),
-                isSmall: true,
+              Expanded(
+                child: CustomInfoCard(
+                  title: "HR",
+                  value: hrValue,
+                  icon: Icons.insights,
+                  themeColor: AppColors.primaryBlue,
+                  bgColor: const Color(0xFFEDF2F7),
+                  isSmall: true,
+                ),
               ),
               const SizedBox(width: 8),
-              CustomInfoCard(
-                title: "Temp",
-                value: tempValue,
-                icon: Icons.thermostat,
-                themeColor: AppColors.errorRed,
-                bgColor: const Color(0xFFEDF2F7),
-                isSmall: true,
+              Expanded(
+                child: CustomInfoCard(
+                  title: "Temp",
+                  value: tempValue,
+                  icon: Icons.thermostat,
+                  themeColor: AppColors.errorRed,
+                  bgColor: const Color(0xFFEDF2F7),
+                  isSmall: true,
+                ),
               ),
               const SizedBox(width: 8),
-              CustomInfoCard(
-                title: "BP",
-                value: bpValue,
-                icon: Icons.speed,
-                themeColor: Colors.teal,
-                bgColor: const Color(0xFFEDF2F7),
-                isSmall: true,
+              Expanded(
+                child: CustomInfoCard(
+                  title: "BP",
+                  value: bpValue,
+                  icon: Icons.speed,
+                  themeColor: Colors.teal,
+                  bgColor: const Color(0xFFEDF2F7),
+                  isSmall: true,
+                ),
               ),
               const SizedBox(width: 8),
-              CustomInfoCard(
-                title: "SpO2",
-                value: spo2Value,
-                icon: Icons.bubble_chart_outlined,
-                themeColor: Colors.green,
-                bgColor: const Color(0xFFEDF2F7),
-                isSmall: true,
+              Expanded(
+                child: CustomInfoCard(
+                  title: "SpO2",
+                  value: spo2Value,
+                  icon: Icons.bubble_chart_outlined,
+                  themeColor: Colors.green,
+                  bgColor: const Color(0xFFEDF2F7),
+                  isSmall: true,
+                ),
               ),
             ],
           ),

@@ -2,6 +2,8 @@ import 'package:cortexia/core/networking/api_result.dart';
 import 'package:cortexia/core/networking/api_error_handler.dart';
 import '../apis/medications_service.dart';
 import 'package:cortexia/features/medications/data/models/prescribe_medication_command_model.dart';
+import 'package:cortexia/features/medications/data/models/medication_response_model.dart';
+import 'package:cortexia/features/medications/data/models/prescribe_medication_response_model.dart';
 import 'package:cortexia/features/medications/domain/repo/repo_interface.dart';
 
 class MedicationsRepoImp implements MedicationsRepoInterface {
@@ -9,7 +11,7 @@ class MedicationsRepoImp implements MedicationsRepoInterface {
   MedicationsRepoImp(this._apiService);
 
   @override
-  Future<ApiResult<dynamic>> postAdmissionsAdmissionidMedications({required String admissionid, required PrescribeMedicationCommandModel requestBody}) async {
+  Future<ApiResult<PrescribeMedicationResponseModel>> postAdmissionsAdmissionidMedications({required String admissionid, required PrescribeMedicationCommandModel requestBody}) async {
     try {
       final response = await _apiService.postAdmissionsAdmissionidMedications(admissionid: admissionid, requestBody: requestBody);
       return ApiResult.success(response);
@@ -19,7 +21,7 @@ class MedicationsRepoImp implements MedicationsRepoInterface {
   }
 
   @override
-  Future<ApiResult<dynamic>> getAdmissionsAdmissionidMedications({required String admissionid}) async {
+  Future<ApiResult<List<MedicationResponseModel>>> getAdmissionsAdmissionidMedications({required String admissionid}) async {
     try {
       final response = await _apiService.getAdmissionsAdmissionidMedications(admissionid: admissionid);
       return ApiResult.success(response);

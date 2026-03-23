@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
 import 'package:cortexia/features/medications/domain/repo/repo_interface.dart';
 import 'package:cortexia/features/medications/data/models/prescribe_medication_command_model.dart';
+import 'package:cortexia/features/medications/data/models/medication_response_model.dart';
+import 'package:cortexia/features/medications/data/models/prescribe_medication_response_model.dart';
 
 part 'medications_state.dart';
 
@@ -16,7 +18,7 @@ class MedicationsCubit extends Cubit<MedicationsState> {
     final response = await _repo.postAdmissionsAdmissionidMedications(admissionid: admissionid, requestBody: requestBody);
     response.when(
       onSuccess: (data) {
-        emit(MedicationsStateSuccess(operation: 'postAdmissionsAdmissionidMedications', data: data));
+        emit(MedicationsStatePrescribed(data: data));
       },
       onError: (error) {
         emit(MedicationsStateError(message: error.messages.first));
@@ -29,7 +31,7 @@ class MedicationsCubit extends Cubit<MedicationsState> {
     final response = await _repo.getAdmissionsAdmissionidMedications(admissionid: admissionid);
     response.when(
       onSuccess: (data) {
-        emit(MedicationsStateSuccess(operation: 'getAdmissionsAdmissionidMedications', data: data));
+        emit(MedicationsStateLoaded(medications: data));
       },
       onError: (error) {
         emit(MedicationsStateError(message: error.messages.first));

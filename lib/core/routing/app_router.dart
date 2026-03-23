@@ -16,8 +16,11 @@ import '../../features/patient/presentation/ui/clinical_notes_screen.dart';
 import '../../features/patient/presentation/ui/fluid_balance_screen.dart';
 import '../../features/patient/presentation/ui/lab_results_screen.dart';
 import '../../features/patient/presentation/ui/main_navigation_screen.dart';
-import '../../features/patient/presentation/ui/medications_screen.dart';
+import '../../features/medications/presentation/ui/medications_screen.dart';
 import '../../features/patient/presentation/ui/imaging_screen.dart';
+import 'package:cortexia/features/medications/presentation/controllers/medications_cubit.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get_it/get_it.dart';
 import 'routes.dart';
 
 class AppRouter {
@@ -53,7 +56,16 @@ class AppRouter {
       case Routes.mainNavigationScreen:
         return MaterialPageRoute(builder: (_) => const MainNavigationScreen());
       case Routes.medicationScreen:
-        return MaterialPageRoute(builder: (_) => const MedicationsScreen());
+        final args = arguments as Map<String, dynamic>?;
+        return MaterialPageRoute(
+          builder: (_) => BlocProvider(
+            create: (context) => MedicationsCubit(GetIt.I.get()),
+            child: MedicationsScreen(
+              admissionId: args?['admissionId'] ?? '',
+              doctorId: args?['doctorId'] ?? 'DOC-1436C0633BBD',
+            ),
+          ),
+        );
       case Routes.imagingScreen:
         return MaterialPageRoute(builder: (_) => const ImagingScreen());
       case Routes.chatbotScreen:
