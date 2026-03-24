@@ -162,8 +162,19 @@ class PatientDashboardScreen extends StatelessWidget {
           children: [
             Expanded(
               child: DashboardActionCard(
-                onPressed: () =>
-                    Navigator.pushNamed(context, Routes.medicalHistoryScreen),
+                onPressed: () {
+                  if (admission?.id != null && admission!.id!.isNotEmpty) {
+                    Navigator.pushNamed(context, Routes.medicalHistoryScreen,
+                        arguments: {'admissionId': admission.id});
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('No active admission found for this patient.'),
+                        backgroundColor: Colors.orange,
+                      ),
+                    );
+                  }
+                },
                 title: "Medical History",
                 subTitle: "View records",
                 icon: Icons.assignment_outlined,

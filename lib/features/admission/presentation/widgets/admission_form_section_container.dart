@@ -7,7 +7,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class AdmissionFormSectionContainer extends StatefulWidget {
-  const AdmissionFormSectionContainer({super.key});
+  final String? patientId;
+  final String? doctorId;
+  const AdmissionFormSectionContainer({super.key, this.patientId, this.doctorId});
 
   @override
   State<AdmissionFormSectionContainer> createState() => _AdmissionFormSectionContainerState();
@@ -18,7 +20,7 @@ class _AdmissionFormSectionContainerState extends State<AdmissionFormSectionCont
   late TextEditingController initialDiagnosisController;
   late TextEditingController roomIdController;
   late TextEditingController bedIdController;
-  final String admissionDate = DateTime.now().toIso8601String();
+  final String admissionDate = DateTime.now().toUtc().toIso8601String().split('.').first + 'Z';
 
   @override
   void initState() {
@@ -98,8 +100,8 @@ class _AdmissionFormSectionContainerState extends State<AdmissionFormSectionCont
                 // التأكد من أن البيانات ليست فارغة قبل الإرسال (اختياري)
                 if (initialDiagnosisController.text.isNotEmpty) {
                   context.read<AdmissionCubit>().createAdmission(
-                    patientId: "PAT-FA20DCEE31AE",
-                    doctorId: "DOC-1436C0633BBD",
+                    patientId: widget.patientId ?? "PAT-FA20DCEE31AE", // Fallback to old for safety if needed, or remove
+                    doctorId: widget.doctorId ?? "DOC-1436C0633BBD",
                     admissionDate: admissionDate,
                     initialDiagnosis: initialDiagnosisController.text,
                     roomId: roomIdController.text,

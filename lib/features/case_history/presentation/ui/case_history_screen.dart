@@ -5,6 +5,7 @@ import 'package:cortexia/core/widgets/custom_app_bar.dart';
 import 'package:cortexia/core/widgets/custom_elevated_button.dart';
 import 'package:cortexia/core/widgets/custom_form_field.dart';
 import 'package:cortexia/features/case_history/data/models/add_case_history_command_model.dart';
+import 'package:cortexia/features/case_history/data/models/case_history_model.dart';
 import 'package:cortexia/features/case_history/domain/repo/repo_interface.dart';
 import 'package:cortexia/features/case_history/presentation/controllers/case_history_cubit.dart';
 import 'package:flutter/material.dart';
@@ -12,15 +13,21 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 class CaseHistoryScreen extends StatelessWidget {
   final String admissionId;
+  final String doctorId;
 
-  const CaseHistoryScreen({super.key,  this.admissionId="ADM-A61B43BAB7AD"});
+  const CaseHistoryScreen({
+    super.key,
+    this.admissionId = "ADM-7A21F7EF3C7D",
+    this.doctorId = "DOC-1436C0633BBD",
+  });
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) =>
-          CaseHistoryCubit(locator<CaseHistoryRepoInterface>())
-            ..getAdmissionsAdmissionidCaseHistory(admissionid: admissionId),
+      create:
+          (_) =>
+              CaseHistoryCubit(locator<CaseHistoryRepoInterface>())
+                ..getAdmissionsAdmissionidCaseHistory(admissionid: admissionId),
       child: const _CaseHistoryView(),
     );
   }
@@ -55,12 +62,21 @@ class _CaseHistoryView extends StatelessWidget {
         },
         child: BlocBuilder<CaseHistoryCubit, CaseHistoryState>(
           builder: (context, state) {
-            if (state is CaseHistoryStateLoading) {
+            List<CaseHistoryModel> histories = [];
+            bool isLoading = state is CaseHistoryStateLoading;
+
+            if (state is CaseHistoryStateSuccess &&
+                state.operation == 'getAdmissionsAdmissionidCaseHistory') {
+              histories = state.data as List<CaseHistoryModel>;
+            }
+
+            if (isLoading && histories.isEmpty) {
               return const Center(
                 child: CircularProgressIndicator(color: AppColors.primaryBlue),
               );
             }
-            return const _CaseHistoryContent();
+
+            return _CaseHistoryContent(histories: histories);
           },
         ),
       ),
@@ -69,7 +85,8 @@ class _CaseHistoryView extends StatelessWidget {
 }
 
 class _CaseHistoryContent extends StatelessWidget {
-  const _CaseHistoryContent();
+  final List<CaseHistoryModel> histories;
+  const _CaseHistoryContent({required this.histories});
 
   @override
   Widget build(BuildContext context) {
@@ -78,11 +95,22 @@ class _CaseHistoryContent extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _CaseHistorySummaryCard(),
+          const _CaseHistorySummaryCard(),
           SizedBox(height: AppDimens.space16),
-          _CaseHistoryInfoSection(),
+          if (histories.isEmpty)
+            const Center(
+              child: Padding(
+                padding: EdgeInsets.symmetric(vertical: 20),
+                child: Text(
+                  'No previous history found',
+                  style: TextStyle(color: AppColors.textSecondary),
+                ),
+              ),
+            )
+          else
+            ...histories.map((history) => _CaseHistoryInfoSection(history: history)).toList(),
           SizedBox(height: AppDimens.space24),
-          _CaseHistoryAddForm(),
+          const _CaseHistoryAddForm(),
           SizedBox(height: AppDimens.space24),
         ],
       ),
@@ -94,6 +122,8 @@ class _CaseHistoryContent extends StatelessWidget {
 // Summary card at top
 // ─────────────────────────────────────────────
 class _CaseHistorySummaryCard extends StatelessWidget {
+  const _CaseHistorySummaryCard();
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -154,13 +184,18 @@ class _CaseHistorySummaryCard extends StatelessWidget {
 // Read-only Info Section (previously fetched data)
 // ─────────────────────────────────────────────
 class _CaseHistoryInfoSection extends StatelessWidget {
+  final CaseHistoryModel history;
+  const _CaseHistoryInfoSection({required this.history});
+
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16),
+      child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Patient Overview',
+          'History Entry - ${history.id ?? ''}',
           style: Theme.of(context).textTheme.titleLarge?.copyWith(
             color: AppColors.textMain,
             fontWeight: FontWeight.bold,
@@ -170,46 +205,55 @@ class _CaseHistoryInfoSection extends StatelessWidget {
         _InfoCard(
           icon: Icons.sick_outlined,
           label: 'Chief Complaint',
-          value: 'Fever with shortness of breath (3 days)',
+          value: history.complaint ?? 'N/A',
           color: Colors.red,
         ),
         SizedBox(height: AppDimens.space8),
         _InfoCard(
           icon: Icons.history_outlined,
           label: 'Present Illness',
-          value:
-              'Patient presented with high-grade fever up to 39.5°C, associated with progressive dyspnea and productive cough with greenish sputum.',
+          value: history.presentIllness ?? 'N/A',
           color: Colors.orange,
         ),
         SizedBox(height: AppDimens.space8),
         _InfoCard(
           icon: Icons.monitor_heart_outlined,
           label: 'Chronic Diseases',
-          value: 'Hypertension (10 years), Type II DM',
+          value: history.chronicDisease ?? 'N/A',
           color: Colors.purple,
         ),
         SizedBox(height: AppDimens.space8),
         _InfoCard(
           icon: Icons.family_restroom_outlined,
           label: 'Genetic / Family History',
-          value: 'Father: Coronary artery disease. Mother: Breast cancer.',
+          value: history.geneticDisease ?? 'N/A',
           color: Colors.teal,
         ),
         SizedBox(height: AppDimens.space8),
         _InfoCard(
           icon: Icons.favorite_border_outlined,
           label: 'Marital History',
-          value: 'Married, 3 children — no obstetric complications',
+          value: history.maritalHistory ?? 'N/A',
           color: Colors.pink,
         ),
         SizedBox(height: AppDimens.space8),
         _InfoCard(
           icon: Icons.smoking_rooms_outlined,
           label: 'Special Habits',
-          value: 'Ex-smoker (quit 5 years ago). No alcohol or drug use.',
+          value: history.specialHabits ?? 'N/A',
           color: Colors.brown,
         ),
+        if (history.clinicalNotes != null) ...[
+          SizedBox(height: AppDimens.space8),
+          _InfoCard(
+            icon: Icons.notes_outlined,
+            label: 'Clinical Notes',
+            value: history.clinicalNotes!,
+            color: Colors.blueGrey,
+          ),
+        ]
       ],
+      ),
     );
   }
 }
@@ -312,14 +356,16 @@ class _CaseHistoryAddFormState extends State<_CaseHistoryAddForm> {
 
   void _submit(BuildContext context) {
     if (!_formKey.currentState!.validate()) return;
-    final admissionId =
-        context
-            .findAncestorWidgetOfExactType<CaseHistoryScreen>()
-            ?.admissionId ??
-        '';
+    
+    final screen = context.findAncestorWidgetOfExactType<CaseHistoryScreen>();
+    final admissionId = screen?.admissionId ?? '';
+    final doctorId = screen?.doctorId ?? '';
+
     context.read<CaseHistoryCubit>().postAdmissionsAdmissionidCaseHistory(
       admissionid: admissionId,
       requestBody: AddCaseHistoryCommandModel(
+        admissionId: admissionId,
+        doctorId: doctorId,
         complaint: _complaintCtrl.text.trim(),
         presentIllness: _presentIllnessCtrl.text.trim(),
         chronicDisease: _chronicDiseaseCtrl.text.trim(),
@@ -327,9 +373,11 @@ class _CaseHistoryAddFormState extends State<_CaseHistoryAddForm> {
         maritalHistory: _maritalHistoryCtrl.text.trim(),
         specialHabits: _specialHabitsCtrl.text.trim(),
         clinicalNotes: _clinicalNotesCtrl.text.trim(),
-
       ),
     );
+
+    // Clear form after submission? 
+    // Usually wait for success but for now let's keep it simple.
   }
 
   @override
@@ -354,7 +402,7 @@ class _CaseHistoryAddFormState extends State<_CaseHistoryAddForm> {
                 ),
                 SizedBox(width: AppDimens.space8),
                 Text(
-                  'Add / Update Case History',
+                  'Add New Case History',
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: AppColors.textMain,
@@ -412,7 +460,7 @@ class _CaseHistoryAddFormState extends State<_CaseHistoryAddForm> {
                 final isLoading = state is CaseHistoryStateLoading;
                 return CustomElevatedButton(
                   text: isLoading ? 'Saving…' : 'Save Case History',
-                  onPressed: () => _submit(context),
+                  onPressed: () => isLoading ? null : _submit(context),
                   backgroundColor: AppColors.primaryBlue,
                   textColor: AppColors.white,
                   height: AppDimens.buttonHeight,
@@ -446,6 +494,7 @@ class _CaseHistoryAddFormState extends State<_CaseHistoryAddForm> {
         CustomTextFormField(
           controller: controller,
           hintText: hint,
+          maxLines: maxLines,
           validator: (val) =>
               (val == null || val.trim().isEmpty) ? 'Required' : null,
         ),

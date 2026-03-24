@@ -34,7 +34,9 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => const LoginScreen());
       case Routes.medicalHistoryScreen:
         return MaterialPageRoute(
-          builder: (_) => CaseHistoryScreen(admissionId: admissionId),
+          builder: (_) => admissionId.isNotEmpty 
+              ? CaseHistoryScreen(admissionId: admissionId)
+              : const CaseHistoryScreen(),
         );
       case Routes.forgotPasswordScreen:
         return MaterialPageRoute(

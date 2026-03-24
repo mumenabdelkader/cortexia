@@ -17,6 +17,7 @@ class CaseHistoryCubit extends Cubit<CaseHistoryState> {
     response.when(
       onSuccess: (data) {
         emit(CaseHistoryStateSuccess(operation: 'postAdmissionsAdmissionidCaseHistory', data: data));
+        getAdmissionsAdmissionidCaseHistory(admissionid: admissionid);
       },
       onError: (error) {
         emit(CaseHistoryStateError(message: error.messages.first));
