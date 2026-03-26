@@ -10,7 +10,6 @@ import 'package:flutter/material.dart';
 import 'package:cortexia/core/widgets/custom_app_bar.dart'; // تأكد من المسار الصحيح
 import 'package:cortexia/core/widgets/custom_elevated_button.dart'; // تأكد من المسار الصحيح
 
-import 'package:cortexia/core/di/dependency_injection.dart';
 import 'package:cortexia/features/patients/data/models/patient_details_response_model.dart';
 import 'package:cortexia/features/patients/presentation/controllers/patients_cubit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -78,7 +77,7 @@ class PatientDashboardScreen extends StatelessWidget {
                       name: patient.name,
                       id: patient.fileNumber ?? patient.id,
                       status: "Active", // أو حسب الـ status في الـ admission
-                      genderAge: "${patient.gender ?? 'N/A'}",
+                      genderAge: patient.gender ?? 'N/A',
                       room: admission?.roomId ?? "N/A",
                       admittedDate: formattedDate,
                       diagnosis: patient.diagnosisSummary ?? admission?.initialDiagnosis ?? "N/A",

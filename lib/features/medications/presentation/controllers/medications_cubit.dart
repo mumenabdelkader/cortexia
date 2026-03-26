@@ -1,6 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
-import 'package:meta/meta.dart';
 import 'package:cortexia/features/medications/domain/repo/repo_interface.dart';
 import 'package:cortexia/features/medications/data/models/prescribe_medication_command_model.dart';
 import 'package:cortexia/features/medications/data/models/medication_response_model.dart';

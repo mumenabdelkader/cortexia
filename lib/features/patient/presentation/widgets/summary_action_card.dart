@@ -10,14 +10,14 @@ class SummaryActionCard extends StatelessWidget {
   final VoidCallback onAddTap;
 
   const SummaryActionCard({
-    Key? key,
+    super.key,
     required this.count,
     required this.label,
     required this.buttonText,
     this.themeColor = const Color(0xFF00ACC1),
     this.backgroundColor = const Color(0xFFF0F9FB),
     required this.onAddTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

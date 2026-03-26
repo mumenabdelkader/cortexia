@@ -20,7 +20,7 @@ class _AdmissionFormSectionContainerState extends State<AdmissionFormSectionCont
   late TextEditingController initialDiagnosisController;
   late TextEditingController roomIdController;
   late TextEditingController bedIdController;
-  final String admissionDate = DateTime.now().toUtc().toIso8601String().split('.').first + 'Z';
+  final String admissionDate = '${DateTime.now().toUtc().toIso8601String().split('.').first}Z';
 
   @override
   void initState() {

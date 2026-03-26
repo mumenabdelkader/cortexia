@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:cortexia/core/widgets/custom_app_bar.dart';
 
 class ImagingScreen extends StatelessWidget {
-  const ImagingScreen({Key? key}) : super(key: key);
+  const ImagingScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -5,10 +5,10 @@ class StatusBadge extends StatelessWidget {
   final bool isActive;      // المتغير الـ bool اللي بيحدد الحالة
 
   const StatusBadge({
-    Key? key,
+    super.key,
     required this.statusText,
     required this.isActive,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

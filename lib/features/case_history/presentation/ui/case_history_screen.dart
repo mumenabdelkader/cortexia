@@ -108,7 +108,7 @@ class _CaseHistoryContent extends StatelessWidget {
               ),
             )
           else
-            ...histories.map((history) => _CaseHistoryInfoSection(history: history)).toList(),
+            ...histories.map((history) => _CaseHistoryInfoSection(history: history)),
           SizedBox(height: AppDimens.space24),
           const _CaseHistoryAddForm(),
           SizedBox(height: AppDimens.space24),

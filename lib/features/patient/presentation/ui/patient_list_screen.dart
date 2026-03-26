@@ -1,4 +1,3 @@
-import 'package:cortexia/core/di/dependency_injection.dart';
 import 'package:cortexia/features/patient/presentation/ui/patient_dashboard_screen.dart';
 import 'package:cortexia/features/patient/presentation/widgets/custom_info_card.dart';
 import 'package:cortexia/features/patients/data/models/get_all_patients_query_model.dart';
