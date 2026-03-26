@@ -21,9 +21,10 @@ class Data {
   String? token;
   String? email;
   String? userId;
+  String? userIdInSystem;
   List<String>? roles;
 
-  Data({this.token, this.email, this.userId, this.roles});
+  Data({this.token, this.email, this.userId, this.userIdInSystem, this.roles});
 
   factory Data.fromJson(Map<String, dynamic> json) => _$DataFromJson(json);
 

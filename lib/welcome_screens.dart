@@ -1,5 +1,5 @@
+import 'package:cortexia/core/cache/app_cahe.dart';
 import 'package:cortexia/core/routing/routes.dart';
-import 'package:cortexia/features/authentication/presentation/ui/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:cortexia/core/themes/color_themes.dart';
 
@@ -13,6 +13,19 @@ class WelcomeScreen extends StatefulWidget {
 class _WelcomeScreenState extends State<WelcomeScreen> {
   final PageController _pageController = PageController();
   int _currentPage = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkLoginStatus();
+  }
+
+  Future<void> _checkLoginStatus() async {
+    final loggedIn = await AppCache.isLoggedIn();
+    if (loggedIn && mounted) {
+      Navigator.pushReplacementNamed(context, Routes.mainNavigationScreen);
+    }
+  }
 
   // البيانات الخاصة بالـ 3 صفحات
   final List<Map<String, String>> _welcomeData = [
@@ -72,6 +85,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                   TextButton(
                     onPressed: () {
                       // أكشن التخطي (يروح للـ Login مثلاً)
+                      Navigator.pushNamed(context, Routes.loginScreen);
                     },
                     child: Text(
                       "Skip",

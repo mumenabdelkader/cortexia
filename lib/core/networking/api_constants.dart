@@ -5,7 +5,8 @@ class ApiConstants {
   static const String login = "/api/Auth/login";
   static const String forgotPassword = "/api/Auth/forgot-password";
   static const String resetPassword = "/api/Auth/reset-password";
-  static const String caseHistory = "/api/admissions/{admissionId}/case-history";
+  static const String caseHistory =
+      "/api/admissions/{admissionId}/case-history";
   static const String createAdmission = "/api/Admission/patients/{patientId}";
   static const String createPatientOrGetAll = "/api/Patients"; // Assumed
 

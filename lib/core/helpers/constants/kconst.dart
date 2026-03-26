@@ -7,5 +7,6 @@ class SharedPrefKeys {
   static const String primaryAddress = 'primaryAddress';
   static const String isGuest = 'isGuest';
   static const String userData = 'userData';
+  static const String userDataJson = 'userDataJson';
   static const String locale = 'locale';
 }

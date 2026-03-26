@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:cortexia/core/cache/app_cahe.dart';
 import 'package:cortexia/features/authentication/data/models/login_request_model.dart';
 import 'package:cortexia/features/authentication/domain/repo/repo_interface.dart';
 import 'package:flutter/material.dart';
@@ -28,11 +29,13 @@ class LoginCubit extends Cubit<LoginState> {
     );
 
     response.when(
-      onSuccess: (loginResponse) {
+      onSuccess: (loginResponse) async {
+        if (loginResponse.data != null) {
+          await AppCache.saveUserData(loginResponse.data!);
+        }
         emit(LoginSuccess(loginResponse));
       },
       onError: (apiErrorModel) {
-        // بنأخد أول رسالة خطأ من القائمة اللي انت عرفتها في الـ ApiErrorModel
         emit(LoginError(message: apiErrorModel.messages.first));
       },
     );
