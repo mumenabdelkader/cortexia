@@ -22,7 +22,7 @@ class AppCache {
   // ──────────────────────────────────────────────
 
   /// Saves token to SecureStorage and the rest of [data] as JSON to SharedPrefs.
-  static Future<void> saveUserData(Data data) async {
+  static Future<void> saveUserData(UserData data) async {
     // Token goes to secure storage
     if (data.token != null) {
       await SharedPrefHelper.setSecuredString(
@@ -46,7 +46,9 @@ class AppCache {
 
   /// Returns true if a token is saved (user is logged in).
   static Future<bool> isLoggedIn() async {
-    final token = await SharedPrefHelper.getSecuredString(SharedPrefKeys.userToken);
+    final token = await SharedPrefHelper.getSecuredString(
+      SharedPrefKeys.userToken,
+    );
     return token.isNotEmpty;
   }
 
@@ -55,13 +57,15 @@ class AppCache {
     return SharedPrefHelper.getSecuredString(SharedPrefKeys.userToken);
   }
 
-  /// Returns the saved user data as a [Data] object, or null.
-  static Future<Data?> getUserData() async {
+  /// Returns the saved user data as a [UserData] object, or null.
+  static Future<UserData?> getUserData() async {
     final raw = SharedPrefHelper.getStringSync(SharedPrefKeys.userDataJson);
     if (raw.isEmpty) return null;
     final map = jsonDecode(raw) as Map<String, dynamic>;
-    final token = await SharedPrefHelper.getSecuredString(SharedPrefKeys.userToken);
-    return Data(
+    final token = await SharedPrefHelper.getSecuredString(
+      SharedPrefKeys.userToken,
+    );
+    return UserData(
       token: token,
       email: map['email'] as String?,
       userId: map['userId'] as String?,

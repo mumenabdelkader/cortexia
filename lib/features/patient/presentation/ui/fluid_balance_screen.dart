@@ -200,7 +200,7 @@ class FluidBalanceScreen extends StatelessWidget {
                 child: Container(
                   padding: EdgeInsets.symmetric(horizontal: AppDimens.space12, vertical: AppDimens.space8),
                   decoration: BoxDecoration(
-                    color: AppColors.infoBlue.withOpacity(0.1),
+                    color: AppColors.infoBlue.withValues(alpha:0.1),
                     borderRadius: AppDimens.radius8,
                   ),
                   child: Row(
@@ -289,7 +289,7 @@ class FluidBalanceScreen extends StatelessWidget {
                 child: Container(
                   padding: EdgeInsets.symmetric(horizontal: AppDimens.space12, vertical: AppDimens.space8),
                   decoration: BoxDecoration(
-                    color: AppColors.warningOrange.withOpacity(0.1),
+                    color: AppColors.warningOrange.withValues(alpha:0.1),
                     borderRadius: AppDimens.radius8,
                   ),
                   child: Row(
@@ -468,7 +468,7 @@ class FluidBalanceScreen extends StatelessWidget {
     return Container(
       padding: AppDimens.paddingAll16,
       decoration: BoxDecoration(
-        color: isInput ? AppColors.infoBlue.withOpacity(0.05) : AppColors.warningOrange.withOpacity(0.05),
+        color: isInput ? AppColors.infoBlue.withValues(alpha:0.05) : AppColors.warningOrange.withValues(alpha:0.05),
         borderRadius: AppDimens.radius12,
       ),
       child: Column(

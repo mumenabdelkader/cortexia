@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cortexia/core/themes/app_dimens.dart';
 import 'package:cortexia/core/themes/color_themes.dart';
-import 'package:cortexia/features/patient/presentation/ui/patient_dashboard_screen.dart';
 import 'package:cortexia/features/patient/presentation/ui/clinical_alerts_screen.dart';
 import 'package:cortexia/features/patient/presentation/ui/patient_list_screen.dart';
 import 'package:cortexia/features/patient/presentation/ui/profile_screen.dart';
@@ -18,7 +17,6 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
   late PageController _pageController;
 
   final List<Widget> _screens = [
-    const PatientDashboardScreen(),
     const PatientListScreen(),
     const ClinicalAlertsScreen(),
     const ProfileScreen(),
@@ -41,7 +39,8 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
     return Scaffold(
       body: PageView(
         controller: _pageController,
-        physics: const BouncingScrollPhysics(), // Added physics for a smooth scroll feel
+        physics:
+            const BouncingScrollPhysics(), // Added physics for a smooth scroll feel
         onPageChanged: (index) {
           setState(() {
             _currentIndex = index;
@@ -54,7 +53,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
           color: AppColors.white,
           boxShadow: [
             BoxShadow(
-              color: AppColors.textSecondary.withOpacity(0.1),
+              color: AppColors.textSecondary.withValues(alpha:0.1),
               blurRadius: 10,
               offset: const Offset(0, -5),
             ),
@@ -62,30 +61,20 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
         ),
         child: SafeArea(
           child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: AppDimens.space16, vertical: 8),
+            padding: EdgeInsets.symmetric(
+              horizontal: AppDimens.space16,
+              vertical: 8,
+            ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                _buildNavItem(
-                  index: 0,
-                  icon: Icons.dashboard,
-                  label: 'Dashboard',
-                ),
+                _buildNavItem(index: 0, icon: Icons.people, label: 'Patients'),
                 _buildNavItem(
                   index: 1,
-                  icon: Icons.people,
-                  label: 'Patients',
-                ),
-                _buildNavItem(
-                  index: 2,
                   icon: Icons.notifications,
                   label: 'Alerts',
                 ),
-                _buildNavItem(
-                  index: 3,
-                  icon: Icons.person,
-                  label: 'Profile',
-                ),
+                _buildNavItem(index: 2, icon: Icons.person, label: 'Profile'),
               ],
             ),
           ),
@@ -111,9 +100,14 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
       },
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
-        padding: EdgeInsets.symmetric(horizontal: AppDimens.space12, vertical: AppDimens.space8),
+        padding: EdgeInsets.symmetric(
+          horizontal: AppDimens.space12,
+          vertical: AppDimens.space8,
+        ),
         decoration: BoxDecoration(
-          color: isSelected ? AppColors.infoBlue.withOpacity(0.1) : Colors.transparent,
+          color: isSelected
+              ? AppColors.infoBlue.withValues(alpha:0.1)
+              : Colors.transparent,
           borderRadius: AppDimens.radius12,
         ),
         child: Column(
@@ -128,7 +122,9 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
             Text(
               label,
               style: TextStyle(
-                color: isSelected ? AppColors.infoBlue : AppColors.textSecondary,
+                color: isSelected
+                    ? AppColors.infoBlue
+                    : AppColors.textSecondary,
                 fontSize: 12,
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
               ),

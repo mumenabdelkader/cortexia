@@ -1,4 +1,3 @@
-import 'package:cortexia/core/di/dependency_injection.dart';
 import 'package:cortexia/core/widgets/custom_elevated_button.dart';
 import 'package:cortexia/core/widgets/custom_form_field.dart';
 import 'package:cortexia/features/admission/presentation/controllers/admission_cubit.dart';
@@ -97,7 +96,7 @@ class _NewPatientRegistrationScreenState
     if (picked != null) {
       setState(() {
         // الـ API محتاج الـ Format ده: 1992-07-15T00:00:00Z
-        _dateOfBirthController.text = picked.toUtc().toIso8601String().split('.').first + 'Z';
+        _dateOfBirthController.text = '${picked.toUtc().toIso8601String().split('.').first}Z';
       });
     }
   }
@@ -431,7 +430,7 @@ class _NewPatientRegistrationScreenState
         ),
         const SizedBox(height: 8),
         DropdownButtonFormField<T>(
-          value: value,
+          initialValue: value,
           hint: Text(hint,
               style: Theme.of(context)
                   .textTheme

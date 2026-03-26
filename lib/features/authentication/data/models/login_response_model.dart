@@ -6,27 +6,34 @@ part 'login_response_model.g.dart'; // اسم الملف لازم يكون نف�
 class LoginResponseModel {
   bool? success;
   String? message;
-  Data? data;
+  UserData? data;
 
   LoginResponseModel({this.success, this.message, this.data});
 
   // الربط مع الكود اللي هيتولد تلقائياً
-  factory LoginResponseModel.fromJson(Map<String, dynamic> json) => _$LoginResponseModelFromJson(json);
+  factory LoginResponseModel.fromJson(Map<String, dynamic> json) =>
+      _$LoginResponseModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$LoginResponseModelToJson(this);
 }
 
 @JsonSerializable()
-class Data {
+class UserData {
   String? token;
   String? email;
   String? userId;
   String? userIdInSystem;
   List<String>? roles;
 
-  Data({this.token, this.email, this.userId, this.userIdInSystem, this.roles});
+  UserData({
+    this.token,
+    this.email,
+    this.userId,
+    this.userIdInSystem,
+    this.roles,
+  });
 
-  factory Data.fromJson(Map<String, dynamic> json) => _$DataFromJson(json);
+  factory UserData.fromJson(Map<String, dynamic> json) => _$DataFromJson(json);
 
   Map<String, dynamic> toJson() => _$DataToJson(this);
 }

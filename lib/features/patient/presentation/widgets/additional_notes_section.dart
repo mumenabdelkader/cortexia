@@ -5,10 +5,7 @@ import 'examination_section_card.dart';
 class AdditionalNotesSection extends StatelessWidget {
   final TextEditingController? controller;
 
-  const AdditionalNotesSection({
-    Key? key,
-    this.controller,
-  });
+  const AdditionalNotesSection({super.key, this.controller});
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +16,8 @@ class AdditionalNotesSection extends StatelessWidget {
       child: CustomTextFormField(
         controller: controller,
         hintText: "Add any additional observations or concerns...",
-        fillColor: Colors.white, // جعل الخلفية بيضاء لتمييزها داخل الكارت الرمادي
+        fillColor:
+            Colors.white, // جعل الخلفية بيضاء لتمييزها داخل الكارت الرمادي
         // يمكنك إضافة برامتر maxLines للكلاس الخاص بك إذا أردت زيادة الارتفاع
         // أو الاعتماد على التصميم الافتراضي للكلاس
       ),

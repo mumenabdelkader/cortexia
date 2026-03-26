@@ -155,7 +155,7 @@ class LabResultsScreen extends StatelessWidget {
           Container(
             padding: AppDimens.paddingAll12,
             decoration: BoxDecoration(
-              color: AppColors.infoBlue.withOpacity(0.1),
+              color: AppColors.infoBlue.withValues(alpha:0.1),
               shape: BoxShape.circle,
             ),
             child: Icon(Icons.history, color: AppColors.infoBlue, size: AppDimens.iconSize),
@@ -327,16 +327,16 @@ class LabResultsScreen extends StatelessWidget {
     Color textColor;
 
     if (status.contains('Normal')) {
-      bgColor = AppColors.successGreen.withOpacity(0.1);
+      bgColor = AppColors.successGreen.withValues(alpha:0.1);
       textColor = AppColors.successGreen;
     } else if (status.contains('High')) {
-      bgColor = AppColors.errorRed.withOpacity(0.1);
+      bgColor = AppColors.errorRed.withValues(alpha:0.1);
       textColor = AppColors.errorRed;
     } else if (status.contains('Low')) {
-      bgColor = AppColors.warningOrange.withOpacity(0.1);
+      bgColor = AppColors.warningOrange.withValues(alpha:0.1);
       textColor = AppColors.warningOrange;
     } else {
-      bgColor = AppColors.infoBlue.withOpacity(0.1);
+      bgColor = AppColors.infoBlue.withValues(alpha:0.1);
       textColor = AppColors.infoBlue;
     }
 

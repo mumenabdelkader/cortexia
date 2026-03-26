@@ -12,7 +12,7 @@ import '../../features/patient/presentation/ui/profile_screen.dart';
 import '../../welcome_screens.dart';
 import 'package:cortexia/features/authentication/presentation/ui/forgot_password_screen.dart';
 import 'package:cortexia/features/authentication/presentation/ui/reset_password_screen.dart';
-import '../../features/patient/presentation/ui/clinical_notes_screen.dart';
+import '../../features/nursing_notes/presentation/ui/clinical_notes_screen.dart';
 import '../../features/patient/presentation/ui/fluid_balance_screen.dart';
 import '../../features/patient/presentation/ui/lab_results_screen.dart';
 import '../../features/patient/presentation/ui/main_navigation_screen.dart';
@@ -26,29 +26,32 @@ import 'routes.dart';
 class AppRouter {
   Route? generateRoute(RouteSettings settings) {
     final arguments = settings.arguments;
-    final admissionId = (arguments is Map ? arguments['admissionId'] : null) as String? ?? '';
+
     switch (settings.name) {
       case Routes.splashScreen:
         return MaterialPageRoute(builder: (_) => WelcomeScreen());
       case Routes.loginScreen:
         return MaterialPageRoute(builder: (_) => const LoginScreen());
       case Routes.medicalHistoryScreen:
+        final admissionId =
+            (arguments is Map ? arguments['admissionId'] : null) as String? ??
+            '';
         return MaterialPageRoute(
-          builder: (_) => admissionId.isNotEmpty 
-              ? CaseHistoryScreen(admissionId: admissionId)
-              : const CaseHistoryScreen(),
+          builder: (_) => CaseHistoryScreen(admissionId: admissionId),
         );
       case Routes.forgotPasswordScreen:
-        return MaterialPageRoute(
-          builder: (_) => const ForgotPasswordScreen(),
-        );
+        return MaterialPageRoute(builder: (_) => const ForgotPasswordScreen());
       case Routes.resetPasswordScreen:
         final email = arguments as String;
         return MaterialPageRoute(
           builder: (_) => ResetPasswordScreen(email: email),
         );
       case Routes.clinicalNotesScreen:
-        return MaterialPageRoute(builder: (_) => const ClinicalNotesScreen());
+        final admissionId =
+            (arguments is Map ? arguments['admissionId'] : null) as String? ?? '';
+        return MaterialPageRoute(
+          builder: (_) => ClinicalNotesScreen(admissionId: admissionId),
+        );
       case Routes.fluidBalanceScreen:
         return MaterialPageRoute(builder: (_) => const FluidBalanceScreen());
       case Routes.labResultsScreen:
@@ -77,7 +80,9 @@ class AppRouter {
           builder: (_) => const NewPatientRegistrationScreen(),
         );
       case Routes.patientDashboardScreen:
-        final id = arguments is String ? arguments : (arguments is Map ? arguments['patientId'] : null);
+        final id = arguments is String
+            ? arguments
+            : (arguments is Map ? arguments['patientId'] : null);
         return MaterialPageRoute(
           builder: (_) => PatientDashboardScreen(patientId: id as String?),
         );

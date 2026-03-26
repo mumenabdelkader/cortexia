@@ -12,7 +12,7 @@ import 'package:intl/intl.dart';
 class MedicationsScreen extends StatefulWidget {
   final String admissionId;
   final String doctorId;
-  const MedicationsScreen({Key? key, this.admissionId = 'ADM-7A21F7EF3C7D', this.doctorId = 'DOC-1436C0633BBD'}) : super(key: key);
+  const MedicationsScreen({super.key, this.admissionId = 'ADM-7A21F7EF3C7D', this.doctorId = 'DOC-1436C0633BBD'});
 
   @override
   State<MedicationsScreen> createState() => _MedicationsScreenState();

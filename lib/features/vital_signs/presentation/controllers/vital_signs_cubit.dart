@@ -1,6 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
-import 'package:meta/meta.dart';
 import 'package:cortexia/features/vital_signs/domain/repo/repo_interface.dart';
 import 'package:cortexia/features/vital_signs/data/models/record_vitals_command_model.dart';
 

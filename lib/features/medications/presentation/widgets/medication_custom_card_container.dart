@@ -12,14 +12,14 @@ class CustomCardContainer extends StatelessWidget {
   final bool? isActive; // الـ bool المطلوب
 
   const CustomCardContainer({
-    Key? key,
+    super.key,
     required this.title,
     this.subTitle,
     required this.child,
     this.actionButtons,
     this.statusText,
     this.isActive,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

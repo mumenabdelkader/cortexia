@@ -1,3 +1,5 @@
+import 'package:cortexia/core/cache/app_cahe.dart';
+import 'package:cortexia/core/routing/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:cortexia/core/themes/app_dimens.dart';
 import 'package:cortexia/core/themes/color_themes.dart';
@@ -27,7 +29,7 @@ class ProfileScreen extends StatelessWidget {
             SizedBox(height: AppDimens.space24),
             _buildSecurityCard(),
             SizedBox(height: AppDimens.space32),
-            _buildLogoutSection(),
+            _buildLogoutSection(context),
             SizedBox(height: AppDimens.space32),
           ],
         ),
@@ -48,7 +50,11 @@ class ProfileScreen extends StatelessWidget {
           CircleAvatar(
             radius: 40,
             backgroundColor: const Color(0x1A0066CC),
-            child: Icon(Icons.person, size: 50, color: AppColors.infoBlue), // Placeholder for image
+            child: Icon(
+              Icons.person,
+              size: 50,
+              color: AppColors.infoBlue,
+            ), // Placeholder for image
           ),
           SizedBox(height: AppDimens.space16),
           Text(
@@ -69,11 +75,14 @@ class ProfileScreen extends StatelessWidget {
           ),
           SizedBox(height: AppDimens.space12),
           Container(
-            padding: EdgeInsets.symmetric(horizontal: AppDimens.space12, vertical: 6),
+            padding: EdgeInsets.symmetric(
+              horizontal: AppDimens.space12,
+              vertical: 6,
+            ),
             decoration: BoxDecoration(
               color: const Color(0x1A0066CC),
               borderRadius: AppDimens.radius8,
-              border: Border.all(color: AppColors.infoBlue.withOpacity(0.3)),
+              border: Border.all(color: AppColors.infoBlue.withValues(alpha:0.3)),
             ),
             child: Text(
               'DR-2024-001',
@@ -119,9 +128,16 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildStatCard({required String count, required String label, required IconData icon}) {
+  Widget _buildStatCard({
+    required String count,
+    required String label,
+    required IconData icon,
+  }) {
     return Container(
-       padding: EdgeInsets.symmetric(vertical: AppDimens.space16, horizontal: AppDimens.space8),
+      padding: EdgeInsets.symmetric(
+        vertical: AppDimens.space16,
+        horizontal: AppDimens.space8,
+      ),
       decoration: BoxDecoration(
         color: AppColors.white,
         borderRadius: AppDimens.radius16,
@@ -145,7 +161,7 @@ class ProfileScreen extends StatelessWidget {
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 10,
-               fontWeight: FontWeight.w500,
+              fontWeight: FontWeight.w500,
               color: AppColors.textSecondary,
             ),
           ),
@@ -158,11 +174,19 @@ class ProfileScreen extends StatelessWidget {
     return _buildSectionCard(
       title: 'Contact Information',
       children: [
-        _buildInfoRow(Icons.email_outlined, 'Email', 'sarah.johnson@hospital.com'),
+        _buildInfoRow(
+          Icons.email_outlined,
+          'Email',
+          'sarah.johnson@hospital.com',
+        ),
         Divider(height: AppDimens.space24, color: AppColors.border),
         _buildInfoRow(Icons.phone_outlined, 'Phone', '+1 (555) 123-4567'),
-         Divider(height: AppDimens.space24, color: AppColors.border),
-        _buildInfoRow(Icons.business_outlined, 'Department', 'Critical Care Unit'),
+        Divider(height: AppDimens.space24, color: AppColors.border),
+        _buildInfoRow(
+          Icons.business_outlined,
+          'Department',
+          'Critical Care Unit',
+        ),
       ],
     );
   }
@@ -172,10 +196,10 @@ class ProfileScreen extends StatelessWidget {
       children: [
         Container(
           padding: AppDimens.paddingAll8,
-           decoration: BoxDecoration(
-              color: AppColors.scaffoldBg,
-              shape: BoxShape.circle,
-           ),
+          decoration: BoxDecoration(
+            color: AppColors.scaffoldBg,
+            shape: BoxShape.circle,
+          ),
           child: Icon(icon, color: AppColors.textSecondary, size: 20),
         ),
         SizedBox(width: AppDimens.space16),
@@ -185,10 +209,7 @@ class ProfileScreen extends StatelessWidget {
             children: [
               Text(
                 label,
-                style: TextStyle(
-                  fontSize: 12,
-                  color: AppColors.textSecondary,
-                ),
+                style: TextStyle(fontSize: 12, color: AppColors.textSecondary),
               ),
               SizedBox(height: 2),
               Text(
@@ -207,28 +228,43 @@ class ProfileScreen extends StatelessWidget {
   }
 
   Widget _buildSettingsCard() {
-     return _buildSectionCard(
-        title: 'App Settings',
-        children: [
-           _buildToggleRow(Icons.dark_mode_outlined, 'Dark Mode', 'Enable dark theme', false),
-           Divider(height: AppDimens.space24, color: AppColors.border),
-           _buildToggleRow(Icons.notifications_active_outlined, 'Push Notifications', 'Receive alerts and updates', true),
-           Divider(height: AppDimens.space24, color: AppColors.border),
-           _buildToggleRow(Icons.volume_up_outlined, 'Critical Alerts Sound', 'Audio alerts for critical events', true),
-        ],
-     );
+    return _buildSectionCard(
+      title: 'App Settings',
+      children: [
+        _buildToggleRow(
+          Icons.dark_mode_outlined,
+          'Dark Mode',
+          'Enable dark theme',
+          false,
+        ),
+        Divider(height: AppDimens.space24, color: AppColors.border),
+        _buildToggleRow(
+          Icons.notifications_active_outlined,
+          'Push Notifications',
+          'Receive alerts and updates',
+          true,
+        ),
+        Divider(height: AppDimens.space24, color: AppColors.border),
+        _buildToggleRow(
+          Icons.volume_up_outlined,
+          'Critical Alerts Sound',
+          'Audio alerts for critical events',
+          true,
+        ),
+      ],
+    );
   }
 
   Widget _buildNotificationPreferencesCard() {
-     return _buildSectionCard(
-        title: 'Notification Preferences',
-        children: [
-           _buildCheckboxRow('Lab Results', true),
-           _buildCheckboxRow('Medication Reminders', true),
-           _buildCheckboxRow('Vital Sign Alerts', true),
-           _buildCheckboxRow('Patient Updates', false),
-        ],
-     );
+    return _buildSectionCard(
+      title: 'Notification Preferences',
+      children: [
+        _buildCheckboxRow('Lab Results', true),
+        _buildCheckboxRow('Medication Reminders', true),
+        _buildCheckboxRow('Vital Sign Alerts', true),
+        _buildCheckboxRow('Patient Updates', false),
+      ],
+    );
   }
 
   Widget _buildSecurityCard() {
@@ -242,7 +278,7 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-   Widget _buildActionButton(IconData icon, String label) {
+  Widget _buildActionButton(IconData icon, String label) {
     return InkWell(
       onTap: () {},
       borderRadius: AppDimens.radius12,
@@ -273,7 +309,10 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildSectionCard({required String title, required List<Widget> children}) {
+  Widget _buildSectionCard({
+    required String title,
+    required List<Widget> children,
+  }) {
     return Container(
       padding: AppDimens.paddingAll20,
       decoration: BoxDecoration(
@@ -292,104 +331,111 @@ class ProfileScreen extends StatelessWidget {
               color: AppColors.textMain,
             ),
           ),
-           SizedBox(height: AppDimens.space20),
-           ...children,
+          SizedBox(height: AppDimens.space20),
+          ...children,
         ],
       ),
     );
   }
 
-  Widget _buildToggleRow(IconData icon, String title, String subtitle, bool initialValue) {
-     return Row(
-        children: [
-            Container(
-             padding: AppDimens.paddingAll8,
-              decoration: BoxDecoration(
-                 color: AppColors.scaffoldBg,
-                 shape: BoxShape.circle,
+  Widget _buildToggleRow(
+    IconData icon,
+    String title,
+    String subtitle,
+    bool initialValue,
+  ) {
+    return Row(
+      children: [
+        Container(
+          padding: AppDimens.paddingAll8,
+          decoration: BoxDecoration(
+            color: AppColors.scaffoldBg,
+            shape: BoxShape.circle,
+          ),
+          child: Icon(icon, color: AppColors.textSecondary, size: 20),
+        ),
+        SizedBox(width: AppDimens.space16),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: TextStyle(
+                  fontSize: AppDimens.fontMedium,
+                  fontWeight: FontWeight.w500,
+                  color: AppColors.textMain,
+                ),
               ),
-             child: Icon(icon, color: AppColors.textSecondary, size: 20),
-           ),
-           SizedBox(width: AppDimens.space16),
-           Expanded(
-             child: Column(
-               crossAxisAlignment: CrossAxisAlignment.start,
-               children: [
-                 Text(
-                   title,
-                   style: TextStyle(
-                     fontSize: AppDimens.fontMedium,
-                     fontWeight: FontWeight.w500,
-                     color: AppColors.textMain,
-                   ),
-                 ),
-                 Text(
-                   subtitle,
-                   style: TextStyle(
-                     fontSize: 12,
-                     color: AppColors.textSecondary,
-                   ),
-                 ),
-               ],
-             ),
-           ),
-           Switch(
-             value: initialValue,
-             onChanged: (val) {},
-             activeColor: AppColors.infoBlue,
-             activeTrackColor: AppColors.infoBlue.withOpacity(0.3),
-           ),
-        ],
-     );
+              Text(
+                subtitle,
+                style: TextStyle(fontSize: 12, color: AppColors.textSecondary),
+              ),
+            ],
+          ),
+        ),
+        Switch(
+          value: initialValue,
+          onChanged: (val) {},
+          activeThumbColor: AppColors.infoBlue,
+          activeTrackColor: AppColors.infoBlue.withValues(alpha:0.3),
+        ),
+      ],
+    );
   }
 
-   Widget _buildCheckboxRow(String title, bool initialValue) {
-      return Padding(
-        padding: const EdgeInsets.only(bottom: 12.0),
-        child: Container(
-           padding: EdgeInsets.symmetric(horizontal: AppDimens.space12, vertical: AppDimens.space4),
-           decoration: BoxDecoration(
-              color: AppColors.scaffoldBg,
-              borderRadius: AppDimens.radius12,
-           ),
-           child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                 Text(
-                    title,
-                    style: TextStyle(
-                       fontSize: AppDimens.fontMedium,
-                       fontWeight: FontWeight.w500,
-                       color: AppColors.textMain,
-                    ),
-                 ),
-                 Checkbox(
-                    value: initialValue,
-                    onChanged: (val) {},
-                    activeColor: AppColors.infoBlue,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
-                 ),
-              ],
-           ),
+  Widget _buildCheckboxRow(String title, bool initialValue) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12.0),
+      child: Container(
+        padding: EdgeInsets.symmetric(
+          horizontal: AppDimens.space12,
+          vertical: AppDimens.space4,
         ),
-      );
-   }
+        decoration: BoxDecoration(
+          color: AppColors.scaffoldBg,
+          borderRadius: AppDimens.radius12,
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              title,
+              style: TextStyle(
+                fontSize: AppDimens.fontMedium,
+                fontWeight: FontWeight.w500,
+                color: AppColors.textMain,
+              ),
+            ),
+            Checkbox(
+              value: initialValue,
+              onChanged: (val) {},
+              activeColor: AppColors.infoBlue,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(4),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 
-  Widget _buildLogoutSection() {
+  Widget _buildLogoutSection(BuildContext context) {
     return Column(
       children: [
         Text(
           'App Version 1.0.0 (Build 42)',
-          style: TextStyle(
-            fontSize: 12,
-            color: AppColors.textLight,
-          ),
+          style: TextStyle(fontSize: 12, color: AppColors.textLight),
         ),
         SizedBox(height: AppDimens.space16),
         SizedBox(
           width: double.infinity,
           child: ElevatedButton(
-            onPressed: () {},
+            onPressed: () {
+              AppCache.clearUserData();
+              Navigator.pushReplacementNamed(context, Routes.loginScreen);
+            },
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.white,
               padding: AppDimens.paddingAll16,
