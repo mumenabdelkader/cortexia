@@ -26,7 +26,7 @@ class SummaryActionCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: backgroundColor,
         borderRadius: BorderRadius.circular(15),
-        border: Border.all(color: themeColor.withOpacity(0.1)),
+        border: Border.all(color: themeColor.withValues(alpha:0.1)),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,

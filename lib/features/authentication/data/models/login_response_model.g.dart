@@ -12,7 +12,7 @@ LoginResponseModel _$LoginResponseModelFromJson(Map<String, dynamic> json) =>
       message: json['message'] as String?,
       data: json['data'] == null
           ? null
-          : Data.fromJson(json['data'] as Map<String, dynamic>),
+          : UserData.fromJson(json['data'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$LoginResponseModelToJson(LoginResponseModel instance) =>
@@ -22,16 +22,15 @@ Map<String, dynamic> _$LoginResponseModelToJson(LoginResponseModel instance) =>
       'data': instance.data,
     };
 
-Data _$DataFromJson(Map<String, dynamic> json) =>
-  Data(
-    token: json['token'] as String?,
-    email: json['email'] as String?,
-    userId: json['userId'] as String?,
-    userIdInSystem: json['userIdInSystem'] as String?,
-    roles: (json['roles'] as List<dynamic>?)?.map((e) => e as String).toList(),
-  );
+UserData _$DataFromJson(Map<String, dynamic> json) => UserData(
+  token: json['token'] as String?,
+  email: json['email'] as String?,
+  userId: json['userId'] as String?,
+  userIdInSystem: json['userIdInSystem'] as String?,
+  roles: (json['roles'] as List<dynamic>?)?.map((e) => e as String).toList(),
+);
 
-Map<String, dynamic> _$DataToJson(Data instance) => <String, dynamic>{
+Map<String, dynamic> _$DataToJson(UserData instance) => <String, dynamic>{
   'token': instance.token,
   'email': instance.email,
   'userId': instance.userId,

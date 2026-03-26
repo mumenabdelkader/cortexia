@@ -141,7 +141,7 @@ class _CaseHistorySummaryCard extends StatelessWidget {
           Container(
             padding: AppDimens.paddingAll12,
             decoration: BoxDecoration(
-              color: AppColors.white.withOpacity(0.2),
+              color: AppColors.white.withValues(alpha:0.2),
               shape: BoxShape.circle,
             ),
             child: const Icon(
@@ -168,7 +168,7 @@ class _CaseHistorySummaryCard extends StatelessWidget {
                   'Complete patient admission history',
                   style: TextStyle(
                     fontSize: AppDimens.fontSmall,
-                    color: AppColors.white.withOpacity(0.8),
+                    color: AppColors.white.withValues(alpha:0.8),
                   ),
                 ),
               ],
@@ -286,7 +286,7 @@ class _InfoCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
+              color: color.withValues(alpha:0.1),
               borderRadius: AppDimens.radius8,
             ),
             child: Icon(icon, color: color, size: 20),

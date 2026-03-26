@@ -1,5 +1,4 @@
 import 'package:cortexia/core/routing/routes.dart';
-import 'package:cortexia/features/medications/presentation/ui/medications_screen.dart';
 import 'package:cortexia/features/patient/presentation/ui/chatbot_screen.dart';
 import 'package:cortexia/features/patient/presentation/ui/imaging_screen.dart';
 import 'package:cortexia/features/patient/presentation/widgets/dashboar_patient_card.dart';
@@ -136,8 +135,11 @@ class PatientDashboardScreen extends StatelessWidget {
           children: [
             Expanded(
               child: DashboardActionCard(
-                onPressed: () =>
-                    Navigator.pushNamed(context, Routes.clinicalNotesScreen),
+                onPressed: () => Navigator.pushNamed(
+                  context,
+                  Routes.clinicalNotesScreen,
+                  arguments: {'admissionId': admission?.id},
+                ),
                 title: "Clinical Notes",
                 subTitle: "View timeline",
                 icon: Icons.description_outlined,
