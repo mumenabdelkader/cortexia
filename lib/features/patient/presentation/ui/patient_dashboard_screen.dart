@@ -1,6 +1,5 @@
 import 'package:cortexia/core/routing/routes.dart';
 import 'package:cortexia/features/patient/presentation/ui/chatbot_screen.dart';
-import 'package:cortexia/features/patient/presentation/ui/imaging_screen.dart';
 import 'package:cortexia/features/patient/presentation/widgets/dashboar_patient_card.dart';
 import 'package:cortexia/features/patient/presentation/widgets/dashboard_action_card.dart';
 import 'package:cortexia/features/patient/presentation/widgets/dashboard_active_medications.dart';
@@ -148,8 +147,11 @@ class PatientDashboardScreen extends StatelessWidget {
             SizedBox(width: 12),
             Expanded(
               child: DashboardActionCard(
-                onPressed: () =>
-                    Navigator.pushNamed(context, Routes.labResultsScreen),
+                onPressed: () => Navigator.pushNamed(
+                  context,
+                  Routes.labResultsScreen,
+                  arguments: {'admissionId': admission?.id},
+                ),
                 title: "Lab Results",
                 subTitle: "Check reports",
                 icon: Icons.analytics_outlined,
@@ -210,22 +212,16 @@ class PatientDashboardScreen extends StatelessWidget {
             ),
             SizedBox(width: 12),
             Expanded(
-              child: GestureDetector(
-                onTap: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => const ImagingScreen(),
-                    ),
-                  );
-                },
-                child: DashboardActionCard(
-                  onPressed: () =>
-                      Navigator.pushNamed(context, Routes.imagingScreen),
-                  title: "imaging",
-                  subTitle: "I/O tracking",
-                  icon: Icons.medication_liquid,
-                  iconColor: Colors.red,
+              child: DashboardActionCard(
+                onPressed: () => Navigator.pushNamed(
+                  context,
+                  Routes.imagingScreen,
+                  arguments: {'admissionId': admission?.id},
                 ),
+                title: "Imaging",
+                subTitle: "Radiology & Scans",
+                icon: Icons.image_outlined,
+                iconColor: Colors.red,
               ),
             ),
           ],
