@@ -4,4 +4,6 @@ import 'package:cortexia/features/vital_signs/data/models/record_vitals_command_
 abstract class VitalSignsRepoInterface {
   Future<ApiResult<dynamic>> postAdmissionsAdmissionidVitals({required String admissionid, required RecordVitalsCommandModel requestBody});
   Future<ApiResult<dynamic>> getAdmissionsAdmissionidVitals({required String admissionid});
+  Future<ApiResult<dynamic>> putAdmissionsAdmissionidVitals({required String admissionid, required RecordVitalsCommandModel requestBody});
+  Future<ApiResult<dynamic>> deleteAdmissionsAdmissionidVitals({required String admissionid, required String id});
 }

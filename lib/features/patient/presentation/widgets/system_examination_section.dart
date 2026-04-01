@@ -1,45 +1,60 @@
 import 'package:flutter/material.dart';
-import 'examination_section_card.dart'; // تأكد من استيراد الحاوية الكبرى
-import 'examination_category_card.dart'; // تأكد من استيراد الكارت الصغير
+import 'examination_section_card.dart';
+import 'examination_category_card.dart';
 
 class SystemExaminationSection extends StatelessWidget {
-  const SystemExaminationSection({super.key});
+  final TextEditingController? generalApperanceController;
+  final TextEditingController? eyeController;
+  final TextEditingController? heartController;
+  final TextEditingController? respController;
+  final TextEditingController? abdomenController;
+
+  const SystemExaminationSection({
+    super.key,
+    this.generalApperanceController,
+    this.eyeController,
+    this.heartController,
+    this.respController,
+    this.abdomenController,
+  });
 
   @override
   Widget build(BuildContext context) {
-    // هنا ننادي على الحاوية المشتركة ونعطيها البيانات الخاصة بهذا القسم
-    return const ExaminationSectionCard(
+    return ExaminationSectionCard(
       title: "System Examination",
       icon: Icons.medical_services_outlined,
-      iconColor: Color(0xFF0D9488), // لون Teal كما في التصميم
+      iconColor: const Color(0xFF0D9488),
       child: Column(
         children: [
-          // نضع هنا قائمة الـ CategoryCards المطلوبة
           ExaminationCategoryCard(
             title: "General Appearance",
             icon: Icons.person_outline,
             iconColor: Colors.green,
+            controller: generalApperanceController,
           ),
           ExaminationCategoryCard(
             title: "Eyes (HEENT)",
             icon: Icons.visibility_outlined,
             iconColor: Colors.blue,
-            content: "PERRLA, conjunctiva clear",
+            controller: eyeController,
           ),
           ExaminationCategoryCard(
             title: "Cardiovascular",
             icon: Icons.favorite_border,
             iconColor: Colors.red,
+            controller: heartController,
           ),
           ExaminationCategoryCard(
             title: "Respiratory",
             icon: Icons.air_outlined,
             iconColor: Colors.cyan,
+            controller: respController,
           ),
           ExaminationCategoryCard(
             title: "Abdomen",
             icon: Icons.health_and_safety_outlined,
             iconColor: Colors.orange,
+            controller: abdomenController,
           ),
         ],
       ),

@@ -5,6 +5,7 @@ part 'add_physical_examination_command_model.g.dart';
 @JsonSerializable()
 class AddPhysicalExaminationCommandModel {
   String? examDate;
+  String? id;
   double? temperature;
   String? bloodPressure;
   int? pulse;
@@ -18,7 +19,7 @@ class AddPhysicalExaminationCommandModel {
   String? admissionId;
   String? doctorId;
 
-  AddPhysicalExaminationCommandModel({this.examDate, this.temperature, this.bloodPressure, this.pulse, this.respRate, this.eyeStatus, this.skinStatus, this.lipsStatus, this.heartExam, this.abdomenExam, this.localExamination, this.admissionId, this.doctorId});
+  AddPhysicalExaminationCommandModel({this.examDate, this.id, this.temperature, this.bloodPressure, this.pulse, this.respRate, this.eyeStatus, this.skinStatus, this.lipsStatus, this.heartExam, this.abdomenExam, this.localExamination, this.admissionId, this.doctorId});
 
   factory AddPhysicalExaminationCommandModel.fromJson(Map<String, dynamic> json) => _$AddPhysicalExaminationCommandModelFromJson(json);
 

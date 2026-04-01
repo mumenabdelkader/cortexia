@@ -15,7 +15,7 @@ class FluidBalanceCubit extends Cubit<FluidBalanceState> {
     final response = await _repo.postAdmissionsAdmissionidFluidBalance(admissionid: admissionid, requestBody: requestBody);
     response.when(
       onSuccess: (data) {
-        emit(FluidBalanceStateSuccess(operation: 'postAdmissionsAdmissionidFluidBalance', data: data));
+        emit(FluidBalanceStateSuccess(operation: 'post', data: data));
       },
       onError: (error) {
         emit(FluidBalanceStateError(message: error.messages.first));
@@ -28,7 +28,33 @@ class FluidBalanceCubit extends Cubit<FluidBalanceState> {
     final response = await _repo.getAdmissionsAdmissionidFluidBalance(admissionid: admissionid);
     response.when(
       onSuccess: (data) {
-        emit(FluidBalanceStateSuccess(operation: 'getAdmissionsAdmissionidFluidBalance', data: data));
+        emit(FluidBalanceStateSuccess(operation: 'get', data: data));
+      },
+      onError: (error) {
+        emit(FluidBalanceStateError(message: error.messages.first));
+      },
+    );
+  }
+
+  Future<void> putAdmissionsAdmissionidFluidBalance({required String admissionid, required AddFluidBalanceCommandModel requestBody}) async {
+    emit(FluidBalanceStateLoading());
+    final response = await _repo.putAdmissionsAdmissionidFluidBalance(admissionid: admissionid, requestBody: requestBody);
+    response.when(
+      onSuccess: (data) {
+        emit(FluidBalanceStateSuccess(operation: 'put', data: data));
+      },
+      onError: (error) {
+        emit(FluidBalanceStateError(message: error.messages.first));
+      },
+    );
+  }
+
+  Future<void> deleteAdmissionsAdmissionidFluidBalance({required String admissionid, required String id}) async {
+    emit(FluidBalanceStateLoading());
+    final response = await _repo.deleteAdmissionsAdmissionidFluidBalance(admissionid: admissionid, id: id);
+    response.when(
+      onSuccess: (data) {
+        emit(FluidBalanceStateSuccess(operation: 'delete', data: data));
       },
       onError: (error) {
         emit(FluidBalanceStateError(message: error.messages.first));

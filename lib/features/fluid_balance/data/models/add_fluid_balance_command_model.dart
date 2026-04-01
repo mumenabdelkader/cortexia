@@ -7,13 +7,14 @@ part 'add_fluid_balance_command_model.g.dart';
 @JsonSerializable()
 class AddFluidBalanceCommandModel {
   String? admissionId;
+  String? id;
   FluidBalanceCategory? category;
   FluidType? type;
-  int? amount_ML;
+  int? amountMl;
   String? recordedAt;
   String? nurseId;
 
-  AddFluidBalanceCommandModel({this.admissionId, this.category, this.type, this.amount_ML, this.recordedAt, this.nurseId});
+  AddFluidBalanceCommandModel({this.admissionId, this.id, this.category, this.type, this.amountMl, this.recordedAt, this.nurseId});
 
   factory AddFluidBalanceCommandModel.fromJson(Map<String, dynamic> json) => _$AddFluidBalanceCommandModelFromJson(json);
 

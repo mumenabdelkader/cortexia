@@ -4,4 +4,6 @@ import 'package:cortexia/features/intervention_procedures/data/models/add_interv
 abstract class InterventionProceduresRepoInterface {
   Future<ApiResult<dynamic>> postAdmissionsAdmissionidInterventionProcedures({required String admissionid, required AddInterventionProcedureCommandModel requestBody});
   Future<ApiResult<dynamic>> getAdmissionsAdmissionidInterventionProcedures({required String admissionid});
+  Future<ApiResult<dynamic>> putAdmissionsAdmissionidInterventionProcedures({required String admissionid, required AddInterventionProcedureCommandModel requestBody});
+  Future<ApiResult<dynamic>> deleteAdmissionsAdmissionidInterventionProcedures({required String admissionid, required String id});
 }

@@ -75,8 +75,14 @@ class _MedicationsScreenState extends State<MedicationsScreen> {
                         statusText: "Active",
                         isActive: true,
                         actionButtons: [
-                          OutlinedButton(onPressed: () {}, child: const Text("Edit")),
-                          OutlinedButton(onPressed: () {}, child: const Text("Discontinue")),
+                          OutlinedButton(
+                            onPressed: () => _showEditMedicationDialog(context, med),
+                            child: const Text("Edit"),
+                          ),
+                          OutlinedButton(
+                            onPressed: () => _confirmDeleteMedication(context, med),
+                            child: const Text("Delete", style: TextStyle(color: Colors.red)),
+                          ),
                         ],
                         child: Text(
                           "🕒 Schedule: Every ${24 ~/ (med.frequency ?? 1)} hours\nStarted: ${med.startDate?.split('T').first ?? ''}",
@@ -215,7 +221,7 @@ class _MedicationsScreenState extends State<MedicationsScreen> {
                   frequency: int.tryParse(frequencyController.text),
                   route: MedicationRoute.values.firstWhere(
                     (e) => e.index == routeValue,
-                    orElse: () => MedicationRoute.value1,
+                    orElse: () => MedicationRoute.oral,
                   ),
                   startDate: selectedStartDate?.toIso8601String(),
                   endDate: selectedEndDate?.toIso8601String(),
@@ -227,6 +233,141 @@ class _MedicationsScreenState extends State<MedicationsScreen> {
                 Navigator.pop(dialogContext);
               },
               child: const Text("Save Medication"),
+            ),
+          ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _confirmDeleteMedication(BuildContext context, MedicationResponseModel med) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Delete Medication'),
+        content: Text('Are you sure you want to delete ${med.drugName}?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(ctx);
+              context.read<MedicationsCubit>().deleteAdmissionsAdmissionidMedications(
+                admissionid: widget.admissionId,
+                id: med.id ?? '',
+              );
+            },
+            child: const Text('Delete', style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showEditMedicationDialog(BuildContext context, MedicationResponseModel med) {
+    DateTime? selectedStartDate = med.startDate != null ? DateTime.tryParse(med.startDate!) : null;
+    DateTime? selectedEndDate = med.endDate != null ? DateTime.tryParse(med.endDate!) : null;
+    final drugNameController = TextEditingController(text: med.drugName);
+    final doseController = TextEditingController(text: med.dose?.toString());
+    final unitController = TextEditingController(text: med.doseUnit);
+    final frequencyController = TextEditingController(text: med.frequency?.toString());
+    final routeController = TextEditingController(text: med.route != null ? med.route!.index.toString() : '');
+
+    showDialog(
+      context: context,
+      builder: (dialogContext) => BlocProvider.value(
+        value: context.read<MedicationsCubit>(),
+        child: StatefulBuilder(
+          builder: (context, setState) => AlertDialog(
+          title: const Text("Edit Medication"),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: drugNameController,
+                  decoration: const InputDecoration(labelText: "Drug Name (e.g. Amoxicillin)"),
+                ),
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        controller: doseController,
+                        decoration: const InputDecoration(labelText: "Dose"),
+                        keyboardType: TextInputType.number,
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: TextField(
+                        controller: unitController,
+                        decoration: const InputDecoration(labelText: "Unit (mg/ml)"),
+                      ),
+                    ),
+                  ],
+                ),
+                TextField(
+                  controller: frequencyController,
+                  decoration: const InputDecoration(labelText: "Frequency (Times per day)"),
+                  keyboardType: TextInputType.number,
+                ),
+                TextField(
+                  controller: routeController,
+                  decoration: const InputDecoration(labelText: "Route (e.g. 1 for PO)"),
+                  keyboardType: TextInputType.number,
+                ),
+                const SizedBox(height: 20),
+
+                ListTile(
+                  title: Text(selectedStartDate == null ? "Select Start Date" : "Start: ${DateFormat('yyyy-MM-dd').format(selectedStartDate!)}"),
+                  trailing: const Icon(Icons.calendar_today),
+                  onTap: () async {
+                    DateTime? picked = await showDatePicker(context: context, initialDate: selectedStartDate ?? DateTime.now(), firstDate: DateTime(2020), lastDate: DateTime(2030));
+                    if (picked != null) setState(() => selectedStartDate = picked);
+                  },
+                ),
+
+                ListTile(
+                  title: Text(selectedEndDate == null ? "Select End Date" : "End: ${DateFormat('yyyy-MM-dd').format(selectedEndDate!)}"),
+                  trailing: const Icon(Icons.calendar_today),
+                  onTap: () async {
+                    DateTime? picked = await showDatePicker(context: context, initialDate: selectedEndDate ?? DateTime.now().add(const Duration(days: 7)), firstDate: DateTime(2020), lastDate: DateTime(2030));
+                    if (picked != null) setState(() => selectedEndDate = picked);
+                  },
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(onPressed: () => Navigator.pop(dialogContext), child: const Text("Cancel")),
+            ElevatedButton(
+              onPressed: () {
+                final routeValue = int.tryParse(routeController.text) ?? 0;
+                final command = PrescribeMedicationCommandModel(
+                  id: med.id,
+                  admissionId: widget.admissionId,
+                  doctorId: widget.doctorId,
+                  drugName: drugNameController.text,
+                  dose: int.tryParse(doseController.text),
+                  doseUnit: unitController.text,
+                  frequency: int.tryParse(frequencyController.text),
+                  route: MedicationRoute.values.firstWhere(
+                    (e) => e.index == routeValue,
+                    orElse: () => MedicationRoute.oral,
+                  ),
+                  startDate: selectedStartDate?.toIso8601String(),
+                  endDate: selectedEndDate?.toIso8601String(),
+                );
+                context.read<MedicationsCubit>().putAdmissionsAdmissionidMedications(
+                      admissionid: widget.admissionId,
+                      requestBody: command,
+                    );
+                Navigator.pop(dialogContext);
+              },
+              child: const Text("Update Medication"),
             ),
           ],
           ),

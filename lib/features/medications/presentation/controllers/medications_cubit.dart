@@ -38,4 +38,30 @@ class MedicationsCubit extends Cubit<MedicationsState> {
     );
   }
 
+  Future<void> putAdmissionsAdmissionidMedications({required String admissionid, required PrescribeMedicationCommandModel requestBody}) async {
+    emit(MedicationsStateLoading());
+    final response = await _repo.putAdmissionsAdmissionidMedications(admissionid: admissionid, requestBody: requestBody);
+    response.when(
+      onSuccess: (data) {
+        emit(MedicationsStateSuccess(operation: 'put', data: data));
+      },
+      onError: (error) {
+        emit(MedicationsStateError(message: error.messages.first));
+      },
+    );
+  }
+
+  Future<void> deleteAdmissionsAdmissionidMedications({required String admissionid, required String id}) async {
+    emit(MedicationsStateLoading());
+    final response = await _repo.deleteAdmissionsAdmissionidMedications(admissionid: admissionid, id: id);
+    response.when(
+      onSuccess: (data) {
+        emit(MedicationsStateSuccess(operation: 'delete', data: data));
+      },
+      onError: (error) {
+        emit(MedicationsStateError(message: error.messages.first));
+      },
+    );
+  }
+
 }

@@ -10,6 +10,7 @@ AddCaseHistoryCommandModel _$AddCaseHistoryCommandModelFromJson(
   Map<String, dynamic> json,
 ) => AddCaseHistoryCommandModel(
   admissionId: json['admissionId'] as String?,
+  id: json['id'] as String?,
   complaint: json['complaint'] as String?,
   presentIllness: json['presentIllness'] as String?,
   chronicDisease: json['chronicDisease'] as String?,
@@ -24,6 +25,7 @@ Map<String, dynamic> _$AddCaseHistoryCommandModelToJson(
   AddCaseHistoryCommandModel instance,
 ) => <String, dynamic>{
   'admissionId': instance.admissionId,
+  'id': instance.id,
   'complaint': instance.complaint,
   'presentIllness': instance.presentIllness,
   'chronicDisease': instance.chronicDisease,

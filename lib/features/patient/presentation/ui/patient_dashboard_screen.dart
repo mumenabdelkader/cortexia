@@ -21,14 +21,16 @@ class PatientDashboardScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => PatientsCubit(GetIt.I.get())..getPatientsIdDetails(id: patientId ?? ""),
+      create: (context) =>
+          PatientsCubit(GetIt.I.get())
+            ..getPatientsIdDetails(id: patientId ?? ""),
       child: Scaffold(
         backgroundColor: const Color(0xFFF8FAFC),
         appBar: const CustomAppBar(
           title: "Patient Dashboard",
           subtitle: "Medical Overview",
         ),
-        body: patientId == null || patientId!.isEmpty 
+        body: patientId == null || patientId!.isEmpty
             ? const Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -37,7 +39,11 @@ class PatientDashboardScreen extends StatelessWidget {
                     SizedBox(height: 16),
                     Text(
                       "No Patient Selected",
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.grey),
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.grey,
+                      ),
                     ),
                     SizedBox(height: 8),
                     Text(
@@ -49,79 +55,92 @@ class PatientDashboardScreen extends StatelessWidget {
               )
             : BlocBuilder<PatientsCubit, PatientsState>(
                 builder: (context, state) {
-            if (state is PatientsStateLoading) {
-              return const Center(child: CircularProgressIndicator());
-            } else if (state is PatientsStateError) {
-              return Center(child: Text(state.message));
-            } else if (state is PatientsStateSuccess && state.operation == 'getPatientsIdDetails') {
-              final patient = state.data as PatientDetailsResponseModel;
-              
-              // تجهيز البيانات للـ Card
-              final admission = (patient.admissions != null && patient.admissions!.isNotEmpty) 
-                  ? patient.admissions!.first : null;
-              
-              String formattedDate = "N/A";
-              if (admission?.admissionDate != null) {
-                try {
-                  DateTime dt = DateTime.parse(admission!.admissionDate!);
-                  formattedDate = DateFormat('MMM dd, yyyy').format(dt);
-                } catch(_) {}
-              }
+                  if (state is PatientsStateLoading) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (state is PatientsStateError) {
+                    return Center(child: Text(state.message));
+                  } else if (state is PatientsStateSuccess &&
+                      state.operation == 'getPatientsIdDetails') {
+                    final patient = state.data as PatientDetailsResponseModel;
 
-              return SingleChildScrollView(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  children: [
-                    DashboarPatientCard(
-                      name: patient.name,
-                      id: patient.fileNumber ?? patient.id,
-                      status: "Active", // أو حسب الـ status في الـ admission
-                      genderAge: patient.gender ?? 'N/A',
-                      room: admission?.roomId ?? "N/A",
-                      admittedDate: formattedDate,
-                      diagnosis: patient.diagnosisSummary ?? admission?.initialDiagnosis ?? "N/A",
-                      daysCount: "Calculating...", // يمكن حسابه من فرق التواريخ
-                    ),
-                    const SizedBox(height: 16),
-                    const DashboardCurrentAlerts(),
-                    const SizedBox(height: 16),
-                    const DashboardVitalSigns(),
-                    const SizedBox(height: 16),
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.pushNamed(
-                          context,
-                          Routes.medicationScreen,
-                          arguments: {'admissionId': admission?.id},
-                        );
-                      },
-                      child: DashboardActiveMedications(admissionId: admission?.id),
-                    ),
-                    const SizedBox(height: 20),
+                    // تجهيز البيانات للـ Card
+                    final admission =
+                        (patient.admissions != null &&
+                            patient.admissions!.isNotEmpty)
+                        ? patient.admissions!.first
+                        : null;
 
-                    CustomElevatedButton(
-                      text: "Chat With AI",
-                      borderRadius: 15,
-                      gradient: const LinearGradient(
-                        colors: [Color(0xFF00D2FF), Color(0xFF00E5FF)],
+                    String formattedDate = "N/A";
+                    if (admission?.admissionDate != null) {
+                      try {
+                        DateTime dt = DateTime.parse(admission!.admissionDate!);
+                        formattedDate = DateFormat('MMM dd, yyyy').format(dt);
+                      } catch (_) {}
+                    }
+
+                    return SingleChildScrollView(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        children: [
+                          DashboarPatientCard(
+                            name: patient.name,
+                            id: patient.fileNumber ?? patient.id,
+                            status:
+                                "Active", // أو حسب الـ status في الـ admission
+                            genderAge: patient.gender ?? 'N/A',
+                            room: admission?.roomId ?? "N/A",
+                            admittedDate: formattedDate,
+                            diagnosis:
+                                patient.diagnosisSummary ??
+                                admission?.initialDiagnosis ??
+                                "N/A",
+                            daysCount:
+                                "Calculating...", // يمكن حسابه من فرق التواريخ
+                          ),
+                          const SizedBox(height: 16),
+                          const DashboardCurrentAlerts(),
+                          const SizedBox(height: 16),
+                          const DashboardVitalSigns(),
+                          const SizedBox(height: 16),
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.pushNamed(
+                                context,
+                                Routes.medicationScreen,
+                                arguments: {'admissionId': admission?.id},
+                              );
+                            },
+                            child: DashboardActiveMedications(
+                              admissionId: admission?.id,
+                            ),
+                          ),
+                          const SizedBox(height: 20),
+
+                          CustomElevatedButton(
+                            text: "Chat With AI",
+                            borderRadius: 15,
+                            gradient: const LinearGradient(
+                              colors: [Color(0xFF00D2FF), Color(0xFF00E5FF)],
+                            ),
+                            onPressed: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) => ChatbotScreen(),
+                                ),
+                              );
+                            },
+                          ),
+
+                          const SizedBox(height: 20),
+                          _buildActionGrid(context, admission),
+                          const SizedBox(height: 30),
+                        ],
                       ),
-                      onPressed: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(builder: (context) => ChatbotScreen()),
-                        );
-                      },
-                    ),
-
-                    const SizedBox(height: 20),
-                    _buildActionGrid(context, admission),
-                    const SizedBox(height: 30),
-                  ],
-                ),
-              );
-            }
-            return const Center(child: Text("No Data"));
-          },
-        ),
+                    );
+                  }
+                  return const Center(child: Text("No Data"));
+                },
+              ),
       ),
     );
   }
@@ -167,12 +186,17 @@ class PatientDashboardScreen extends StatelessWidget {
               child: DashboardActionCard(
                 onPressed: () {
                   if (admission?.id != null && admission!.id!.isNotEmpty) {
-                    Navigator.pushNamed(context, Routes.medicalHistoryScreen,
-                        arguments: {'admissionId': admission.id});
+                    Navigator.pushNamed(
+                      context,
+                      Routes.medicalHistoryScreen,
+                      arguments: {'admissionId': admission.id},
+                    );
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
-                        content: Text('No active admission found for this patient.'),
+                        content: Text(
+                          'No active admission found for this patient.',
+                        ),
                         backgroundColor: Colors.orange,
                       ),
                     );
@@ -187,8 +211,11 @@ class PatientDashboardScreen extends StatelessWidget {
             SizedBox(width: 12),
             Expanded(
               child: DashboardActionCard(
-                onPressed: () =>
-                    Navigator.pushNamed(context, Routes.fluidBalanceScreen),
+                onPressed: () => Navigator.pushNamed(
+                  context,
+                  Routes.fluidBalanceScreen,
+                  arguments: {'admissionId': admission?.id},
+                ),
                 title: "Fluid Balance",
                 subTitle: "I/O tracking",
                 icon: Icons.water_drop_outlined,
@@ -202,8 +229,11 @@ class PatientDashboardScreen extends StatelessWidget {
           children: [
             Expanded(
               child: DashboardActionCard(
-                onPressed: () =>
-                    Navigator.pushNamed(context, Routes.medicationScreen, arguments: {'admissionId': admission?.id}),
+                onPressed: () => Navigator.pushNamed(
+                  context,
+                  Routes.medicationScreen,
+                  arguments: {'admissionId': admission?.id},
+                ),
                 title: "Medication",
                 subTitle: "View records",
                 icon: Icons.image_outlined,
@@ -222,6 +252,38 @@ class PatientDashboardScreen extends StatelessWidget {
                 subTitle: "Radiology & Scans",
                 icon: Icons.image_outlined,
                 iconColor: Colors.red,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        Row(
+          children: [
+            Expanded(
+              child: DashboardActionCard(
+                onPressed: () => Navigator.pushNamed(
+                  context,
+                  Routes.vitalSignsScreen,
+                  arguments: {'admissionId': admission?.id},
+                ),
+                title: "Vital Signs",
+                subTitle: "Record vitals",
+                icon: Icons.monitor_heart_outlined,
+                iconColor: Colors.pinkAccent,
+              ),
+            ),
+            SizedBox(width: 12),
+            Expanded(
+              child: DashboardActionCard(
+                onPressed: () => Navigator.pushNamed(
+                  context,
+                  Routes.interventionProceduresScreen,
+                  arguments: {'admissionId': admission?.id},
+                ),
+                title: "Interventions",
+                subTitle: "Log procedures",
+                icon: Icons.medical_services_outlined,
+                iconColor: Colors.deepOrange,
               ),
             ),
           ],

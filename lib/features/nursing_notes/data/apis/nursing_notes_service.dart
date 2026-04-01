@@ -15,4 +15,10 @@ abstract class NursingNotesService {
   @GET(ApiConstants.nursingNotes)
   Future<dynamic> getAdmissionsAdmissionidNursingNotes({@Path('admissionId') required String admissionid});
 
+  @PUT(ApiConstants.nursingNotes)
+  Future<dynamic> putAdmissionsAdmissionidNursingNotes({@Path('admissionId') required String admissionid, @Body() required AddNursingNoteCommandModel requestBody});
+
+  @DELETE(ApiConstants.nursingNotes)
+  Future<dynamic> deleteAdmissionsAdmissionidNursingNotes({@Path('admissionId') required String admissionid, @Query('Id') required String id});
+
 }

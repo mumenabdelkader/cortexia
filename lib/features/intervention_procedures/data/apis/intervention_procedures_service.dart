@@ -15,4 +15,10 @@ abstract class InterventionProceduresService {
   @GET(ApiConstants.interventionProcedures)
   Future<dynamic> getAdmissionsAdmissionidInterventionProcedures({@Path('admissionId') required String admissionid});
 
+  @PUT(ApiConstants.interventionProcedures)
+  Future<dynamic> putAdmissionsAdmissionidInterventionProcedures({@Path('admissionId') required String admissionid, @Body() required AddInterventionProcedureCommandModel requestBody});
+
+  @DELETE(ApiConstants.interventionProcedures)
+  Future<dynamic> deleteAdmissionsAdmissionidInterventionProcedures({@Path('admissionId') required String admissionid, @Query('Id') required String id});
+
 }

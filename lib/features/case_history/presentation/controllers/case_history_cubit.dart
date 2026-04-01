@@ -15,7 +15,7 @@ class CaseHistoryCubit extends Cubit<CaseHistoryState> {
     final response = await _repo.postAdmissionsAdmissionidCaseHistory(admissionid: admissionid, requestBody: requestBody);
     response.when(
       onSuccess: (data) {
-        emit(CaseHistoryStateSuccess(operation: 'postAdmissionsAdmissionidCaseHistory', data: data));
+        emit(CaseHistoryStateSuccess(operation: 'post', data: data));
         getAdmissionsAdmissionidCaseHistory(admissionid: admissionid);
       },
       onError: (error) {
@@ -29,7 +29,33 @@ class CaseHistoryCubit extends Cubit<CaseHistoryState> {
     final response = await _repo.getAdmissionsAdmissionidCaseHistory(admissionid: admissionid);
     response.when(
       onSuccess: (data) {
-        emit(CaseHistoryStateSuccess(operation: 'getAdmissionsAdmissionidCaseHistory', data: data));
+        emit(CaseHistoryStateSuccess(operation: 'get', data: data));
+      },
+      onError: (error) {
+        emit(CaseHistoryStateError(message: error.messages.first));
+      },
+    );
+  }
+
+  Future<void> putAdmissionsAdmissionidCaseHistory({required String admissionid, required AddCaseHistoryCommandModel requestBody}) async {
+    emit(CaseHistoryStateLoading());
+    final response = await _repo.putAdmissionsAdmissionidCaseHistory(admissionid: admissionid, requestBody: requestBody);
+    response.when(
+      onSuccess: (data) {
+        emit(CaseHistoryStateSuccess(operation: 'put', data: data));
+      },
+      onError: (error) {
+        emit(CaseHistoryStateError(message: error.messages.first));
+      },
+    );
+  }
+
+  Future<void> deleteAdmissionsAdmissionidCaseHistory({required String admissionid, required String id}) async {
+    emit(CaseHistoryStateLoading());
+    final response = await _repo.deleteAdmissionsAdmissionidCaseHistory(admissionid: admissionid, id: id);
+    response.when(
+      onSuccess: (data) {
+        emit(CaseHistoryStateSuccess(operation: 'delete', data: data));
       },
       onError: (error) {
         emit(CaseHistoryStateError(message: error.messages.first));

@@ -10,6 +10,7 @@ RecordVitalsCommandModel _$RecordVitalsCommandModelFromJson(
   Map<String, dynamic> json,
 ) => RecordVitalsCommandModel(
   admissionId: json['admissionId'] as String?,
+  id: json['id'] as String?,
   temperature: (json['temperature'] as num?)?.toDouble(),
   bP_Systolic: (json['bP_Systolic'] as num?)?.toInt(),
   bP_Diastolic: (json['bP_Diastolic'] as num?)?.toInt(),
@@ -29,6 +30,7 @@ Map<String, dynamic> _$RecordVitalsCommandModelToJson(
   RecordVitalsCommandModel instance,
 ) => <String, dynamic>{
   'admissionId': instance.admissionId,
+  'id': instance.id,
   'temperature': instance.temperature,
   'bP_Systolic': instance.bP_Systolic,
   'bP_Diastolic': instance.bP_Diastolic,
@@ -43,8 +45,8 @@ Map<String, dynamic> _$RecordVitalsCommandModelToJson(
 };
 
 const _$ConsciousnessLevelEnumMap = {
-  ConsciousnessLevel.value0: 0,
-  ConsciousnessLevel.value1: 1,
-  ConsciousnessLevel.value2: 2,
-  ConsciousnessLevel.value3: 3,
+  ConsciousnessLevel.alert: 0,
+  ConsciousnessLevel.voice: 1,
+  ConsciousnessLevel.pain: 2,
+  ConsciousnessLevel.unresponsive: 3,
 };

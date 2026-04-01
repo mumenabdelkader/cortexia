@@ -30,4 +30,24 @@ class MedicationsRepoImp implements MedicationsRepoInterface {
     }
   }
 
+  @override
+  Future<ApiResult<dynamic>> putAdmissionsAdmissionidMedications({required String admissionid, required PrescribeMedicationCommandModel requestBody}) async {
+    try {
+      final response = await _apiService.putAdmissionsAdmissionidMedications(admissionid: admissionid, requestBody: requestBody);
+      return ApiResult.success(response);
+    } catch (error) {
+      return ApiResult.error(ApiErrorHandler.handle(error));
+    }
+  }
+
+  @override
+  Future<ApiResult<dynamic>> deleteAdmissionsAdmissionidMedications({required String admissionid, required String id}) async {
+    try {
+      final response = await _apiService.deleteAdmissionsAdmissionidMedications(admissionid: admissionid, id: id);
+      return ApiResult.success(response);
+    } catch (error) {
+      return ApiResult.error(ApiErrorHandler.handle(error));
+    }
+  }
+
 }

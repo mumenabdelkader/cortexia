@@ -16,7 +16,7 @@ class PhysicalExaminationCubit extends Cubit<PhysicalExaminationState> {
     final response = await _repo.postAdmissionsAdmissionidPhysicalExamination(admissionid: admissionid, requestBody: requestBody);
     response.when(
       onSuccess: (data) {
-        emit(PhysicalExaminationStateSuccess(operation: 'postAdmissionsAdmissionidPhysicalExamination', data: data));
+        emit(PhysicalExaminationStateSuccess(operation: 'post', data: data));
       },
       onError: (error) {
         emit(PhysicalExaminationStateError(message: error.messages.first));
@@ -29,7 +29,33 @@ class PhysicalExaminationCubit extends Cubit<PhysicalExaminationState> {
     final response = await _repo.getAdmissionsAdmissionidPhysicalExamination(admissionid: admissionid);
     response.when(
       onSuccess: (data) {
-        emit(PhysicalExaminationStateSuccess(operation: 'getAdmissionsAdmissionidPhysicalExamination', data: data));
+        emit(PhysicalExaminationStateSuccess(operation: 'get', data: data));
+      },
+      onError: (error) {
+        emit(PhysicalExaminationStateError(message: error.messages.first));
+      },
+    );
+  }
+
+  Future<void> putAdmissionsAdmissionidPhysicalExamination({required String admissionid, required AddPhysicalExaminationCommandModel requestBody}) async {
+    emit(PhysicalExaminationStateLoading());
+    final response = await _repo.putAdmissionsAdmissionidPhysicalExamination(admissionid: admissionid, requestBody: requestBody);
+    response.when(
+      onSuccess: (data) {
+        emit(PhysicalExaminationStateSuccess(operation: 'put', data: data));
+      },
+      onError: (error) {
+        emit(PhysicalExaminationStateError(message: error.messages.first));
+      },
+    );
+  }
+
+  Future<void> deleteAdmissionsAdmissionidPhysicalExamination({required String admissionid, required String id}) async {
+    emit(PhysicalExaminationStateLoading());
+    final response = await _repo.deleteAdmissionsAdmissionidPhysicalExamination(admissionid: admissionid, id: id);
+    response.when(
+      onSuccess: (data) {
+        emit(PhysicalExaminationStateSuccess(operation: 'delete', data: data));
       },
       onError: (error) {
         emit(PhysicalExaminationStateError(message: error.messages.first));

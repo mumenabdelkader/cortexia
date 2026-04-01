@@ -15,4 +15,10 @@ abstract class VitalSignsService {
   @GET(ApiConstants.vitalSigns)
   Future<dynamic> getAdmissionsAdmissionidVitals({@Path('admissionId') required String admissionid});
 
+  @PUT(ApiConstants.vitalSigns)
+  Future<dynamic> putAdmissionsAdmissionidVitals({@Path('admissionId') required String admissionid, @Body() required RecordVitalsCommandModel requestBody});
+
+  @DELETE(ApiConstants.vitalSigns)
+  Future<dynamic> deleteAdmissionsAdmissionidVitals({@Path('admissionId') required String admissionid, @Query('Id') required String id});
+
 }

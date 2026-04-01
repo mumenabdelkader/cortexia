@@ -6,4 +6,6 @@ import 'package:cortexia/features/medications/data/models/prescribe_medication_r
 abstract class MedicationsRepoInterface {
   Future<ApiResult<PrescribeMedicationResponseModel>> postAdmissionsAdmissionidMedications({required String admissionid, required PrescribeMedicationCommandModel requestBody});
   Future<ApiResult<List<MedicationResponseModel>>> getAdmissionsAdmissionidMedications({required String admissionid});
+  Future<ApiResult<dynamic>> putAdmissionsAdmissionidMedications({required String admissionid, required PrescribeMedicationCommandModel requestBody});
+  Future<ApiResult<dynamic>> deleteAdmissionsAdmissionidMedications({required String admissionid, required String id});
 }

@@ -28,4 +28,24 @@ class InterventionProceduresRepoImp implements InterventionProceduresRepoInterfa
     }
   }
 
+  @override
+  Future<ApiResult<dynamic>> putAdmissionsAdmissionidInterventionProcedures({required String admissionid, required AddInterventionProcedureCommandModel requestBody}) async {
+    try {
+      final response = await _apiService.putAdmissionsAdmissionidInterventionProcedures(admissionid: admissionid, requestBody: requestBody);
+      return ApiResult.success(response);
+    } catch (error) {
+      return ApiResult.error(ApiErrorHandler.handle(error));
+    }
+  }
+
+  @override
+  Future<ApiResult<dynamic>> deleteAdmissionsAdmissionidInterventionProcedures({required String admissionid, required String id}) async {
+    try {
+      final response = await _apiService.deleteAdmissionsAdmissionidInterventionProcedures(admissionid: admissionid, id: id);
+      return ApiResult.success(response);
+    } catch (error) {
+      return ApiResult.error(ApiErrorHandler.handle(error));
+    }
+  }
+
 }

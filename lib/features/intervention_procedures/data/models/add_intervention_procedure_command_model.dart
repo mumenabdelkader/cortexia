@@ -5,6 +5,7 @@ part 'add_intervention_procedure_command_model.g.dart';
 
 @JsonSerializable()
 class AddInterventionProcedureCommandModel {
+  String? id;
   CareInterventionType? type;
   int? size;
   String? insertionDate;
@@ -12,7 +13,7 @@ class AddInterventionProcedureCommandModel {
   String? admissionId;
   String? nurseId;
 
-  AddInterventionProcedureCommandModel({this.type, this.size, this.insertionDate, this.removalDate, this.admissionId, this.nurseId});
+  AddInterventionProcedureCommandModel({this.id, this.type, this.size, this.insertionDate, this.removalDate, this.admissionId, this.nurseId});
 
   factory AddInterventionProcedureCommandModel.fromJson(Map<String, dynamic> json) => _$AddInterventionProcedureCommandModelFromJson(json);
 
