@@ -1,4 +1,6 @@
 // Dependency Injection
+import 'package:cortexia/core/di/dependency_injection.dart';
+import 'package:cortexia/features/fluid_balance/presentation/controllers/fluid_balance_cubit.dart';
 import 'package:cortexia/features/patient/presentation/ui/clinical_alerts_screen.dart';
 import 'package:flutter/material.dart';
 import '../../features/authentication/presentation/ui/login_screen.dart';
@@ -20,6 +22,10 @@ import '../../features/medications/presentation/ui/medications_screen.dart';
 import '../../features/diagnostics/presentation/ui/imaging_screen.dart';
 import 'package:cortexia/features/medications/presentation/controllers/medications_cubit.dart';
 import 'package:cortexia/features/diagnostics/presentation/controllers/diagnostics_cubit.dart';
+import 'package:cortexia/features/vital_signs/presentation/ui/vital_signs_screen.dart';
+import 'package:cortexia/features/vital_signs/presentation/controllers/vital_signs_cubit.dart';
+import 'package:cortexia/features/intervention_procedures/presentation/ui/intervention_procedures_screen.dart';
+import 'package:cortexia/features/intervention_procedures/presentation/controllers/intervention_procedures_cubit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'routes.dart';
@@ -55,7 +61,15 @@ class AppRouter {
           builder: (_) => ClinicalNotesScreen(admissionId: admissionId),
         );
       case Routes.fluidBalanceScreen:
-        return MaterialPageRoute(builder: (_) => const FluidBalanceScreen());
+        final admissionId =
+            (arguments is Map ? arguments['admissionId'] : null) as String? ??
+            '';
+        return MaterialPageRoute(
+          builder: (_) => BlocProvider(
+            create: (context) => locator<FluidBalanceCubit>(),
+            child: FluidBalanceScreen(admissionId: admissionId),
+          ),
+        );
       case Routes.labResultsScreen:
         final admissionIdArg =
             (arguments is Map ? arguments['admissionId'] : null) as String? ??
@@ -112,6 +126,26 @@ class AppRouter {
         );
       case Routes.profileScreen:
         return MaterialPageRoute(builder: (_) => const ProfileScreen());
+      case Routes.vitalSignsScreen:
+        final admissionId =
+            (arguments is Map ? arguments['admissionId'] : null) as String? ??
+            'ADM-7A21F7EF3C7D';
+        return MaterialPageRoute(
+          builder: (_) => BlocProvider(
+            create: (context) => VitalSignsCubit(GetIt.I.get()),
+            child: VitalSignsScreen(admissionId: admissionId),
+          ),
+        );
+      case Routes.interventionProceduresScreen:
+        final admId =
+            (arguments is Map ? arguments['admissionId'] : null) as String? ??
+            'ADM-7A21F7EF3C7D';
+        return MaterialPageRoute(
+          builder: (_) => BlocProvider(
+            create: (context) => InterventionProceduresCubit(GetIt.I.get()),
+            child: InterventionProceduresScreen(admissionId: admId),
+          ),
+        );
 
       default:
         return null;

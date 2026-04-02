@@ -17,4 +17,10 @@ abstract class CaseHistoryService {
   @GET(ApiConstants.caseHistory)
   Future<List<CaseHistoryModel>> getAdmissionsAdmissionidCaseHistory({@Path('admissionId') required String admissionid});
 
+  @PUT(ApiConstants.caseHistory)
+  Future<dynamic> putAdmissionsAdmissionidCaseHistory({@Path('admissionId') required String admissionid, @Body() required AddCaseHistoryCommandModel requestBody});
+
+  @DELETE(ApiConstants.caseHistory)
+  Future<dynamic> deleteAdmissionsAdmissionidCaseHistory({@Path('admissionId') required String admissionid, @Query('Id') required String id});
+
 }

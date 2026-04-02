@@ -6,15 +6,14 @@ part of 'imaging_model.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-ImagingModel _$ImagingModelFromJson(Map<String, dynamic> json) =>
-    ImagingModel(
-      id: json['id'] as String?,
-      type: (json['type'] as num?)?.toInt(),
-      findings: json['findings'] as String?,
-      date: json['date'] as String?,
-      admissionId: json['admissionId'] as String?,
-      doctorId: json['doctorId'] as String?,
-    );
+ImagingModel _$ImagingModelFromJson(Map<String, dynamic> json) => ImagingModel(
+  id: json['id'] as String?,
+  type: (json['type'] as num?)?.toInt(),
+  findings: json['findings'] as String?,
+  date: json['date'] as String?,
+  admissionId: json['admissionId'] as String?,
+  doctorId: json['doctorId'] as String?,
+);
 
 Map<String, dynamic> _$ImagingModelToJson(ImagingModel instance) =>
     <String, dynamic>{

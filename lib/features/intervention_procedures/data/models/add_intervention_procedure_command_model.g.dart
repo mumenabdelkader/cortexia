@@ -9,6 +9,7 @@ part of 'add_intervention_procedure_command_model.dart';
 AddInterventionProcedureCommandModel
 _$AddInterventionProcedureCommandModelFromJson(Map<String, dynamic> json) =>
     AddInterventionProcedureCommandModel(
+      id: json['id'] as String?,
       type: $enumDecodeNullable(_$CareInterventionTypeEnumMap, json['type']),
       size: (json['size'] as num?)?.toInt(),
       insertionDate: json['insertionDate'] as String?,
@@ -20,6 +21,7 @@ _$AddInterventionProcedureCommandModelFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$AddInterventionProcedureCommandModelToJson(
   AddInterventionProcedureCommandModel instance,
 ) => <String, dynamic>{
+  'id': instance.id,
   'type': _$CareInterventionTypeEnumMap[instance.type],
   'size': instance.size,
   'insertionDate': instance.insertionDate,
@@ -29,9 +31,9 @@ Map<String, dynamic> _$AddInterventionProcedureCommandModelToJson(
 };
 
 const _$CareInterventionTypeEnumMap = {
-  CareInterventionType.value0: 0,
-  CareInterventionType.value1: 1,
-  CareInterventionType.value2: 2,
-  CareInterventionType.value3: 3,
-  CareInterventionType.value4: 4,
+  CareInterventionType.ivCannula: 0,
+  CareInterventionType.urinaryCatheter: 1,
+  CareInterventionType.ngTube: 2,
+  CareInterventionType.centralLine: 3,
+  CareInterventionType.woundDrain: 4,
 };

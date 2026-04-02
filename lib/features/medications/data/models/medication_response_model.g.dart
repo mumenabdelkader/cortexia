@@ -37,11 +37,11 @@ Map<String, dynamic> _$MedicationResponseModelToJson(
 };
 
 const _$MedicationRouteEnumMap = {
-  MedicationRoute.value0: 0,
-  MedicationRoute.value1: 1,
-  MedicationRoute.value2: 2,
-  MedicationRoute.value3: 3,
-  MedicationRoute.value4: 4,
-  MedicationRoute.value5: 5,
-  MedicationRoute.value6: 6,
+  MedicationRoute.oral: 0,
+  MedicationRoute.iv: 1,
+  MedicationRoute.im: 2,
+  MedicationRoute.sc: 3,
+  MedicationRoute.topical: 4,
+  MedicationRoute.inhalation: 5,
+  MedicationRoute.rectal: 6,
 };

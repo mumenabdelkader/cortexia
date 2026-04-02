@@ -71,4 +71,6 @@ class Routes {
   static const String patientDashboardScreen = '/patient-dashboard';
   static const String patientListScreen = '/patient-list';
   static const String physicalExaminationScreen = '/physical-examination';
+  static const String vitalSignsScreen = '/vital-signs';
+  static const String interventionProceduresScreen = '/intervention-procedures';
 }
