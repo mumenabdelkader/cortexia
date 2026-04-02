@@ -1,3 +1,5 @@
+import 'package:cortexia/core/cache/app_cahe.dart';
+import 'package:cortexia/features/intervention_procedures/presentation/controllers/intervention_procedures_opreations_const.dart';
 import 'package:cortexia/core/themes/app_dimens.dart';
 import 'package:cortexia/core/themes/color_themes.dart';
 import 'package:cortexia/core/widgets/custom_app_bar.dart';
@@ -21,26 +23,54 @@ class InterventionProceduresScreen extends StatefulWidget {
   });
 
   @override
-  State<InterventionProceduresScreen> createState() => _InterventionProceduresScreenState();
+  State<InterventionProceduresScreen> createState() =>
+      _InterventionProceduresScreenState();
 }
 
-class _InterventionProceduresScreenState extends State<InterventionProceduresScreen> {
+class _InterventionProceduresScreenState
+    extends State<InterventionProceduresScreen> {
+  String _nurseId = '';
+  bool _isLoading = true;
+
   @override
   void initState() {
     super.initState();
+    _loadNurseId();
     _fetchData();
   }
 
+  Future<void> _loadNurseId() async {
+    final userData = await AppCache.getUserData();
+    if (mounted) {
+      setState(() {
+        _nurseId = userData?.userIdInSystem ?? '';
+        _isLoading = false;
+      });
+    }
+  }
+
   void _fetchData() {
-    context.read<InterventionProceduresCubit>().getAdmissionsAdmissionidInterventionProcedures(admissionid: widget.admissionId);
+    context
+        .read<InterventionProceduresCubit>()
+        .getAdmissionsAdmissionidInterventionProcedures(
+          admissionid: widget.admissionId,
+        );
   }
 
   void _showAddOrEditDialog(BuildContext ctx, {dynamic existingRecord}) {
     final isEdit = existingRecord != null;
-    final sizeCtrl = TextEditingController(text: isEdit ? existingRecord['size']?.toString() : '');
-    
-    DateTime? selectedInsertionDate = isEdit && existingRecord['insertionDate'] != null ? DateTime.tryParse(existingRecord['insertionDate']) : null;
-    DateTime? selectedRemovalDate = isEdit && existingRecord['removalDate'] != null ? DateTime.tryParse(existingRecord['removalDate']) : null;
+    final sizeCtrl = TextEditingController(
+      text: isEdit ? existingRecord['size']?.toString() : '',
+    );
+
+    DateTime? selectedInsertionDate =
+        isEdit && existingRecord['insertionDate'] != null
+        ? DateTime.tryParse(existingRecord['insertionDate'])
+        : null;
+    DateTime? selectedRemovalDate =
+        isEdit && existingRecord['removalDate'] != null
+        ? DateTime.tryParse(existingRecord['removalDate'])
+        : null;
 
     int initialTypeIndex = 0;
     if (isEdit && existingRecord['type'] != null) {
@@ -63,10 +93,15 @@ class _InterventionProceduresScreenState extends State<InterventionProceduresScr
                 children: [
                   DropdownButtonFormField<int>(
                     value: selectedTypeIndex,
-                    decoration: const InputDecoration(labelText: 'Procedure Type'),
+                    decoration: const InputDecoration(
+                      labelText: 'Procedure Type',
+                    ),
                     items: const [
                       DropdownMenuItem(value: 0, child: Text('IV Cannula')),
-                      DropdownMenuItem(value: 1, child: Text('Urinary Catheter')),
+                      DropdownMenuItem(
+                        value: 1,
+                        child: Text('Urinary Catheter'),
+                      ),
                       DropdownMenuItem(value: 2, child: Text('NG Tube')),
                       DropdownMenuItem(value: 3, child: Text('Central Line')),
                       DropdownMenuItem(value: 4, child: Text('Wound Drain')),
@@ -84,34 +119,57 @@ class _InterventionProceduresScreenState extends State<InterventionProceduresScr
                   ),
                   const SizedBox(height: 16),
                   ListTile(
-                    title: Text(selectedInsertionDate == null ? "Select Insertion Date" : "Inserted: ${DateFormat('yyyy-MM-dd').format(selectedInsertionDate!)}"),
+                    title: Text(
+                      selectedInsertionDate == null
+                          ? "Select Insertion Date"
+                          : "Inserted: ${DateFormat('yyyy-MM-dd').format(selectedInsertionDate!)}",
+                    ),
                     trailing: const Icon(Icons.calendar_today),
                     onTap: () async {
-                      DateTime? picked = await showDatePicker(context: context, initialDate: DateTime.now(), firstDate: DateTime(2020), lastDate: DateTime(2030));
-                      if (picked != null) setState(() => selectedInsertionDate = picked);
+                      DateTime? picked = await showDatePicker(
+                        context: context,
+                        initialDate: DateTime.now(),
+                        firstDate: DateTime(2020),
+                        lastDate: DateTime(2030),
+                      );
+                      if (picked != null)
+                        setState(() => selectedInsertionDate = picked);
                     },
                   ),
                   ListTile(
-                    title: Text(selectedRemovalDate == null ? "Select Removal Date" : "Removed: ${DateFormat('yyyy-MM-dd').format(selectedRemovalDate!)}"),
+                    title: Text(
+                      selectedRemovalDate == null
+                          ? "Select Removal Date"
+                          : "Removed: ${DateFormat('yyyy-MM-dd').format(selectedRemovalDate!)}",
+                    ),
                     trailing: const Icon(Icons.calendar_today),
                     onTap: () async {
-                      DateTime? picked = await showDatePicker(context: context, initialDate: DateTime.now(), firstDate: DateTime(2020), lastDate: DateTime(2030));
-                      if (picked != null) setState(() => selectedRemovalDate = picked);
+                      DateTime? picked = await showDatePicker(
+                        context: context,
+                        initialDate: DateTime.now(),
+                        firstDate: DateTime(2020),
+                        lastDate: DateTime(2030),
+                      );
+                      if (picked != null)
+                        setState(() => selectedRemovalDate = picked);
                     },
                   ),
                 ],
               ),
             ),
             actions: [
-              TextButton(onPressed: () => Navigator.pop(dialogCtx), child: const Text("Cancel")),
+              TextButton(
+                onPressed: () => Navigator.pop(dialogCtx),
+                child: const Text("Cancel"),
+              ),
               CustomElevatedButton(
                 text: isEdit ? "Update" : "Save",
                 width: 100,
                 onPressed: () {
                   final command = AddInterventionProcedureCommandModel(
-                    id: isEdit ? existingRecord['id'] : null,
+                    id: isEdit ? existingRecord['id'] as String? : null,
                     admissionId: widget.admissionId,
-                    nurseId: widget.nurseId,
+                    nurseId: _nurseId,
                     size: int.tryParse(sizeCtrl.text),
                     insertionDate: selectedInsertionDate?.toIso8601String(),
                     removalDate: selectedRemovalDate?.toIso8601String(),
@@ -122,19 +180,23 @@ class _InterventionProceduresScreenState extends State<InterventionProceduresScr
                   );
 
                   if (isEdit) {
-                    context.read<InterventionProceduresCubit>().putAdmissionsAdmissionidInterventionProcedures(
+                    context
+                        .read<InterventionProceduresCubit>()
+                        .putAdmissionsAdmissionidInterventionProcedures(
                           admissionid: widget.admissionId,
                           requestBody: command,
                         );
                   } else {
-                    context.read<InterventionProceduresCubit>().postAdmissionsAdmissionidInterventionProcedures(
+                    context
+                        .read<InterventionProceduresCubit>()
+                        .postAdmissionsAdmissionidInterventionProcedures(
                           admissionid: widget.admissionId,
                           requestBody: command,
                         );
                   }
                   Navigator.pop(dialogCtx);
                 },
-              )
+              ),
             ],
           ),
         ),
@@ -147,13 +209,20 @@ class _InterventionProceduresScreenState extends State<InterventionProceduresScr
       context: ctx,
       builder: (dialogCtx) => AlertDialog(
         title: const Text("Delete Record"),
-        content: const Text("Are you sure you want to delete this intervention?"),
+        content: const Text(
+          "Are you sure you want to delete this intervention?",
+        ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(dialogCtx), child: const Text("Cancel")),
+          TextButton(
+            onPressed: () => Navigator.pop(dialogCtx),
+            child: const Text("Cancel"),
+          ),
           TextButton(
             onPressed: () {
               Navigator.pop(dialogCtx);
-              context.read<InterventionProceduresCubit>().deleteAdmissionsAdmissionidInterventionProcedures(
+              context
+                  .read<InterventionProceduresCubit>()
+                  .deleteAdmissionsAdmissionidInterventionProcedures(
                     admissionid: widget.admissionId,
                     id: entry['id'] as String? ?? '',
                   );
@@ -167,6 +236,9 @@ class _InterventionProceduresScreenState extends State<InterventionProceduresScr
 
   @override
   Widget build(BuildContext context) {
+    if (_isLoading) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
     return Scaffold(
       backgroundColor: AppColors.scaffoldBg,
       appBar: CustomAppBar(
@@ -177,97 +249,177 @@ class _InterventionProceduresScreenState extends State<InterventionProceduresScr
         backgroundColor: AppColors.primaryBlue,
         onPressed: () => _showAddOrEditDialog(context),
         icon: const Icon(Icons.add, color: Colors.white),
-        label: const Text("Log Procedure", style: TextStyle(color: Colors.white)),
+        label: const Text(
+          "Log Procedure",
+          style: TextStyle(color: Colors.white),
+        ),
       ),
-      body: BlocConsumer<InterventionProceduresCubit, InterventionProceduresState>(
-        listener: (context, state) {
-          if (state is InterventionProceduresStateSuccess && state.operation != 'get') {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Operation ${state.operation} successful')),
-            );
-            _fetchData();
-          } else if (state is InterventionProceduresStateError) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Error: ${state.message}')),
-            );
-          }
-        },
-        builder: (context, state) {
-          if (state is InterventionProceduresStateLoading) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          if (state is InterventionProceduresStateSuccess && state.operation == 'get') {
-            final List<dynamic> data = state.data as List<dynamic>? ?? [];
-            if (data.isEmpty) {
-              return const Center(child: Text("No Procedures logged.", style: TextStyle(fontSize: 18, color: Colors.grey)));
-            }
+      body:
+          BlocConsumer<
+            InterventionProceduresCubit,
+            InterventionProceduresState
+          >(
+            listener: (context, state) {
+              if (state is InterventionProceduresStateSuccess &&
+                  state.operation !=
+                      kGetAdmissionsAdmissionidInterventionProcedures) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Operation ${state.operation} successful'),
+                  ),
+                );
+                _fetchData();
+              } else if (state is InterventionProceduresStateError) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Error: ${state.message}')),
+                );
+              }
+            },
+            builder: (context, state) {
+              if (state is InterventionProceduresStateLoading) {
+                return const Center(child: CircularProgressIndicator());
+              }
+              if (state is InterventionProceduresStateSuccess &&
+                  state.operation ==
+                      kGetAdmissionsAdmissionidInterventionProcedures) {
+                final List<dynamic> data = state.data as List<dynamic>? ?? [];
+                if (data.isEmpty) {
+                  return const Center(
+                    child: Text(
+                      "No Procedures logged.",
+                      style: TextStyle(fontSize: 18, color: Colors.grey),
+                    ),
+                  );
+                }
 
-            return ListView.builder(
-              padding: AppDimens.paddingAll16,
-              itemCount: data.length,
-              itemBuilder: (context, index) {
-                final item = data[index];
-                final insertionStr = item['insertionDate'] != null ? DateFormat('MMM d, y, hh:mm a').format(DateTime.parse(item['insertionDate']).toLocal()) : 'Unknown Date';
-                final removalStr = item['removalDate'] != null ? DateFormat('MMM d, y, hh:mm a').format(DateTime.parse(item['removalDate']).toLocal()) : 'Active';
-                final typeName = ['IV Cannula', 'Urinary Catheter', 'NG Tube', 'Central Line', 'Wound Drain'][item['type'] ?? 0];
+                return ListView.builder(
+                  padding: AppDimens.paddingAll16,
+                  itemCount: data.length,
+                  itemBuilder: (context, index) {
+                    final item = data[index];
+                    final insertionStr = item['insertionDate'] != null
+                        ? DateFormat('MMM d, y, hh:mm a').format(
+                            DateTime.parse(item['insertionDate']).toLocal(),
+                          )
+                        : 'Unknown Date';
+                    final removalStr = item['removalDate'] != null
+                        ? DateFormat('MMM d, y, hh:mm a').format(
+                            DateTime.parse(item['removalDate']).toLocal(),
+                          )
+                        : 'Active';
+                    final typeName = [
+                      'IV Cannula',
+                      'Urinary Catheter',
+                      'NG Tube',
+                      'Central Line',
+                      'Wound Drain',
+                    ][item['type'] ?? 0];
 
-                return Card(
-                  margin: const EdgeInsets.only(bottom: 12),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                  elevation: 0,
-                  color: Colors.white,
-                  child: Padding(
-                    padding: AppDimens.paddingAll16,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    return Card(
+                      margin: const EdgeInsets.only(bottom: 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      elevation: 0,
+                      color: Colors.white,
+                      child: Padding(
+                        padding: AppDimens.paddingAll16,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(typeName, style: const TextStyle(fontWeight: FontWeight.bold, color: AppColors.infoBlue, fontSize: 18)),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  typeName,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: AppColors.infoBlue,
+                                    fontSize: 18,
+                                  ),
+                                ),
+                                Row(
+                                  children: [
+                                    IconButton(
+                                      icon: const Icon(
+                                        Icons.edit,
+                                        color: Colors.blue,
+                                        size: 20,
+                                      ),
+                                      onPressed: () => _showAddOrEditDialog(
+                                        context,
+                                        existingRecord: item,
+                                      ),
+                                    ),
+                                    IconButton(
+                                      icon: const Icon(
+                                        Icons.delete,
+                                        color: Colors.red,
+                                        size: 20,
+                                      ),
+                                      onPressed: () =>
+                                          _confirmDelete(context, item),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                            const Divider(),
                             Row(
                               children: [
-                                IconButton(icon: const Icon(Icons.edit, color: Colors.blue, size: 20), onPressed: () => _showAddOrEditDialog(context, existingRecord: item)),
-                                IconButton(icon: const Icon(Icons.delete, color: Colors.red, size: 20), onPressed: () => _confirmDelete(context, item)),
+                                const Icon(
+                                  Icons.open_with,
+                                  size: 16,
+                                  color: Colors.grey,
+                                ),
+                                const SizedBox(width: 8),
+                                Text(
+                                  "Size: ${item['size'] ?? 'N/A'}",
+                                  style: const TextStyle(color: Colors.grey),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 8),
+                            Row(
+                              children: [
+                                const Icon(
+                                  Icons.exit_to_app,
+                                  size: 16,
+                                  color: Colors.green,
+                                ),
+                                const SizedBox(width: 8),
+                                Text(
+                                  "Inserted: $insertionStr",
+                                  style: const TextStyle(color: Colors.grey),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 8),
+                            Row(
+                              children: [
+                                const Icon(
+                                  Icons.highlight_remove,
+                                  size: 16,
+                                  color: Colors.red,
+                                ),
+                                const SizedBox(width: 8),
+                                Text(
+                                  "Removed: $removalStr",
+                                  style: const TextStyle(color: Colors.grey),
+                                ),
                               ],
                             ),
                           ],
                         ),
-                        const Divider(),
-                        Row(
-                          children: [
-                            const Icon(Icons.open_with, size: 16, color: Colors.grey),
-                            const SizedBox(width: 8),
-                            Text("Size: ${item['size'] ?? 'N/A'}", style: const TextStyle(color: Colors.grey)),
-                          ],
-                        ),
-                        const SizedBox(height: 8),
-                         Row(
-                          children: [
-                            const Icon(Icons.exit_to_app, size: 16, color: Colors.green),
-                            const SizedBox(width: 8),
-                            Text("Inserted: $insertionStr", style: const TextStyle(color: Colors.grey)),
-                          ],
-                        ),
-                        const SizedBox(height: 8),
-                         Row(
-                          children: [
-                            const Icon(Icons.highlight_remove, size: 16, color: Colors.red),
-                            const SizedBox(width: 8),
-                            Text("Removed: $removalStr", style: const TextStyle(color: Colors.grey)),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
+                      ),
+                    );
+                  },
                 );
-              },
-            );
-          }
-          
-          return const Center(child: Text("Waiting for data..."));
-        },
-      ),
+              }
+
+              return const Center(child: Text("Waiting for data..."));
+            },
+          ),
     );
   }
 }

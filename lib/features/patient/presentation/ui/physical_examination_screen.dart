@@ -1,3 +1,4 @@
+import 'package:cortexia/features/physical_examination/presentation/controllers/physical_examination_opreations_const.dart';
 import 'package:cortexia/core/widgets/custom_form_field.dart';
 import 'package:cortexia/features/patient/presentation/widgets/additional_notes_section.dart';
 import 'package:cortexia/features/patient/presentation/widgets/neurological_examination_section.dart';
@@ -93,7 +94,7 @@ class _PhysicalExaminationScreenState extends State<PhysicalExaminationScreen> {
       ),
       body: BlocConsumer<PhysicalExaminationCubit, PhysicalExaminationState>(
         listener: (context, state) {
-          if (state is PhysicalExaminationStateSuccess && state.operation != 'get') {
+          if (state is PhysicalExaminationStateSuccess && state.operation != kGetAdmissionsAdmissionidPhysicalExamination) {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(content: Text('Examination Saved Successfully')),
             );
@@ -109,7 +110,7 @@ class _PhysicalExaminationScreenState extends State<PhysicalExaminationScreen> {
             return const Center(child: CircularProgressIndicator());
           }
 
-          if (state is PhysicalExaminationStateSuccess && state.operation == 'get') {
+          if (state is PhysicalExaminationStateSuccess && state.operation == kGetAdmissionsAdmissionidPhysicalExamination) {
             _populateData(state.data);
           }
 

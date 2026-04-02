@@ -1,3 +1,4 @@
+import 'package:cortexia/features/vital_signs/presentation/controllers/vital_signs_opreations_const.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:cortexia/features/vital_signs/domain/repo/repo_interface.dart';
@@ -15,7 +16,7 @@ class VitalSignsCubit extends Cubit<VitalSignsState> {
     final response = await _repo.postAdmissionsAdmissionidVitals(admissionid: admissionid, requestBody: requestBody);
     response.when(
       onSuccess: (data) {
-        emit(VitalSignsStateSuccess(operation: 'post', data: data));
+        emit(VitalSignsStateSuccess(operation: kPostAdmissionsAdmissionidVitals, data: data));
       },
       onError: (error) {
         emit(VitalSignsStateError(message: error.messages.first));
@@ -28,7 +29,7 @@ class VitalSignsCubit extends Cubit<VitalSignsState> {
     final response = await _repo.getAdmissionsAdmissionidVitals(admissionid: admissionid);
     response.when(
       onSuccess: (data) {
-        emit(VitalSignsStateSuccess(operation: 'get', data: data));
+        emit(VitalSignsStateSuccess(operation: kGetAdmissionsAdmissionidVitals, data: data));
       },
       onError: (error) {
         emit(VitalSignsStateError(message: error.messages.first));
@@ -41,7 +42,7 @@ class VitalSignsCubit extends Cubit<VitalSignsState> {
     final response = await _repo.putAdmissionsAdmissionidVitals(admissionid: admissionid, requestBody: requestBody);
     response.when(
       onSuccess: (data) {
-        emit(VitalSignsStateSuccess(operation: 'put', data: data));
+        emit(VitalSignsStateSuccess(operation: kPutAdmissionsAdmissionidVitals, data: data));
       },
       onError: (error) {
         emit(VitalSignsStateError(message: error.messages.first));
@@ -54,7 +55,7 @@ class VitalSignsCubit extends Cubit<VitalSignsState> {
     final response = await _repo.deleteAdmissionsAdmissionidVitals(admissionid: admissionid, id: id);
     response.when(
       onSuccess: (data) {
-        emit(VitalSignsStateSuccess(operation: 'delete', data: data));
+        emit(VitalSignsStateSuccess(operation: kDeleteAdmissionsAdmissionidVitals, data: data));
       },
       onError: (error) {
         emit(VitalSignsStateError(message: error.messages.first));

@@ -1,3 +1,4 @@
+import 'package:cortexia/features/vital_signs/presentation/controllers/vital_signs_opreations_const.dart';
 import 'package:cortexia/core/themes/app_dimens.dart';
 import 'package:cortexia/core/themes/color_themes.dart';
 import 'package:cortexia/core/widgets/custom_app_bar.dart';
@@ -204,7 +205,7 @@ class _VitalSignsScreenState extends State<VitalSignsScreen> {
       ),
       body: BlocConsumer<VitalSignsCubit, VitalSignsState>(
         listener: (context, state) {
-          if (state is VitalSignsStateSuccess && state.operation != 'get') {
+          if (state is VitalSignsStateSuccess && state.operation != kGetAdmissionsAdmissionidVitals) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text('Operation ${state.operation} successful')),
             );
@@ -219,7 +220,7 @@ class _VitalSignsScreenState extends State<VitalSignsScreen> {
           if (state is VitalSignsStateLoading) {
             return const Center(child: CircularProgressIndicator());
           }
-          if (state is VitalSignsStateSuccess && state.operation == 'get') {
+          if (state is VitalSignsStateSuccess && state.operation == kGetAdmissionsAdmissionidVitals) {
             final List<dynamic> data = state.data as List<dynamic>? ?? [];
             if (data.isEmpty) {
               return const Center(child: Text("No Vital Signs Recorded", style: TextStyle(fontSize: 18, color: Colors.grey)));

@@ -1,3 +1,4 @@
+import 'package:cortexia/features/case_history/presentation/controllers/case_history_opreations_const.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:cortexia/features/case_history/domain/repo/repo_interface.dart';
@@ -15,7 +16,7 @@ class CaseHistoryCubit extends Cubit<CaseHistoryState> {
     final response = await _repo.postAdmissionsAdmissionidCaseHistory(admissionid: admissionid, requestBody: requestBody);
     response.when(
       onSuccess: (data) {
-        emit(CaseHistoryStateSuccess(operation: 'post', data: data));
+        emit(CaseHistoryStateSuccess(operation: kPostAdmissionsAdmissionidCaseHistory, data: data));
         getAdmissionsAdmissionidCaseHistory(admissionid: admissionid);
       },
       onError: (error) {
@@ -29,7 +30,7 @@ class CaseHistoryCubit extends Cubit<CaseHistoryState> {
     final response = await _repo.getAdmissionsAdmissionidCaseHistory(admissionid: admissionid);
     response.when(
       onSuccess: (data) {
-        emit(CaseHistoryStateSuccess(operation: 'get', data: data));
+        emit(CaseHistoryStateSuccess(operation: kGetAdmissionsAdmissionidCaseHistory, data: data));
       },
       onError: (error) {
         emit(CaseHistoryStateError(message: error.messages.first));
@@ -42,7 +43,7 @@ class CaseHistoryCubit extends Cubit<CaseHistoryState> {
     final response = await _repo.putAdmissionsAdmissionidCaseHistory(admissionid: admissionid, requestBody: requestBody);
     response.when(
       onSuccess: (data) {
-        emit(CaseHistoryStateSuccess(operation: 'put', data: data));
+        emit(CaseHistoryStateSuccess(operation: kPutAdmissionsAdmissionidCaseHistory, data: data));
       },
       onError: (error) {
         emit(CaseHistoryStateError(message: error.messages.first));
@@ -55,7 +56,7 @@ class CaseHistoryCubit extends Cubit<CaseHistoryState> {
     final response = await _repo.deleteAdmissionsAdmissionidCaseHistory(admissionid: admissionid, id: id);
     response.when(
       onSuccess: (data) {
-        emit(CaseHistoryStateSuccess(operation: 'delete', data: data));
+        emit(CaseHistoryStateSuccess(operation: kDeleteAdmissionsAdmissionidCaseHistory, data: data));
       },
       onError: (error) {
         emit(CaseHistoryStateError(message: error.messages.first));

@@ -1,0 +1,4 @@
+const String kPostAdmissionsAdmissionidInterventionProcedures = 'postAdmissionsAdmissionidInterventionProcedures';
+const String kGetAdmissionsAdmissionidInterventionProcedures = 'getAdmissionsAdmissionidInterventionProcedures';
+const String kPutAdmissionsAdmissionidInterventionProcedures = 'putAdmissionsAdmissionidInterventionProcedures';
+const String kDeleteAdmissionsAdmissionidInterventionProcedures = 'deleteAdmissionsAdmissionidInterventionProcedures';

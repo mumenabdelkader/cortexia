@@ -13,9 +13,20 @@ class AddInterventionProcedureCommandModel {
   String? admissionId;
   String? nurseId;
 
-  AddInterventionProcedureCommandModel({this.id, this.type, this.size, this.insertionDate, this.removalDate, this.admissionId, this.nurseId});
+  AddInterventionProcedureCommandModel({
+    this.id,
+    this.type,
+    this.size,
+    this.insertionDate,
+    this.removalDate,
+    this.admissionId,
+    this.nurseId,
+  });
 
-  factory AddInterventionProcedureCommandModel.fromJson(Map<String, dynamic> json) => _$AddInterventionProcedureCommandModelFromJson(json);
+  factory AddInterventionProcedureCommandModel.fromJson(
+    Map<String, dynamic> json,
+  ) => _$AddInterventionProcedureCommandModelFromJson(json);
 
-  Map<String, dynamic> toJson() => _$AddInterventionProcedureCommandModelToJson(this);
+  Map<String, dynamic> toJson() =>
+      _$AddInterventionProcedureCommandModelToJson(this);
 }

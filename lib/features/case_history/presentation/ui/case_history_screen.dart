@@ -1,3 +1,4 @@
+import 'package:cortexia/features/case_history/presentation/controllers/case_history_opreations_const.dart';
 import 'package:cortexia/core/di/dependency_injection.dart';
 import 'package:cortexia/core/themes/app_dimens.dart';
 import 'package:cortexia/core/themes/color_themes.dart';
@@ -43,7 +44,7 @@ class _CaseHistoryView extends StatelessWidget {
       body: BlocListener<CaseHistoryCubit, CaseHistoryState>(
         listener: (context, state) {
           if (state is CaseHistoryStateSuccess &&
-              state.operation == 'postAdmissionsAdmissionidCaseHistory') {
+              state.operation == kPostAdmissionsAdmissionidCaseHistory) {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
                 content: Text('Case history saved successfully.'),
@@ -65,7 +66,7 @@ class _CaseHistoryView extends StatelessWidget {
             bool isLoading = state is CaseHistoryStateLoading;
 
             if (state is CaseHistoryStateSuccess &&
-                state.operation == 'getAdmissionsAdmissionidCaseHistory') {
+                state.operation == kGetAdmissionsAdmissionidCaseHistory) {
               histories = state.data as List<CaseHistoryModel>;
             }
 

@@ -1,3 +1,4 @@
+import 'package:cortexia/features/nursing_notes/presentation/controllers/nursing_notes_opreations_const.dart';
 import 'package:cortexia/core/cache/app_cahe.dart';
 import 'package:cortexia/core/di/dependency_injection.dart';
 import 'package:cortexia/core/themes/app_dimens.dart';
@@ -6,7 +7,6 @@ import 'package:cortexia/core/widgets/custom_app_bar.dart';
 import 'package:cortexia/core/widgets/custom_elevated_button.dart';
 import 'package:cortexia/core/widgets/custom_form_field.dart';
 import 'package:cortexia/features/nursing_notes/data/models/add_nursing_note_command_model.dart';
-import 'package:cortexia/features/nursing_notes/domain/repo/repo_interface.dart';
 import 'package:cortexia/features/nursing_notes/presentation/controllers/nursing_notes_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -56,9 +56,10 @@ class _ClinicalNotesScreenState extends State<ClinicalNotesScreen> {
     }
 
     return BlocProvider(
-      create: (_) => NursingNotesCubit(
-        locator<NursingNotesRepoInterface>(),
-      )..getAdmissionsAdmissionidNursingNotes(admissionid: widget.admissionId!),
+      create: (_) => locator<NursingNotesCubit>()
+        ..getAdmissionsAdmissionidNursingNotes(
+          admissionid: widget.admissionId!,
+        ),
       child: _ClinicalNotesView(
         admissionId: widget.admissionId!,
         nurseId: _nurseId,
@@ -84,7 +85,8 @@ class _ClinicalNotesView extends StatelessWidget {
       body: BlocListener<NursingNotesCubit, NursingNotesState>(
         listener: (context, state) {
           if (state is NursingNotesStateSuccess &&
-              state.operation == 'postAdmissionsAdmissionidNursingNotes') {
+              (state.operation == kPostAdmissionsAdmissionidNursingNotes ||
+                  state.operation == kPutAdmissionsAdmissionidNursingNotes)) {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
                 content: Text('Note saved successfully.'),
@@ -108,7 +110,7 @@ class _ClinicalNotesView extends StatelessWidget {
           builder: (context, state) {
             final notes =
                 (state is NursingNotesStateSuccess &&
-                    state.operation == 'getAdmissionsAdmissionidNursingNotes' &&
+                    state.operation == kGetAdmissionsAdmissionidNursingNotes &&
                     state.data is List)
                 ? List<Map<String, dynamic>>.from(
                     (state.data as List).map((e) => e as Map<String, dynamic>),

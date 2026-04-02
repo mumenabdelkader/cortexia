@@ -1,3 +1,4 @@
+import 'package:cortexia/features/fluid_balance/presentation/controllers/fluid_balance_opreations_const.dart';
 import 'package:cortexia/core/cache/app_cahe.dart';
 import 'package:flutter/material.dart';
 import 'package:cortexia/core/themes/app_dimens.dart';
@@ -37,6 +38,7 @@ class _FluidBalanceScreenState extends State<FluidBalanceScreen> {
   @override
   void initState() {
     super.initState();
+    _loadNurseId();
     _fetchData();
   }
 
@@ -86,12 +88,16 @@ class _FluidBalanceScreenState extends State<FluidBalanceScreen> {
 
   @override
   Widget build(BuildContext context) {
+    if (_isLoading) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
     return Scaffold(
       backgroundColor: AppColors.scaffoldBg,
       appBar: const CustomAppBar(title: 'Fluid Balance Tracker'),
       body: BlocConsumer<FluidBalanceCubit, FluidBalanceState>(
         listener: (context, state) {
-          if (state is FluidBalanceStateSuccess && state.operation != 'get') {
+          if (state is FluidBalanceStateSuccess &&
+              state.operation != kGetAdmissionsAdmissionidFluidBalance) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text('Operation ${state.operation} successful'),
@@ -114,7 +120,8 @@ class _FluidBalanceScreenState extends State<FluidBalanceScreen> {
           int totalInput = 0;
           int totalOutput = 0;
 
-          if (state is FluidBalanceStateSuccess && state.operation == 'get') {
+          if (state is FluidBalanceStateSuccess &&
+              state.operation == kGetAdmissionsAdmissionidFluidBalance) {
             final data = state.data as List<dynamic>? ?? [];
             for (var item in data) {
               int amount = (item['amountMl'] as num?)?.toInt() ?? 0;
@@ -528,7 +535,7 @@ class _FluidBalanceScreenState extends State<FluidBalanceScreen> {
 
                   final command = AddFluidBalanceCommandModel(
                     admissionId: widget.admissionId,
-                    nurseId: widget.nurseId,
+                    nurseId: _nurseId,
                     amountMl: amount,
                     category: isInput
                         ? FluidBalanceCategory.intake

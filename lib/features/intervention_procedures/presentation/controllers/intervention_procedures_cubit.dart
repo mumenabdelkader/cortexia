@@ -1,3 +1,4 @@
+import 'package:cortexia/features/intervention_procedures/presentation/controllers/intervention_procedures_opreations_const.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:cortexia/features/intervention_procedures/domain/repo/repo_interface.dart';
@@ -23,7 +24,7 @@ class InterventionProceduresCubit extends Cubit<InterventionProceduresState> {
         );
     response.when(
       onSuccess: (data) {
-        emit(InterventionProceduresStateSuccess(operation: 'post', data: data));
+        emit(InterventionProceduresStateSuccess(operation: kPostAdmissionsAdmissionidInterventionProcedures, data: data));
       },
       onError: (error) {
         emit(InterventionProceduresStateError(message: error.messages.first));
@@ -40,7 +41,7 @@ class InterventionProceduresCubit extends Cubit<InterventionProceduresState> {
     );
     response.when(
       onSuccess: (data) {
-        emit(InterventionProceduresStateSuccess(operation: 'get', data: data));
+        emit(InterventionProceduresStateSuccess(operation: kGetAdmissionsAdmissionidInterventionProcedures, data: data));
       },
       onError: (error) {
         emit(InterventionProceduresStateError(message: error.messages.first));
@@ -59,7 +60,7 @@ class InterventionProceduresCubit extends Cubit<InterventionProceduresState> {
     );
     response.when(
       onSuccess: (data) {
-        emit(InterventionProceduresStateSuccess(operation: 'put', data: data));
+        emit(InterventionProceduresStateSuccess(operation: kPutAdmissionsAdmissionidInterventionProcedures, data: data));
       },
       onError: (error) {
         emit(InterventionProceduresStateError(message: error.messages.first));
@@ -80,7 +81,7 @@ class InterventionProceduresCubit extends Cubit<InterventionProceduresState> {
     response.when(
       onSuccess: (data) {
         emit(
-          InterventionProceduresStateSuccess(operation: 'delete', data: data),
+          InterventionProceduresStateSuccess(operation: kDeleteAdmissionsAdmissionidInterventionProcedures, data: data),
         );
       },
       onError: (error) {
