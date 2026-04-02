@@ -28,4 +28,24 @@ class VitalSignsRepoImp implements VitalSignsRepoInterface {
     }
   }
 
+  @override
+  Future<ApiResult<dynamic>> putAdmissionsAdmissionidVitals({required String admissionid, required RecordVitalsCommandModel requestBody}) async {
+    try {
+      final response = await _apiService.putAdmissionsAdmissionidVitals(admissionid: admissionid, requestBody: requestBody);
+      return ApiResult.success(response);
+    } catch (error) {
+      return ApiResult.error(ApiErrorHandler.handle(error));
+    }
+  }
+
+  @override
+  Future<ApiResult<dynamic>> deleteAdmissionsAdmissionidVitals({required String admissionid, required String id}) async {
+    try {
+      final response = await _apiService.deleteAdmissionsAdmissionidVitals(admissionid: admissionid, id: id);
+      return ApiResult.success(response);
+    } catch (error) {
+      return ApiResult.error(ApiErrorHandler.handle(error));
+    }
+  }
+
 }

@@ -6,4 +6,6 @@ import 'package:cortexia/features/case_history/data/models/case_history_model.da
 abstract class CaseHistoryRepoInterface {
   Future<ApiResult<AddCaseHistoryResponseModel>> postAdmissionsAdmissionidCaseHistory({required String admissionid, required AddCaseHistoryCommandModel requestBody});
   Future<ApiResult<List<CaseHistoryModel>>> getAdmissionsAdmissionidCaseHistory({required String admissionid});
+  Future<ApiResult<dynamic>> putAdmissionsAdmissionidCaseHistory({required String admissionid, required AddCaseHistoryCommandModel requestBody});
+  Future<ApiResult<dynamic>> deleteAdmissionsAdmissionidCaseHistory({required String admissionid, required String id});
 }

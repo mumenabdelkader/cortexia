@@ -28,4 +28,24 @@ class NursingNotesRepoImp implements NursingNotesRepoInterface {
     }
   }
 
+  @override
+  Future<ApiResult<dynamic>> putAdmissionsAdmissionidNursingNotes({required String admissionid, required AddNursingNoteCommandModel requestBody}) async {
+    try {
+      final response = await _apiService.putAdmissionsAdmissionidNursingNotes(admissionid: admissionid, requestBody: requestBody);
+      return ApiResult.success(response);
+    } catch (error) {
+      return ApiResult.error(ApiErrorHandler.handle(error));
+    }
+  }
+
+  @override
+  Future<ApiResult<dynamic>> deleteAdmissionsAdmissionidNursingNotes({required String admissionid, required String id}) async {
+    try {
+      final response = await _apiService.deleteAdmissionsAdmissionidNursingNotes(admissionid: admissionid, id: id);
+      return ApiResult.success(response);
+    } catch (error) {
+      return ApiResult.error(ApiErrorHandler.handle(error));
+    }
+  }
+
 }

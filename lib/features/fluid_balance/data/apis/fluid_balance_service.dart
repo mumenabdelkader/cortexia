@@ -15,4 +15,10 @@ abstract class FluidBalanceService {
   @GET(ApiConstants.fluidBalance)
   Future<dynamic> getAdmissionsAdmissionidFluidBalance({@Path('admissionId') required String admissionid});
 
+  @PUT(ApiConstants.fluidBalance)
+  Future<dynamic> putAdmissionsAdmissionidFluidBalance({@Path('admissionId') required String admissionid, @Body() required AddFluidBalanceCommandModel requestBody});
+
+  @DELETE(ApiConstants.fluidBalance)
+  Future<dynamic> deleteAdmissionsAdmissionidFluidBalance({@Path('admissionId') required String admissionid, @Query('Id') required String id});
+
 }

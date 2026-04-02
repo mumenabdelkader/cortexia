@@ -1,3 +1,4 @@
+import 'package:cortexia/features/medications/presentation/controllers/medications_opreations_const.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:cortexia/features/medications/domain/repo/repo_interface.dart';
@@ -31,6 +32,32 @@ class MedicationsCubit extends Cubit<MedicationsState> {
     response.when(
       onSuccess: (data) {
         emit(MedicationsStateLoaded(medications: data));
+      },
+      onError: (error) {
+        emit(MedicationsStateError(message: error.messages.first));
+      },
+    );
+  }
+
+  Future<void> putAdmissionsAdmissionidMedications({required String admissionid, required PrescribeMedicationCommandModel requestBody}) async {
+    emit(MedicationsStateLoading());
+    final response = await _repo.putAdmissionsAdmissionidMedications(admissionid: admissionid, requestBody: requestBody);
+    response.when(
+      onSuccess: (data) {
+        emit(MedicationsStateSuccess(operation: kPutAdmissionsAdmissionidMedications, data: data));
+      },
+      onError: (error) {
+        emit(MedicationsStateError(message: error.messages.first));
+      },
+    );
+  }
+
+  Future<void> deleteAdmissionsAdmissionidMedications({required String admissionid, required String id}) async {
+    emit(MedicationsStateLoading());
+    final response = await _repo.deleteAdmissionsAdmissionidMedications(admissionid: admissionid, id: id);
+    response.when(
+      onSuccess: (data) {
+        emit(MedicationsStateSuccess(operation: kDeleteAdmissionsAdmissionidMedications, data: data));
       },
       onError: (error) {
         emit(MedicationsStateError(message: error.messages.first));

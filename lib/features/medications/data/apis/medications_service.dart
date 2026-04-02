@@ -17,4 +17,10 @@ abstract class MedicationsService {
   @GET(ApiConstants.admissionMedications)
   Future<List<MedicationResponseModel>> getAdmissionsAdmissionidMedications({@Path('admissionId') required String admissionid});
 
+  @PUT(ApiConstants.admissionMedications)
+  Future<dynamic> putAdmissionsAdmissionidMedications({@Path('admissionId') required String admissionid, @Body() required PrescribeMedicationCommandModel requestBody});
+
+  @DELETE(ApiConstants.admissionMedications)
+  Future<dynamic> deleteAdmissionsAdmissionidMedications({@Path('admissionId') required String admissionid, @Query('Id') required String id});
+
 }

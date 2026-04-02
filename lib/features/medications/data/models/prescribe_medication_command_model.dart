@@ -6,6 +6,7 @@ part 'prescribe_medication_command_model.g.dart';
 @JsonSerializable()
 class PrescribeMedicationCommandModel {
   String? admissionId;
+  String? id;
   String? drugName;
   int? dose;
   String? doseUnit;
@@ -15,7 +16,7 @@ class PrescribeMedicationCommandModel {
   String? endDate;
   String? doctorId;
 
-  PrescribeMedicationCommandModel({this.admissionId, this.drugName, this.dose, this.doseUnit, this.frequency, this.route, this.startDate, this.endDate, this.doctorId});
+  PrescribeMedicationCommandModel({this.admissionId, this.id, this.drugName, this.dose, this.doseUnit, this.frequency, this.route, this.startDate, this.endDate, this.doctorId});
 
   factory PrescribeMedicationCommandModel.fromJson(Map<String, dynamic> json) => _$PrescribeMedicationCommandModelFromJson(json);
 

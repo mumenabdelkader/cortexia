@@ -1,3 +1,4 @@
+import 'package:cortexia/features/nursing_notes/presentation/controllers/nursing_notes_opreations_const.dart';
 import 'package:cortexia/core/cache/app_cahe.dart';
 import 'package:cortexia/core/di/dependency_injection.dart';
 import 'package:cortexia/core/themes/app_dimens.dart';
@@ -6,7 +7,6 @@ import 'package:cortexia/core/widgets/custom_app_bar.dart';
 import 'package:cortexia/core/widgets/custom_elevated_button.dart';
 import 'package:cortexia/core/widgets/custom_form_field.dart';
 import 'package:cortexia/features/nursing_notes/data/models/add_nursing_note_command_model.dart';
-import 'package:cortexia/features/nursing_notes/domain/repo/repo_interface.dart';
 import 'package:cortexia/features/nursing_notes/presentation/controllers/nursing_notes_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -46,9 +46,7 @@ class _ClinicalNotesScreenState extends State<ClinicalNotesScreen> {
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
-      return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      );
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
     if (widget.admissionId == null || widget.admissionId!.isEmpty) {
@@ -58,7 +56,7 @@ class _ClinicalNotesScreenState extends State<ClinicalNotesScreen> {
     }
 
     return BlocProvider(
-      create: (_) => NursingNotesCubit(locator<NursingNotesRepoInterface>())
+      create: (_) => locator<NursingNotesCubit>()
         ..getAdmissionsAdmissionidNursingNotes(
           admissionid: widget.admissionId!,
         ),
@@ -77,10 +75,7 @@ class _ClinicalNotesView extends StatelessWidget {
   final String admissionId;
   final String nurseId;
 
-  const _ClinicalNotesView({
-    required this.admissionId,
-    required this.nurseId,
-  });
+  const _ClinicalNotesView({required this.admissionId, required this.nurseId});
 
   @override
   Widget build(BuildContext context) {
@@ -90,7 +85,8 @@ class _ClinicalNotesView extends StatelessWidget {
       body: BlocListener<NursingNotesCubit, NursingNotesState>(
         listener: (context, state) {
           if (state is NursingNotesStateSuccess &&
-              state.operation == 'postAdmissionsAdmissionidNursingNotes') {
+              (state.operation == kPostAdmissionsAdmissionidNursingNotes ||
+                  state.operation == kPutAdmissionsAdmissionidNursingNotes)) {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
                 content: Text('Note saved successfully.'),
@@ -112,9 +108,9 @@ class _ClinicalNotesView extends StatelessWidget {
         },
         child: BlocBuilder<NursingNotesCubit, NursingNotesState>(
           builder: (context, state) {
-            final notes = (state is NursingNotesStateSuccess &&
-                    state.operation ==
-                        'getAdmissionsAdmissionidNursingNotes' &&
+            final notes =
+                (state is NursingNotesStateSuccess &&
+                    state.operation == kGetAdmissionsAdmissionidNursingNotes &&
                     state.data is List)
                 ? List<Map<String, dynamic>>.from(
                     (state.data as List).map((e) => e as Map<String, dynamic>),
@@ -140,9 +136,9 @@ class _ClinicalNotesView extends StatelessWidget {
                   Text(
                     'Timeline',
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          color: AppColors.textMain,
-                          fontWeight: FontWeight.bold,
-                        ),
+                      color: AppColors.textMain,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   SizedBox(height: AppDimens.space16),
 
@@ -150,7 +146,8 @@ class _ClinicalNotesView extends StatelessWidget {
                   if (isFetching)
                     const Center(
                       child: CircularProgressIndicator(
-                          color: AppColors.primaryBlue),
+                        color: AppColors.primaryBlue,
+                      ),
                     )
                   else if (notes.isEmpty)
                     Center(
@@ -163,7 +160,13 @@ class _ClinicalNotesView extends StatelessWidget {
                       ),
                     )
                   else
-                    ...notes.map((note) => _NoteCard(note: note)),
+                    ...notes.map(
+                      (note) => _NoteCard(
+                        note: note,
+                        admissionId: admissionId,
+                        nurseId: nurseId,
+                      ),
+                    ),
                 ],
               ),
             );
@@ -201,8 +204,10 @@ class _SummaryCard extends StatelessWidget {
                   color: AppColors.primaryBlue.withOpacity(0.1),
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(Icons.note_alt_outlined,
-                    color: AppColors.primaryBlue),
+                child: const Icon(
+                  Icons.note_alt_outlined,
+                  color: AppColors.primaryBlue,
+                ),
               ),
               SizedBox(width: AppDimens.space12),
               Column(
@@ -261,14 +266,14 @@ class _AddNoteFormState extends State<_AddNoteForm> {
 
     final now = DateTime.now().toIso8601String();
     context.read<NursingNotesCubit>().postAdmissionsAdmissionidNursingNotes(
-          admissionid: widget.admissionId,
-          requestBody: AddNursingNoteCommandModel(
-            admissionId: widget.admissionId,
-            noteText: _noteCtrl.text.trim(),
-            noteDateTime: now,
-            nurseId: widget.nurseId,
-          ),
-        );
+      admissionid: widget.admissionId,
+      requestBody: AddNursingNoteCommandModel(
+        admissionId: widget.admissionId,
+        noteText: _noteCtrl.text.trim(),
+        noteDateTime: now,
+        nurseId: widget.nurseId,
+      ),
+    );
     _noteCtrl.clear();
   }
 
@@ -288,15 +293,17 @@ class _AddNoteFormState extends State<_AddNoteForm> {
           children: [
             Row(
               children: [
-                const Icon(Icons.add_circle_outline,
-                    color: AppColors.primaryBlue),
+                const Icon(
+                  Icons.add_circle_outline,
+                  color: AppColors.primaryBlue,
+                ),
                 SizedBox(width: AppDimens.space8),
                 Text(
                   'Add New Note',
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        color: AppColors.textMain,
-                        fontWeight: FontWeight.bold,
-                      ),
+                    color: AppColors.textMain,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ],
             ),
@@ -333,7 +340,13 @@ class _AddNoteFormState extends State<_AddNoteForm> {
 // ─────────────────────────────────────────────
 class _NoteCard extends StatelessWidget {
   final Map<String, dynamic> note;
-  const _NoteCard({required this.note});
+  final String admissionId;
+  final String nurseId;
+  const _NoteCard({
+    required this.note,
+    required this.admissionId,
+    required this.nurseId,
+  });
 
   String _formatDateTime(String? raw) {
     if (raw == null) return '';
@@ -367,8 +380,7 @@ class _NoteCard extends StatelessWidget {
                 CircleAvatar(
                   radius: 20,
                   backgroundColor: AppColors.primaryBlue.withOpacity(0.1),
-                  child:
-                      const Icon(Icons.person, color: AppColors.primaryBlue),
+                  child: const Icon(Icons.person, color: AppColors.primaryBlue),
                 ),
                 SizedBox(width: AppDimens.space12),
                 Expanded(
@@ -385,9 +397,11 @@ class _NoteCard extends StatelessWidget {
                       ),
                       Row(
                         children: [
-                          Icon(Icons.access_time,
-                              size: AppDimens.fontSmall,
-                              color: AppColors.textSecondary),
+                          Icon(
+                            Icons.access_time,
+                            size: AppDimens.fontSmall,
+                            color: AppColors.textSecondary,
+                          ),
                           SizedBox(width: AppDimens.space4),
                           Text(
                             _formatDateTime(note['noteDateTime'] as String?),
@@ -403,7 +417,9 @@ class _NoteCard extends StatelessWidget {
                 ),
                 Container(
                   padding: EdgeInsets.symmetric(
-                      horizontal: AppDimens.space8, vertical: AppDimens.space4),
+                    horizontal: AppDimens.space8,
+                    vertical: AppDimens.space4,
+                  ),
                   decoration: BoxDecoration(
                     color: AppColors.successGreen.withOpacity(0.1),
                     borderRadius: AppDimens.radius8,
@@ -417,6 +433,53 @@ class _NoteCard extends StatelessWidget {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
+                ),
+                PopupMenuButton<String>(
+                  icon: const Icon(
+                    Icons.more_vert,
+                    color: AppColors.textSecondary,
+                  ),
+                  onSelected: (value) {
+                    if (value == 'edit') {
+                      _showEditNoteBottomSheet(context);
+                    } else if (value == 'delete') {
+                      _confirmDeleteNote(context);
+                    }
+                  },
+                  itemBuilder: (BuildContext context) =>
+                      <PopupMenuEntry<String>>[
+                        const PopupMenuItem<String>(
+                          value: 'edit',
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.edit,
+                                color: AppColors.primaryBlue,
+                                size: 20,
+                              ),
+                              SizedBox(width: 8),
+                              Text('Edit'),
+                            ],
+                          ),
+                        ),
+                        const PopupMenuItem<String>(
+                          value: 'delete',
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.delete,
+                                color: AppColors.errorRed,
+                                size: 20,
+                              ),
+                              SizedBox(width: 8),
+                              Text(
+                                'Delete',
+                                style: TextStyle(color: AppColors.errorRed),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                 ),
               ],
             ),
@@ -439,6 +502,171 @@ class _NoteCard extends StatelessWidget {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  void _confirmDeleteNote(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Delete Note'),
+        content: const Text(
+          'Are you sure you want to delete this clinical note?',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(ctx);
+              context
+                  .read<NursingNotesCubit>()
+                  .deleteAdmissionsAdmissionidNursingNotes(
+                    admissionid: admissionId,
+                    id: note['id'] as String? ?? '',
+                  );
+            },
+            child: const Text(
+              'Delete',
+              style: TextStyle(color: AppColors.errorRed),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showEditNoteBottomSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) {
+        return BlocProvider.value(
+          value: context.read<NursingNotesCubit>(),
+          child: Padding(
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.of(ctx).viewInsets.bottom,
+            ),
+            child: _EditNoteBottomSheet(
+              note: note,
+              admissionId: admissionId,
+              nurseId: nurseId,
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+// ─────────────────────────────────────────────
+// Edit Note Bottom Sheet
+// ─────────────────────────────────────────────
+class _EditNoteBottomSheet extends StatefulWidget {
+  final Map<String, dynamic> note;
+  final String admissionId;
+  final String nurseId;
+
+  const _EditNoteBottomSheet({
+    required this.note,
+    required this.admissionId,
+    required this.nurseId,
+  });
+
+  @override
+  State<_EditNoteBottomSheet> createState() => _EditNoteBottomSheetState();
+}
+
+class _EditNoteBottomSheetState extends State<_EditNoteBottomSheet> {
+  final _formKey = GlobalKey<FormState>();
+  late final TextEditingController _noteCtrl;
+
+  @override
+  void initState() {
+    super.initState();
+    _noteCtrl = TextEditingController(
+      text: widget.note['noteText'] as String? ?? '',
+    );
+  }
+
+  @override
+  void dispose() {
+    _noteCtrl.dispose();
+    super.dispose();
+  }
+
+  void _submit() {
+    if (!_formKey.currentState!.validate()) return;
+
+    Navigator.pop(context);
+    final now = DateTime.now().toIso8601String();
+
+    context.read<NursingNotesCubit>().putAdmissionsAdmissionidNursingNotes(
+      admissionid: widget.admissionId,
+      requestBody: AddNursingNoteCommandModel(
+        id: widget.note['id'] as String?,
+        admissionId: widget.admissionId,
+        noteText: _noteCtrl.text.trim(),
+        noteDateTime: now,
+        nurseId: widget.nurseId,
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: AppDimens.paddingAll16,
+      decoration: const BoxDecoration(
+        color: AppColors.white,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      child: SafeArea(
+        child: Form(
+          key: _formKey,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Edit Clinical Note',
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      color: AppColors.textMain,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.close),
+                    onPressed: () => Navigator.pop(context),
+                  ),
+                ],
+              ),
+              SizedBox(height: AppDimens.space12),
+              CustomTextFormField(
+                controller: _noteCtrl,
+                hintText: 'Type your clinical note here...',
+                maxLines: 4,
+                validator: (val) =>
+                    (val == null || val.trim().isEmpty) ? 'Required' : null,
+              ),
+              SizedBox(height: AppDimens.space16),
+              CustomElevatedButton(
+                text: 'Update Note',
+                onPressed: _submit,
+                height: AppDimens.buttonHeight,
+                backgroundColor: AppColors.primaryBlue,
+                textColor: AppColors.white,
+              ),
+            ],
+          ),
         ),
       ),
     );

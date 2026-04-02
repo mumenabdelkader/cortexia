@@ -1,0 +1,4 @@
+const String kPostAdmissionsAdmissionidFluidBalance = 'postAdmissionsAdmissionidFluidBalance';
+const String kGetAdmissionsAdmissionidFluidBalance = 'getAdmissionsAdmissionidFluidBalance';
+const String kPutAdmissionsAdmissionidFluidBalance = 'putAdmissionsAdmissionidFluidBalance';
+const String kDeleteAdmissionsAdmissionidFluidBalance = 'deleteAdmissionsAdmissionidFluidBalance';

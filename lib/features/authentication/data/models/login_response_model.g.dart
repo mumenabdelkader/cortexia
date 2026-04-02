@@ -22,7 +22,7 @@ Map<String, dynamic> _$LoginResponseModelToJson(LoginResponseModel instance) =>
       'data': instance.data,
     };
 
-UserData _$DataFromJson(Map<String, dynamic> json) => UserData(
+UserData _$UserDataFromJson(Map<String, dynamic> json) => UserData(
   token: json['token'] as String?,
   email: json['email'] as String?,
   userId: json['userId'] as String?,
@@ -30,7 +30,7 @@ UserData _$DataFromJson(Map<String, dynamic> json) => UserData(
   roles: (json['roles'] as List<dynamic>?)?.map((e) => e as String).toList(),
 );
 
-Map<String, dynamic> _$DataToJson(UserData instance) => <String, dynamic>{
+Map<String, dynamic> _$UserDataToJson(UserData instance) => <String, dynamic>{
   'token': instance.token,
   'email': instance.email,
   'userId': instance.userId,

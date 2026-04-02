@@ -10,6 +10,7 @@ PrescribeMedicationCommandModel _$PrescribeMedicationCommandModelFromJson(
   Map<String, dynamic> json,
 ) => PrescribeMedicationCommandModel(
   admissionId: json['admissionId'] as String?,
+  id: json['id'] as String?,
   drugName: json['drugName'] as String?,
   dose: (json['dose'] as num?)?.toInt(),
   doseUnit: json['doseUnit'] as String?,
@@ -24,6 +25,7 @@ Map<String, dynamic> _$PrescribeMedicationCommandModelToJson(
   PrescribeMedicationCommandModel instance,
 ) => <String, dynamic>{
   'admissionId': instance.admissionId,
+  'id': instance.id,
   'drugName': instance.drugName,
   'dose': instance.dose,
   'doseUnit': instance.doseUnit,
@@ -35,11 +37,11 @@ Map<String, dynamic> _$PrescribeMedicationCommandModelToJson(
 };
 
 const _$MedicationRouteEnumMap = {
-  MedicationRoute.value0: 0,
-  MedicationRoute.value1: 1,
-  MedicationRoute.value2: 2,
-  MedicationRoute.value3: 3,
-  MedicationRoute.value4: 4,
-  MedicationRoute.value5: 5,
-  MedicationRoute.value6: 6,
+  MedicationRoute.oral: 0,
+  MedicationRoute.iv: 1,
+  MedicationRoute.im: 2,
+  MedicationRoute.sc: 3,
+  MedicationRoute.topical: 4,
+  MedicationRoute.inhalation: 5,
+  MedicationRoute.rectal: 6,
 };

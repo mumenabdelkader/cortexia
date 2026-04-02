@@ -10,6 +10,7 @@ AddPhysicalExaminationCommandModel _$AddPhysicalExaminationCommandModelFromJson(
   Map<String, dynamic> json,
 ) => AddPhysicalExaminationCommandModel(
   examDate: json['examDate'] as String?,
+  id: json['id'] as String?,
   temperature: (json['temperature'] as num?)?.toDouble(),
   bloodPressure: json['bloodPressure'] as String?,
   pulse: (json['pulse'] as num?)?.toInt(),
@@ -28,6 +29,7 @@ Map<String, dynamic> _$AddPhysicalExaminationCommandModelToJson(
   AddPhysicalExaminationCommandModel instance,
 ) => <String, dynamic>{
   'examDate': instance.examDate,
+  'id': instance.id,
   'temperature': instance.temperature,
   'bloodPressure': instance.bloodPressure,
   'pulse': instance.pulse,

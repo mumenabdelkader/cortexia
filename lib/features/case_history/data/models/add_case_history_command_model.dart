@@ -5,6 +5,7 @@ part 'add_case_history_command_model.g.dart';
 @JsonSerializable()
 class AddCaseHistoryCommandModel {
   String? admissionId;
+  String? id;
   String? complaint;
   String? presentIllness;
   String? chronicDisease;
@@ -14,7 +15,7 @@ class AddCaseHistoryCommandModel {
   String? clinicalNotes;
   String? doctorId;
 
-  AddCaseHistoryCommandModel({this.admissionId, this.complaint, this.presentIllness, this.chronicDisease, this.geneticDisease, this.maritalHistory, this.specialHabits, this.clinicalNotes, this.doctorId});
+  AddCaseHistoryCommandModel({this.admissionId, this.id, this.complaint, this.presentIllness, this.chronicDisease, this.geneticDisease, this.maritalHistory, this.specialHabits, this.clinicalNotes, this.doctorId});
 
   factory AddCaseHistoryCommandModel.fromJson(Map<String, dynamic> json) => _$AddCaseHistoryCommandModelFromJson(json);
 

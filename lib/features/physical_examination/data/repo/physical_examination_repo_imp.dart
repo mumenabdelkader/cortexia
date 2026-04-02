@@ -28,4 +28,24 @@ class PhysicalExaminationRepoImp implements PhysicalExaminationRepoInterface {
     }
   }
 
+  @override
+  Future<ApiResult<dynamic>> putAdmissionsAdmissionidPhysicalExamination({required String admissionid, required AddPhysicalExaminationCommandModel requestBody}) async {
+    try {
+      final response = await _apiService.putAdmissionsAdmissionidPhysicalExamination(admissionid: admissionid, requestBody: requestBody);
+      return ApiResult.success(response);
+    } catch (error) {
+      return ApiResult.error(ApiErrorHandler.handle(error));
+    }
+  }
+
+  @override
+  Future<ApiResult<dynamic>> deleteAdmissionsAdmissionidPhysicalExamination({required String admissionid, required String id}) async {
+    try {
+      final response = await _apiService.deleteAdmissionsAdmissionidPhysicalExamination(admissionid: admissionid, id: id);
+      return ApiResult.success(response);
+    } catch (error) {
+      return ApiResult.error(ApiErrorHandler.handle(error));
+    }
+  }
+
 }

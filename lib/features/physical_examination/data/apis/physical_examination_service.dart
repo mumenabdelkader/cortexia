@@ -15,4 +15,10 @@ abstract class PhysicalExaminationService {
   @GET(ApiConstants.physicalExamination)
   Future<dynamic> getAdmissionsAdmissionidPhysicalExamination({@Path('admissionId') required String admissionid});
 
+  @PUT(ApiConstants.physicalExamination)
+  Future<dynamic> putAdmissionsAdmissionidPhysicalExamination({@Path('admissionId') required String admissionid, @Body() required AddPhysicalExaminationCommandModel requestBody});
+
+  @DELETE(ApiConstants.physicalExamination)
+  Future<dynamic> deleteAdmissionsAdmissionidPhysicalExamination({@Path('admissionId') required String admissionid, @Query('Id') required String id});
+
 }
