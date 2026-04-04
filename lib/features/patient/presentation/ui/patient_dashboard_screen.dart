@@ -98,9 +98,9 @@ class PatientDashboardScreen extends StatelessWidget {
                                 "Calculating...", // يمكن حسابه من فرق التواريخ
                           ),
                           const SizedBox(height: 16),
-                          const DashboardCurrentAlerts(),
+                          DashboardCurrentAlerts(admissionId: admission?.id),
                           const SizedBox(height: 16),
-                          const DashboardVitalSigns(),
+                          DashboardVitalSigns(admissionId: admission?.id),
                           const SizedBox(height: 16),
                           GestureDetector(
                             onTap: () {
@@ -286,6 +286,26 @@ class PatientDashboardScreen extends StatelessWidget {
                 iconColor: Colors.deepOrange,
               ),
             ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        Row(
+          children: [
+            Expanded(
+              child: DashboardActionCard(
+                onPressed: () => Navigator.pushNamed(
+                  context,
+                  Routes.physicalExaminationScreen,
+                  arguments: {'admissionId': admission?.id},
+                ),
+                title: "Physical Exam",
+                subTitle: "Examination findings",
+                icon: Icons.personal_injury_outlined,
+                iconColor: Colors.indigo,
+              ),
+            ),
+            const SizedBox(width: 12),
+            const Expanded(child: SizedBox()),
           ],
         ),
       ],

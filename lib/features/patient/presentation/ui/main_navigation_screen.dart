@@ -3,7 +3,7 @@ import 'package:cortexia/core/themes/app_dimens.dart';
 import 'package:cortexia/core/themes/color_themes.dart';
 import 'package:cortexia/features/patient/presentation/ui/clinical_alerts_screen.dart';
 import 'package:cortexia/features/patient/presentation/ui/patient_list_screen.dart';
-import 'package:cortexia/features/patient/presentation/ui/profile_screen.dart';
+import 'package:cortexia/features/doctor/presentation/ui/profile_screen.dart';
 
 class MainNavigationScreen extends StatefulWidget {
   const MainNavigationScreen({super.key});
@@ -53,7 +53,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
           color: AppColors.white,
           boxShadow: [
             BoxShadow(
-              color: AppColors.textSecondary.withValues(alpha:0.1),
+              color: AppColors.textSecondary.withValues(alpha: 0.1),
               blurRadius: 10,
               offset: const Offset(0, -5),
             ),
@@ -106,7 +106,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
         ),
         decoration: BoxDecoration(
           color: isSelected
-              ? AppColors.infoBlue.withValues(alpha:0.1)
+              ? AppColors.infoBlue.withValues(alpha: 0.1)
               : Colors.transparent,
           borderRadius: AppDimens.radius12,
         ),

@@ -1,6 +1,7 @@
 import 'package:cortexia/features/patient/presentation/ui/patient_dashboard_screen.dart';
 import 'package:cortexia/features/patient/presentation/widgets/custom_info_card.dart';
 import 'package:cortexia/features/patients/data/models/get_all_patients_query_model.dart';
+import 'package:cortexia/features/patients/data/models/blood_type.dart';
 import 'package:cortexia/features/patients/data/models/patient_model.dart';
 import 'package:cortexia/features/patients/presentation/controllers/patients_cubit.dart';
 import 'package:flutter/material.dart';
@@ -162,8 +163,12 @@ class _PatientListView extends StatelessWidget {
                           name: p.name ?? '—',
                           patientId: p.fileNumber ?? p.id ?? '—',
                           status: 'Active',
-                          diagnosis: '—',
-                          admissionDate: p.dateOfBirth ?? '—',
+                          diagnosis: p.diagnosisSummary ?? '—',
+                          age: p.age?.toString(),
+                          gender: p.sex ?? p.gender?.name,
+                          bloodType: p.bloodType?.displayLabel,
+                          phone: p.phoneNumber,
+                          email: p.email,
                         ),
                       );
                     },
