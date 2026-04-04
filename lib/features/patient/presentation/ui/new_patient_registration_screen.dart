@@ -1,22 +1,19 @@
+import 'package:cortexia/core/cache/app_cahe.dart';
+import 'package:cortexia/core/themes/color_themes.dart';
+import 'package:cortexia/core/widgets/custom_app_bar.dart';
 import 'package:cortexia/core/widgets/custom_elevated_button.dart';
 import 'package:cortexia/core/widgets/custom_form_field.dart';
+import 'package:cortexia/features/admission/data/models/admit_patient_command.dart';
+import 'package:cortexia/features/admission/data/models/room_model.dart';
 import 'package:cortexia/features/admission/presentation/controllers/admission_cubit.dart';
 import 'package:cortexia/features/admission/presentation/controllers/admission_state.dart';
-import 'package:cortexia/features/admission/presentation/widgets/admission_form_section_container.dart';
 import 'package:cortexia/features/patient/presentation/ui/patient_list_screen.dart';
 import 'package:cortexia/features/patient/presentation/widgets/form_section_container.dart';
-import 'package:cortexia/features/patient/presentation/widgets/patient_id_header.dart';
 import 'package:cortexia/features/patients/data/models/blood_type.dart';
-import 'package:cortexia/features/patients/data/models/create_patient_command_model.dart';
 import 'package:cortexia/features/patients/data/models/gender.dart';
-
-import 'package:cortexia/core/widgets/custom_app_bar.dart';
-import 'package:cortexia/features/patients/presentation/controllers/patients_cubit.dart';
 import 'package:flutter/material.dart';
-import 'package:cortexia/core/themes/color_themes.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
-
 
 class NewPatientRegistrationScreen extends StatefulWidget {
   const NewPatientRegistrationScreen({super.key});
@@ -28,66 +25,70 @@ class NewPatientRegistrationScreen extends StatefulWidget {
 
 class _NewPatientRegistrationScreenState
     extends State<NewPatientRegistrationScreen> {
-  // ── Form key ──────────────────────────────────────────────────────────────
   final _formKey = GlobalKey<FormState>();
 
-  // ── Personal Information controllers ─────────────────────────────────────
-  final _nameController        = TextEditingController();
+  // ── Cubit (created here so _submit can call it directly) ──────────────────
+  late final AdmissionCubit _cubit;
+
+  // ── Personal info controllers ─────────────────────────────────────────────
+  final _nameController = TextEditingController();
+  final _nationalIdController = TextEditingController();
   final _dateOfBirthController = TextEditingController();
-  final _emailController       = TextEditingController();
-  final _phoneController       = TextEditingController();
-  final _nationalIdController  = TextEditingController();
-  final _fileNumberController  = TextEditingController();
-  
-  // controllers العنوان
-  final _streetController      = TextEditingController();
-  final _cityController        = TextEditingController();
-  final _stateController       = TextEditingController();
-  final _countryController     = TextEditingController();
-  final _zipCodeController     = TextEditingController();
+  final _emailController = TextEditingController();
+  final _phoneController = TextEditingController();
+  final _diagnosisSummaryController = TextEditingController();
 
-  Gender?   _selectedGender;
+  // ── Address controllers ────────────────────────────────────────────────────
+  final _streetController = TextEditingController();
+  final _cityController = TextEditingController();
+  final _stateController = TextEditingController();
+  final _zipCodeController = TextEditingController();
+  final _countryController = TextEditingController();
+
+  // ── Admission controllers ──────────────────────────────────────────────────
+  final _initialDiagnosisController = TextEditingController();
+
+  // ── Dropdown selections ────────────────────────────────────────────────────
+  Gender? _selectedGender;
   BloodType? _selectedBloodType;
-  String? _registeredPatientId;
+  RoomModel? _selectedRoom;
+  BedModel? _selectedBed;
 
-  @override
-  void dispose() {
-    _nameController.dispose();
-    _dateOfBirthController.dispose();
-    _emailController.dispose();
-    _phoneController.dispose();
-    _nationalIdController.dispose();
-    _fileNumberController.dispose();
-    _streetController.dispose();
-    _cityController.dispose();
-    _stateController.dispose();
-    _countryController.dispose();
-    _zipCodeController.dispose();
-    super.dispose();
-  }
-
-  // ── Gender labels ─────────────────────────────────────────────────────────
   static const _genderLabels = {
     Gender.value0: 'Male',
     Gender.value1: 'Female',
   };
 
-  // ── BloodType labels ──────────────────────────────────────────────────────
-  static const _bloodTypeLabels = {
-    BloodType.value0: 'A+',
-    BloodType.value1: 'A−',
-    BloodType.value2: 'B+',
-    BloodType.value3: 'B−',
-    BloodType.value4: 'AB+',
-    BloodType.value5: 'AB−',
-    BloodType.value6: 'O+',
-    BloodType.value7: 'O−',
-    BloodType.value8: 'Unknown',
-  };
+  @override
+  void initState() {
+    super.initState();
+    _cubit = AdmissionCubit(GetIt.I.get())..loadRooms();
+  }
 
-  // ── Date Picker ──────────────────────────────────────────────────────────
-  Future<void> _selectDate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
+  @override
+  void dispose() {
+    for (final c in [
+      _nameController,
+      _nationalIdController,
+      _dateOfBirthController,
+      _emailController,
+      _phoneController,
+      _diagnosisSummaryController,
+      _streetController,
+      _cityController,
+      _stateController,
+      _zipCodeController,
+      _countryController,
+      _initialDiagnosisController,
+    ]) {
+      c.dispose();
+    }
+    _cubit.close();
+    super.dispose();
+  }
+
+  Future<void> _selectDate() async {
+    final picked = await showDatePicker(
       context: context,
       initialDate: DateTime.now().subtract(const Duration(days: 365 * 20)),
       firstDate: DateTime(1900),
@@ -95,323 +96,369 @@ class _NewPatientRegistrationScreenState
     );
     if (picked != null) {
       setState(() {
-        // الـ API محتاج الـ Format ده: 1992-07-15T00:00:00Z
-        _dateOfBirthController.text = '${picked.toUtc().toIso8601String().split('.').first}Z';
+        _dateOfBirthController.text =
+            '${picked.toUtc().toIso8601String().split('.').first}Z';
       });
     }
   }
 
-  // ── Submit ────────────────────────────────────────────────────────────────
-  void _submit(BuildContext context) {
+  Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
+    if (_selectedBed == null || _selectedRoom == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please select a room and bed.'),
+          backgroundColor: Colors.orange,
+        ),
+      );
+      return;
+    }
 
-    final requestBody = CreatePatientCommandModel(
-      name:        _nameController.text.trim(),
-      dateOfBirth: _dateOfBirthController.text.trim(),
-      email:       _emailController.text.trim(),
-      phoneNumber:  _phoneController.text.trim(),
-      gender:      _selectedGender,
-      bloodType:   _selectedBloodType,
-      fileNumber:  _fileNumberController.text.trim(),
-      nationalId:  _nationalIdController.text.trim(),
-      street:      _streetController.text.trim(),
-      city:        _cityController.text.trim(),
-      state:       _stateController.text.trim(),
-      country:     _countryController.text.trim(),
-      zipCode:     _zipCodeController.text.trim(),
-    );
+    final userData = await AppCache.getUserData();
+    final doctorId = userData?.userIdInSystem ?? '';
 
-    context.read<PatientsCubit>().postPatients(requestBody: requestBody);
+    if (!mounted) return;
+    _cubit.admitPatient(
+          AdmitPatientCommand(
+            name: _nameController.text.trim(),
+            nationalId: _nationalIdController.text.trim(),
+            dateOfBirth: _dateOfBirthController.text.trim(),
+            gender: _selectedGender,
+            email: _emailController.text.trim(),
+            phone: _phoneController.text.trim(),
+            street: _streetController.text.trim(),
+            city: _cityController.text.trim(),
+            state: _stateController.text.trim(),
+            zipCode: _zipCodeController.text.trim(),
+            country: _countryController.text.trim(),
+            bloodType: _selectedBloodType,
+            diagnosisSummary: _diagnosisSummaryController.text.trim(),
+            doctorId: doctorId,
+            initialDiagnosis: _initialDiagnosisController.text.trim(),
+            roomId: _selectedRoom!.roomId,
+            bedId: _selectedBed!.bedId,
+          ),
+        );
   }
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider(create: (_) => PatientsCubit(GetIt.I.get())),
-        BlocProvider(create: (_) => AdmissionCubit(GetIt.I.get())),
-      ],
-      child: Builder(
-        builder: (context) => Scaffold(
-      appBar: const CustomAppBar(
-        title: "New Patient Registration",
-        subtitle: "Complete patient information",
-      ),
-
-      body: Form(
-        key: _formKey,
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16.0),
-          child: MultiBlocListener(
-            listeners: [
-              BlocListener<AdmissionCubit, AdmissionState>(
-                listener: (context, state) {
-                  if (state is AdmissionSuccess) {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (_) => PatientListScreen()),
-                    );
-                  }
-                },
+    return BlocProvider.value(
+      value: _cubit,
+      child: BlocConsumer<AdmissionCubit, AdmissionState>(
+        listener: (context, state) {
+          if (state is AdmitPatientSuccess) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Patient admitted successfully! ✅'),
+                backgroundColor: Colors.green,
               ),
-            ],
-            child: BlocConsumer<PatientsCubit, PatientsState>(
-            listener: (context, state) {
-              if (state is PatientsStateSuccess &&
-                  state.operation == 'postPatients') {
-                setState(() {
-                  _registeredPatientId = state.data['id'];
-                });
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text("Patient info saved! Now please complete admission details."),
-                    backgroundColor: Colors.green,
-                  ),
-                );
-              } else if (state is PatientsStateError) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text(state.message)),
-                );
-              }
-            },
-            builder: (context, state) {
-              final isLoading = state is PatientsStateLoading;
+            );
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(builder: (_) => const PatientListScreen()),
+            );
+          } else if (state is AdmissionError) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(state.message),
+                backgroundColor: Colors.red,
+              ),
+            );
+          }
+        },
+        builder: (context, state) {
+          final rooms = state is RoomsLoaded ? state.rooms : <RoomModel>[];
+          final isSubmitting = state is AdmissionLoading;
+          final isLoadingRooms = state is RoomsLoading;
 
-              return Column(
-                children: [
-                  // ── Patient ID Header ────────────────────────────────────
-                  PatientIdHeader(
-                    patientId: _registeredPatientId ?? '---',
-                  ),
-
-                  const SizedBox(height: 20),
-
-                  // ── Personal Information ─────────────────────────────────
-                  AbsorbPointer(
-                    absorbing: _registeredPatientId != null,
-                    child: Opacity(
-                      opacity: _registeredPatientId != null ? 0.7 : 1.0,
-                      child: FormSectionContainer(
-                        title: "Personal Information",
-                        icon: Icons.person_add_alt_1_outlined,
-                        children: [
-                          CustomTextFormField(
-                            labelText: "Full Name *",
-                            hintText: "Enter patient's full name",
-                            controller: _nameController,
-                            validator: (v) =>
-                                (v == null || v.trim().isEmpty) ? 'Required' : null,
-                          ),
-                          const SizedBox(height: 16),
-                          GestureDetector(
-                            onTap: _registeredPatientId != null ? null : () => _selectDate(context),
-                            child: AbsorbPointer(
+          return Scaffold(
+            appBar: const CustomAppBar(
+              title: 'Admit New Patient',
+              subtitle: 'Complete patient & admission info',
+            ),
+            body: Form(
+              key: _formKey,
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  children: [
+                    // ── Personal Information ─────────────────────────────────
+                    FormSectionContainer(
+                      title: 'Personal Information',
+                      icon: Icons.person_add_alt_1_outlined,
+                      children: [
+                        CustomTextFormField(
+                          labelText: 'Full Name *',
+                          hintText: 'Enter patient\'s full name',
+                          controller: _nameController,
+                          validator: (v) =>
+                              (v == null || v.trim().isEmpty) ? 'Required' : null,
+                        ),
+                        const SizedBox(height: 16),
+                        Row(
+                          children: [
+                            Expanded(
                               child: CustomTextFormField(
-                                labelText: "Date of Birth *",
-                                hintText: "Select birth date",
-                                controller: _dateOfBirthController,
-                                suffixIcon: const Icon(Icons.calendar_month_outlined),
+                                labelText: 'National ID *',
+                                hintText: 'Enter National ID',
+                                controller: _nationalIdController,
+                                keyboardType: TextInputType.number,
                                 validator: (v) =>
-                                    (v == null || v.trim().isEmpty) ? 'Required' : null,
+                                    (v == null || v.trim().isEmpty)
+                                        ? 'Required'
+                                        : null,
                               ),
                             ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: GestureDetector(
+                                onTap: _selectDate,
+                                child: AbsorbPointer(
+                                  child: CustomTextFormField(
+                                    labelText: 'Date of Birth *',
+                                    hintText: 'Select date',
+                                    controller: _dateOfBirthController,
+                                    suffixIcon: const Icon(
+                                        Icons.calendar_month_outlined),
+                                    validator: (v) =>
+                                        (v == null || v.trim().isEmpty)
+                                            ? 'Required'
+                                            : null,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 16),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: CustomTextFormField(
+                                labelText: 'Email',
+                                hintText: 'patient@email.com',
+                                controller: _emailController,
+                                keyboardType: TextInputType.emailAddress,
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: CustomTextFormField(
+                                labelText: 'Phone',
+                                hintText: '+20xxxxxxxxxx',
+                                controller: _phoneController,
+                                keyboardType: TextInputType.phone,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 16),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: _buildDropdown<Gender>(
+                                label: 'Gender *',
+                                value: _selectedGender,
+                                items: Gender.values,
+                                labelOf: (g) => _genderLabels[g]!,
+                                onChanged: (g) =>
+                                    setState(() => _selectedGender = g),
+                                validator: (v) =>
+                                    v == null ? 'Required' : null,
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: _buildDropdown<BloodType>(
+                                label: 'Blood Type',
+                                value: _selectedBloodType,
+                                items: BloodType.values,
+                                labelOf: (b) => b.displayLabel,
+                                onChanged: (b) =>
+                                    setState(() => _selectedBloodType = b),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 16),
+                        CustomTextFormField(
+                          labelText: 'Diagnosis Summary',
+                          hintText: 'Brief summary of condition',
+                          controller: _diagnosisSummaryController,
+                        ),
+                      ],
+                    ),
+
+                    const SizedBox(height: 16),
+
+                    // ── Address ──────────────────────────────────────────────
+                    FormSectionContainer(
+                      title: 'Address Information',
+                      icon: Icons.location_on_outlined,
+                      iconColor: AppColors.primaryBlue,
+                      children: [
+                        CustomTextFormField(
+                          labelText: 'Street *',
+                          hintText: 'Enter street address',
+                          controller: _streetController,
+                          validator: (v) =>
+                              (v == null || v.trim().isEmpty) ? 'Required' : null,
+                        ),
+                        const SizedBox(height: 16),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: CustomTextFormField(
+                                labelText: 'City *',
+                                hintText: 'e.g. Cairo',
+                                controller: _cityController,
+                                validator: (v) =>
+                                    (v == null || v.trim().isEmpty)
+                                        ? 'Required'
+                                        : null,
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: CustomTextFormField(
+                                labelText: 'State *',
+                                hintText: 'e.g. Giza',
+                                controller: _stateController,
+                                validator: (v) =>
+                                    (v == null || v.trim().isEmpty)
+                                        ? 'Required'
+                                        : null,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 16),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: CustomTextFormField(
+                                labelText: 'Country *',
+                                hintText: 'e.g. Egypt',
+                                controller: _countryController,
+                                validator: (v) =>
+                                    (v == null || v.trim().isEmpty)
+                                        ? 'Required'
+                                        : null,
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: CustomTextFormField(
+                                labelText: 'Zip Code',
+                                hintText: 'Enter zip code',
+                                controller: _zipCodeController,
+                                keyboardType: TextInputType.number,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+
+                    const SizedBox(height: 16),
+
+                    // ── Admission Details ────────────────────────────────────
+                    FormSectionContainer(
+                      title: 'Admission Details',
+                      icon: Icons.login_outlined,
+                      iconColor: Colors.teal,
+                      children: [
+                        CustomTextFormField(
+                          labelText: 'Initial Diagnosis *',
+                          hintText: 'Enter initial diagnosis',
+                          prefixIcon: Icons.medical_services_outlined,
+                          controller: _initialDiagnosisController,
+                          validator: (v) =>
+                              (v == null || v.trim().isEmpty) ? 'Required' : null,
+                        ),
+                        const SizedBox(height: 16),
+
+                        // ── Room selector ──────────────────────────────────
+                        if (isLoadingRooms)
+                          const Center(
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(vertical: 12),
+                              child: CircularProgressIndicator(),
+                            ),
+                          )
+                        else ...[
+                          _buildDropdown<RoomModel>(
+                            label: 'Room *',
+                            value: _selectedRoom,
+                            items: rooms,
+                            labelOf: (r) =>
+                                '${r.roomNumber} · ${r.roomTypeLabel} · Floor ${r.floor}',
+                            onChanged: (r) => setState(() {
+                              _selectedRoom = r;
+                              _selectedBed = null;
+                            }),
                           ),
                           const SizedBox(height: 16),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: CustomTextFormField(
-                                  labelText: "National ID *",
-                                  hintText: "Enter National ID",
-                                  controller: _nationalIdController,
-                                  keyboardType: TextInputType.number,
-                                  validator: (v) =>
-                                      (v == null || v.trim().isEmpty) ? 'Required' : null,
-                                ),
-                              ),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                child: CustomTextFormField(
-                                  labelText: "File Number *",
-                                  hintText: "FN-2026-XXXXX",
-                                  controller: _fileNumberController,
-                                  validator: (v) =>
-                                      (v == null || v.trim().isEmpty) ? 'Required' : null,
-                                ),
-                              ),
-                            ],
+
+                          // ── Bed selector (filtered to available) ──────────
+                          _buildDropdown<BedModel>(
+                            label: 'Bed *',
+                            value: _selectedBed,
+                            items: _selectedRoom?.availableBeds ?? [],
+                            labelOf: (b) =>
+                                '${b.bedNumber} · ${b.isAvailable ? "Available" : "Occupied"}',
+                            onChanged: _selectedRoom == null
+                                ? null
+                                : (b) => setState(() => _selectedBed = b),
                           ),
-                          const SizedBox(height: 16),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: CustomTextFormField(
-                                  labelText: "Email",
-                                  hintText: "patient@email.com",
-                                  controller: _emailController,
-                                  keyboardType: TextInputType.emailAddress,
-                                ),
+                          if (_selectedRoom != null &&
+                              (_selectedRoom!.availableBeds.isEmpty))
+                            Padding(
+                              padding: const EdgeInsets.only(top: 8),
+                              child: Row(
+                                children: [
+                                  Icon(Icons.warning_amber_outlined,
+                                      size: 14,
+                                      color: Colors.orange.shade700),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    'No available beds in this room.',
+                                    style: TextStyle(
+                                        color: Colors.orange.shade700,
+                                        fontSize: 12),
+                                  ),
+                                ],
                               ),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                child: CustomTextFormField(
-                                  labelText: "Phone",
-                                  hintText: "+20xxxxxxxxxx",
-                                  controller: _phoneController,
-                                  keyboardType: TextInputType.phone,
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 16),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: _buildDropdown<Gender>(
-                                  label: "Gender *",
-                                  hint: "Select",
-                                  value: _selectedGender,
-                                  items: Gender.values,
-                                  labelOf: (g) => _genderLabels[g]!,
-                                  onChanged: _registeredPatientId != null ? null : (g) =>
-                                      setState(() => _selectedGender = g),
-                                  validator: (v) =>
-                                      v == null ? 'Required' : null,
-                                ),
-                              ),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                child: _buildDropdown<BloodType>(
-                                  label: "Blood Type",
-                                  hint: "Select",
-                                  value: _selectedBloodType,
-                                  items: BloodType.values,
-                                  labelOf: (b) => _bloodTypeLabels[b]!,
-                                  onChanged: _registeredPatientId != null ? null : (b) =>
-                                      setState(() => _selectedBloodType = b),
-                                ),
-                              ),
-                            ],
-                          ),
+                            ),
                         ],
-                      ),
+
+                        const SizedBox(height: 24),
+
+                        isSubmitting
+                            ? const Center(
+                                child: CircularProgressIndicator(
+                                    color: Colors.teal),
+                              )
+                            : CustomElevatedButton(
+                                text: 'Admit Patient',
+                                onPressed: _submit,
+                              ),
+                      ],
                     ),
-                  ),
 
-                  const SizedBox(height: 20),
-
-                  // ── Address Information ──────────────────────────────────
-                  AbsorbPointer(
-                    absorbing: _registeredPatientId != null,
-                    child: Opacity(
-                      opacity: _registeredPatientId != null ? 0.7 : 1.0,
-                      child: FormSectionContainer(
-                        title: "Address Information",
-                        icon: Icons.location_on_outlined,
-                        iconColor: AppColors.primaryBlue,
-                        children: [
-                          CustomTextFormField(
-                            labelText: "Street *",
-                            hintText: "Enter street address",
-                            controller: _streetController,
-                            validator: (v) =>
-                                (v == null || v.trim().isEmpty) ? 'Required' : null,
-                          ),
-                          const SizedBox(height: 16),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: CustomTextFormField(
-                                  labelText: "City *",
-                                  hintText: "e.g. Giza",
-                                  controller: _cityController,
-                                  validator: (v) =>
-                                      (v == null || v.trim().isEmpty) ? 'Required' : null,
-                                ),
-                              ),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                child: CustomTextFormField(
-                                  labelText: "State *",
-                                  hintText: "e.g. Giza",
-                                  controller: _stateController,
-                                  validator: (v) =>
-                                      (v == null || v.trim().isEmpty) ? 'Required' : null,
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 16),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: CustomTextFormField(
-                                  labelText: "Country *",
-                                  hintText: "e.g. Egypt",
-                                  controller: _countryController,
-                                  validator: (v) =>
-                                      (v == null || v.trim().isEmpty) ? 'Required' : null,
-                                ),
-                              ),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                child: CustomTextFormField(
-                                  labelText: "Zip Code *",
-                                  hintText: "Enter Zip Code",
-                                  controller: _zipCodeController,
-                                  keyboardType: TextInputType.number,
-                                  validator: (v) =>
-                                      (v == null || v.trim().isEmpty) ? 'Required' : null,
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 24),
-                          if (_registeredPatientId == null)
-                            isLoading
-                                ? const CircularProgressIndicator()
-                                : CustomElevatedButton(
-                            text: "Save Patient Info",
-                            onPressed: () => _submit(context),
-                          ),
-                          if (_registeredPatientId != null)
-                             const Padding(
-                               padding: EdgeInsets.symmetric(vertical: 8.0),
-                               child: Text("Personal Info Saved ✅", style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold)),
-                             ),
-                        ],
-                      ),
-                    ),
-                  ),
-
-                  const SizedBox(height: 20),
-
-                  // ── Admission Details ────────────────────────────────────
-                  AbsorbPointer(
-                    absorbing: _registeredPatientId == null,
-                    child: Opacity(
-                      opacity: _registeredPatientId == null ? 0.5 : 1.0,
-                      child: AdmissionFormSectionContainer(
-                        patientId: _registeredPatientId,
-                        doctorId: "DOC-1436C0633BBD",
-                      ),
-                    ),
-                  ),
-
-                  const SizedBox(height: 40),
-                ],
-              );
-            },
-          ),
-        ),
+                    const SizedBox(height: 40),
+                  ],
+                ),
+              ),
+            ),
+          );
+        },
       ),
-    ))));
+    );
   }
 
-  // ── Helper: generic dropdown builder ─────────────────────────────────────
   Widget _buildDropdown<T>({
     required String label,
-    required String hint,
     required T? value,
     required List<T> items,
     required String Function(T) labelOf,
@@ -430,20 +477,28 @@ class _NewPatientRegistrationScreenState
         ),
         const SizedBox(height: 8),
         DropdownButtonFormField<T>(
-          initialValue: value,
-          hint: Text(hint,
-              style: Theme.of(context)
-                  .textTheme
-                  .bodyMedium
-                  ?.copyWith(color: AppColors.textLight)),
+          value: value,
+          hint: Text(
+            'Select',
+            style: Theme.of(context)
+                .textTheme
+                .bodyMedium
+                ?.copyWith(color: AppColors.textLight),
+          ),
           items: items
-              .map((e) => DropdownMenuItem<T>(
-                    value: e,
-                    child: Text(labelOf(e)),
-                  ))
+              .map(
+                (e) => DropdownMenuItem<T>(
+                  value: e,
+                  child: Text(
+                    labelOf(e),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              )
               .toList(),
           onChanged: onChanged,
           validator: validator,
+          isExpanded: true,
           decoration: InputDecoration(
             filled: true,
             fillColor: const Color(0xFFEDF2F7),

@@ -1,3 +1,4 @@
+import 'package:cortexia/core/routing/routes.dart';
 import 'package:cortexia/features/medications/presentation/controllers/medications_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -8,10 +9,12 @@ class DashboardActiveMedications extends StatefulWidget {
   const DashboardActiveMedications({super.key, this.admissionId});
 
   @override
-  State<DashboardActiveMedications> createState() => _DashboardActiveMedicationsState();
+  State<DashboardActiveMedications> createState() =>
+      _DashboardActiveMedicationsState();
 }
 
-class _DashboardActiveMedicationsState extends State<DashboardActiveMedications> {
+class _DashboardActiveMedicationsState
+    extends State<DashboardActiveMedications> {
   @override
   Widget build(BuildContext context) {
     if (widget.admissionId == null || widget.admissionId!.isEmpty) {
@@ -19,7 +22,8 @@ class _DashboardActiveMedicationsState extends State<DashboardActiveMedications>
     }
 
     return BlocProvider(
-      create: (context) => MedicationsCubit(GetIt.I.get())..getAdmissionsAdmissionidMedications(admissionid: widget.admissionId!),
+      create: (context) => MedicationsCubit(GetIt.I.get())
+        ..getAdmissionsAdmissionidMedications(admissionid: widget.admissionId!),
       child: BlocBuilder<MedicationsCubit, MedicationsState>(
         builder: (context, state) {
           return Container(
@@ -35,7 +39,11 @@ class _DashboardActiveMedicationsState extends State<DashboardActiveMedications>
                 // عنوان القسم مع أيقونة الكبسولة
                 Row(
                   children: const [
-                    Icon(Icons.medication_outlined, color: Colors.cyan, size: 22),
+                    Icon(
+                      Icons.medication_outlined,
+                      color: Colors.cyan,
+                      size: 22,
+                    ),
                     SizedBox(width: 8),
                     Text(
                       "Active Medications",
@@ -63,7 +71,13 @@ class _DashboardActiveMedicationsState extends State<DashboardActiveMedications>
                 // زر العرض الكامل
                 Center(
                   child: TextButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.pushNamed(
+                        context,
+                        Routes.medicationScreen,
+                        arguments: {'admissionId': widget.admissionId},
+                      );
+                    },
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: const [
@@ -101,7 +115,8 @@ class _DashboardActiveMedicationsState extends State<DashboardActiveMedications>
         padding: const EdgeInsets.only(bottom: 12),
         child: _buildMedicationItem(
           name: med.drugName ?? 'Unknown',
-          info: "${med.dose}${med.doseUnit} • ${med.route != null ? med.route.toString().split('.').last : ''}",
+          info:
+              "${med.dose}${med.doseUnit} • ${med.route != null ? med.route.toString().split('.').last : ''}",
           time: med.frequency != null ? "${med.frequency}x" : "N/A",
         ),
       );
@@ -137,10 +152,7 @@ class _DashboardActiveMedicationsState extends State<DashboardActiveMedications>
               const SizedBox(height: 4),
               Text(
                 info,
-                style: TextStyle(
-                  fontSize: 13,
-                  color: Colors.grey.shade600,
-                ),
+                style: TextStyle(fontSize: 13, color: Colors.grey.shade600),
               ),
             ],
           ),
@@ -150,7 +162,7 @@ class _DashboardActiveMedicationsState extends State<DashboardActiveMedications>
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.blue.withValues(alpha:0.1)),
+              border: Border.all(color: Colors.blue.withValues(alpha: 0.1)),
             ),
             child: Text(
               time,

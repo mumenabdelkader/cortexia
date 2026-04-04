@@ -45,13 +45,13 @@ Map<String, dynamic> _$CreatePatientCommandModelToJson(
 const _$GenderEnumMap = {Gender.value0: 0, Gender.value1: 1};
 
 const _$BloodTypeEnumMap = {
-  BloodType.value0: 0,
-  BloodType.value1: 1,
-  BloodType.value2: 2,
-  BloodType.value3: 3,
-  BloodType.value4: 4,
-  BloodType.value5: 5,
-  BloodType.value6: 6,
-  BloodType.value7: 7,
-  BloodType.value8: 8,
+  BloodType.aPositive: 0,
+  BloodType.aNegative: 1,
+  BloodType.bPositive: 2,
+  BloodType.bNegative: 3,
+  BloodType.abPositive: 4,
+  BloodType.abNegative: 5,
+  BloodType.oPositive: 6,
+  BloodType.oNegative: 7,
+  BloodType.unknown: 8,
 };

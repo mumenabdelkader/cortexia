@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 class DashboardCurrentAlerts extends StatelessWidget {
-  const DashboardCurrentAlerts({super.key});
+  final String? admissionId;
+  const DashboardCurrentAlerts({super.key, this.admissionId});
 
   @override
   Widget build(BuildContext context) {
@@ -111,10 +112,7 @@ class DashboardCurrentAlerts extends StatelessWidget {
               const SizedBox(height: 2),
               Text(
                 subtitle,
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey.shade600,
-                ),
+                style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
               ),
             ],
           ),

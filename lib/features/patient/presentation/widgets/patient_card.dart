@@ -7,7 +7,11 @@ class PatientCard extends StatelessWidget {
   final String patientId;
   final String status;
   final String diagnosis;
-  final String admissionDate;
+  final String? age;
+  final String? gender;
+  final String? bloodType;
+  final String? phone;
+  final String? email;
   final String hrValue;
   final String tempValue;
   final String bpValue;
@@ -19,25 +23,29 @@ class PatientCard extends StatelessWidget {
     required this.patientId,
     required this.status,
     required this.diagnosis,
-    required this.admissionDate,
-    this.hrValue = "0",
-    this.tempValue = "0",
-    this.bpValue = "0/0",
-    this.spo2Value = "0%",
+    this.age,
+    this.gender,
+    this.bloodType,
+    this.phone,
+    this.email,
+    this.hrValue = "—",
+    this.tempValue = "—",
+    this.bpValue = "—",
+    this.spo2Value = "—",
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(16),
-      margin: const EdgeInsets.only(bottom: 16), // مسافة بين الكروت
+      margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppColors.border.withValues(alpha:0.5)),
+        border: Border.all(color: AppColors.border.withValues(alpha: 0.5)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha:0.02),
+            color: Colors.black.withValues(alpha: 0.02),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -45,14 +53,10 @@ class PatientCard extends StatelessWidget {
       ),
       child: Column(
         children: [
-          // الجزء العلوي: الصورة والاسم والحالة
+          // ── Header: avatar, name, ID, status badge ──────────────────────
           Row(
             children: [
-              const CircleAvatar(
-                radius: 25,
-                backgroundColor: Color(0xFFE2E8F0),
-                child: Icon(Icons.person, color: AppColors.primaryBlue),
-              ),
+              _buildAvatar(),
               const SizedBox(width: 12),
               Expanded(
                 child: Column(
@@ -71,17 +75,82 @@ class PatientCard extends StatelessWidget {
                   ],
                 ),
               ),
-              _buildStatusBadge(status),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  _buildStatusBadge(status),
+                  if (bloodType != null) ...[
+                    const SizedBox(height: 4),
+                    _buildBloodTypeBadge(bloodType!),
+                  ],
+                ],
+              ),
             ],
           ),
 
-          const SizedBox(height: 20),
-          _buildDetailRow("Diagnosis:", diagnosis),
-          const SizedBox(height: 8),
-          _buildDetailRow("Admitted:", admissionDate),
-          const SizedBox(height: 20),
+          const SizedBox(height: 14),
+          const Divider(height: 1, color: Color(0xFFF1F5F9)),
+          const SizedBox(height: 14),
 
-          // كروت العلامات الحيوية (isSmall: true)
+          // ── Patient details grid ─────────────────────────────────────────
+          _buildDetailRow(
+            icon: Icons.assignment_outlined,
+            label: "Diagnosis",
+            value: diagnosis,
+            iconColor: Colors.blue,
+          ),
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              Expanded(
+                child: _buildDetailRow(
+                  icon: Icons.cake_outlined,
+                  label: "Age",
+                  value: age != null ? "$age yrs" : "—",
+                  iconColor: Colors.purple,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: _buildDetailRow(
+                  icon: Icons.wc_outlined,
+                  label: "Gender",
+                  value: gender ?? "—",
+                  iconColor: Colors.teal,
+                ),
+              ),
+            ],
+          ),
+          if (phone != null || email != null) ...[
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                if (phone != null)
+                  Expanded(
+                    child: _buildDetailRow(
+                      icon: Icons.phone_outlined,
+                      label: "Phone",
+                      value: phone!,
+                      iconColor: Colors.green,
+                    ),
+                  ),
+                if (phone != null && email != null) const SizedBox(width: 12),
+                if (email != null)
+                  Expanded(
+                    child: _buildDetailRow(
+                      icon: Icons.email_outlined,
+                      label: "Email",
+                      value: email!,
+                      iconColor: Colors.orange,
+                    ),
+                  ),
+              ],
+            ),
+          ],
+
+          const SizedBox(height: 14),
+
+          // ── Vital Signs mini-cards ───────────────────────────────────────
           Row(
             children: [
               Expanded(
@@ -134,19 +203,47 @@ class PatientCard extends StatelessWidget {
     );
   }
 
-  // ميثود فرعية للـ Badge
+  Widget _buildAvatar() {
+    final initials = name.trim().isNotEmpty
+        ? name.trim().split(' ').map((w) => w[0]).take(2).join().toUpperCase()
+        : '?';
+    return CircleAvatar(
+      radius: 26,
+      backgroundColor: const Color(0xFFE2E8F0),
+      child: Text(
+        initials,
+        style: const TextStyle(
+          color: AppColors.primaryBlue,
+          fontWeight: FontWeight.bold,
+          fontSize: 14,
+        ),
+      ),
+    );
+  }
+
   Widget _buildStatusBadge(String status) {
-    bool isStable = status.toLowerCase() == "stable";
+    final isStable = status.toLowerCase() == "stable";
+    final isActive = status.toLowerCase() == "active";
+    Color color = isStable
+        ? Colors.green
+        : isActive
+        ? Colors.blue
+        : Colors.orange;
+    Color bg = isStable
+        ? Colors.green.shade50
+        : isActive
+        ? Colors.blue.shade50
+        : Colors.orange.shade50;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
-        color: isStable ? Colors.green[50] : Colors.orange[50],
+        color: bg,
         borderRadius: BorderRadius.circular(8),
       ),
       child: Text(
         status,
         style: TextStyle(
-          color: isStable ? Colors.green : Colors.orange,
+          color: color,
           fontWeight: FontWeight.bold,
           fontSize: 12,
         ),
@@ -154,13 +251,52 @@ class PatientCard extends StatelessWidget {
     );
   }
 
-  // ميثود فرعية لصفوف البيانات
-  Widget _buildDetailRow(String label, String value) {
+  Widget _buildBloodTypeBadge(String type) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+      decoration: BoxDecoration(
+        color: Colors.red.shade50,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.bloodtype_outlined, size: 11, color: Colors.red.shade400),
+          const SizedBox(width: 3),
+          Text(
+            type,
+            style: TextStyle(
+              color: Colors.red.shade600,
+              fontWeight: FontWeight.bold,
+              fontSize: 11,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDetailRow({
+    required IconData icon,
+    required String label,
+    required String value,
+    required Color iconColor,
+  }) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(label, style: TextStyle(color: Colors.grey[600], fontSize: 13)),
-        Text(value, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
+        Icon(icon, size: 14, color: iconColor),
+        const SizedBox(width: 5),
+        Text(
+          "$label: ",
+          style: TextStyle(color: Colors.grey[500], fontSize: 12),
+        ),
+        Flexible(
+          child: Text(
+            value,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 12),
+          ),
+        ),
       ],
     );
   }

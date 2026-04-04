@@ -9,8 +9,8 @@ import '../../features/patient/presentation/ui/chatbot_screen.dart';
 import '../../features/patient/presentation/ui/new_patient_registration_screen.dart';
 import '../../features/patient/presentation/ui/patient_dashboard_screen.dart';
 import '../../features/patient/presentation/ui/patient_list_screen.dart';
-import '../../features/patient/presentation/ui/physical_examination_screen.dart';
-import '../../features/patient/presentation/ui/profile_screen.dart';
+import '../../features/physical_examination/presentation/ui/physical_examination_screen.dart';
+import '../../features/doctor/presentation/ui/profile_screen.dart';
 import '../../welcome_screens.dart';
 import 'package:cortexia/features/authentication/presentation/ui/forgot_password_screen.dart';
 import 'package:cortexia/features/authentication/presentation/ui/reset_password_screen.dart';
@@ -26,6 +26,7 @@ import 'package:cortexia/features/vital_signs/presentation/ui/vital_signs_screen
 import 'package:cortexia/features/vital_signs/presentation/controllers/vital_signs_cubit.dart';
 import 'package:cortexia/features/intervention_procedures/presentation/ui/intervention_procedures_screen.dart';
 import 'package:cortexia/features/intervention_procedures/presentation/controllers/intervention_procedures_cubit.dart';
+import 'package:cortexia/features/physical_examination/presentation/controllers/physical_examination_cubit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'routes.dart';
@@ -121,8 +122,14 @@ class AppRouter {
       case Routes.patientListScreen:
         return MaterialPageRoute(builder: (_) => const PatientListScreen());
       case Routes.physicalExaminationScreen:
+        final admissionId =
+            (arguments is Map ? arguments['admissionId'] : null) as String? ??
+            '';
         return MaterialPageRoute(
-          builder: (_) => const PhysicalExaminationScreen(),
+          builder: (_) => BlocProvider(
+            create: (_) => locator<PhysicalExaminationCubit>(),
+            child: PhysicalExaminationScreen(admissionId: admissionId),
+          ),
         );
       case Routes.profileScreen:
         return MaterialPageRoute(builder: (_) => const ProfileScreen());

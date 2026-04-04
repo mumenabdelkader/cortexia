@@ -42,6 +42,10 @@ import 'package:cortexia/features/vital_signs/data/apis/vital_signs_service.dart
 import 'package:cortexia/features/vital_signs/data/repo/vital_signs_repo_imp.dart';
 import 'package:cortexia/features/vital_signs/domain/repo/repo_interface.dart';
 import 'package:cortexia/features/vital_signs/presentation/controllers/vital_signs_cubit.dart';
+import 'package:cortexia/features/doctor/data/apis/doctor_service.dart';
+import 'package:cortexia/features/doctor/data/repo/doctor_repo_impl.dart';
+import 'package:cortexia/features/doctor/domain/repo/doctor_repo_interface.dart';
+import 'package:cortexia/features/doctor/presentation/controllers/doctor_cubit.dart';
 
 import 'package:get_it/get_it.dart';
 
@@ -170,5 +174,16 @@ Future<void> setupGetIt() async {
   );
   locator.registerFactory<VitalSignsCubit>(
     () => VitalSignsCubit(locator<VitalSignsRepoInterface>()),
+  );
+
+  /* -------------------------- DOCTOR FEATURE ----------------------------- */
+  locator.registerLazySingleton<DoctorService>(
+    () => DoctorService(dio),
+  );
+  locator.registerLazySingleton<DoctorRepoInterface>(
+    () => DoctorRepoImpl(locator<DoctorService>()),
+  );
+  locator.registerFactory<DoctorCubit>(
+    () => DoctorCubit(locator<DoctorRepoInterface>()),
   );
 }
