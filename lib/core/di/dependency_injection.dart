@@ -46,6 +46,10 @@ import 'package:cortexia/features/doctor/data/apis/doctor_service.dart';
 import 'package:cortexia/features/doctor/data/repo/doctor_repo_impl.dart';
 import 'package:cortexia/features/doctor/domain/repo/doctor_repo_interface.dart';
 import 'package:cortexia/features/doctor/presentation/controllers/doctor_cubit.dart';
+import 'package:cortexia/features/alerts/data/apis/alerts_service.dart';
+import 'package:cortexia/features/alerts/data/repo/alerts_repo_impl.dart';
+import 'package:cortexia/features/alerts/domain/repo/alerts_repo_interface.dart';
+import 'package:cortexia/features/alerts/presentation/controllers/alerts_cubit.dart';
 
 import 'package:get_it/get_it.dart';
 
@@ -185,5 +189,15 @@ Future<void> setupGetIt() async {
   );
   locator.registerFactory<DoctorCubit>(
     () => DoctorCubit(locator<DoctorRepoInterface>()),
+  );
+  /* -------------------------- ALERTS FEATURE ----------------------------- */
+  locator.registerLazySingleton<AlertsService>(
+    () => AlertsService(dio),
+  );
+  locator.registerLazySingleton<AlertsRepoInterface>(
+    () => AlertsRepoImpl(locator<AlertsService>()),
+  );
+  locator.registerFactory<AlertsCubit>(
+    () => AlertsCubit(locator<AlertsRepoInterface>()),
   );
 }

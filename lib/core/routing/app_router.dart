@@ -1,7 +1,7 @@
 // Dependency Injection
 import 'package:cortexia/core/di/dependency_injection.dart';
+import 'package:cortexia/features/alerts/presentation/ui/clinical_alerts_screen.dart';
 import 'package:cortexia/features/fluid_balance/presentation/controllers/fluid_balance_cubit.dart';
-import 'package:cortexia/features/patient/presentation/ui/clinical_alerts_screen.dart';
 import 'package:flutter/material.dart';
 import '../../features/authentication/presentation/ui/login_screen.dart';
 import '../../features/case_history/presentation/ui/case_history_screen.dart';
@@ -27,6 +27,7 @@ import 'package:cortexia/features/vital_signs/presentation/controllers/vital_sig
 import 'package:cortexia/features/intervention_procedures/presentation/ui/intervention_procedures_screen.dart';
 import 'package:cortexia/features/intervention_procedures/presentation/controllers/intervention_procedures_cubit.dart';
 import 'package:cortexia/features/physical_examination/presentation/controllers/physical_examination_cubit.dart';
+import 'package:cortexia/features/alerts/presentation/controllers/alerts_cubit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'routes.dart';
@@ -82,7 +83,15 @@ class AppRouter {
           ),
         );
       case Routes.clinicalAlertsScreen:
-        return MaterialPageRoute(builder: (_) => const ClinicalAlertsScreen());
+        final alertsAdmissionId =
+            (arguments is Map ? arguments['admissionId'] : null) as String? ??
+            '';
+        return MaterialPageRoute(
+          builder: (_) => BlocProvider(
+            create: (context) => locator<AlertsCubit>(),
+            child: ClinicalAlertsScreen(admissionId: alertsAdmissionId),
+          ),
+        );
       case Routes.mainNavigationScreen:
         return MaterialPageRoute(builder: (_) => const MainNavigationScreen());
       case Routes.medicationScreen:

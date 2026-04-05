@@ -229,4 +229,9 @@ class ApiConstants {
 
   // ── Vital Signs ────────────────────────────────────────────────────────────
   static const String vitalSigns = '/api/admissions/{admissionId}/vitals';
+
+  // ── Alerts (SmartAssistant) ────────────────────────────────────────────────
+  static const String activeAlerts = '/api/SmartAssistant/alerts/active';
+  static String overrideAlert(String id) =>
+      '/api/SmartAssistant/alerts/$id/override';
 }

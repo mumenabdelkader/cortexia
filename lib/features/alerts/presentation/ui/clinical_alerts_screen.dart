@@ -1,140 +1,94 @@
+import 'package:cortexia/core/cache/app_cahe.dart';
+import 'package:cortexia/features/alerts/data/models/alert_model.dart';
+import 'package:cortexia/features/alerts/data/models/override_alert_request.dart';
+import 'package:cortexia/features/alerts/presentation/controllers/alerts_cubit.dart';
+import 'package:cortexia/features/alerts/presentation/controllers/alerts_state.dart';
 import 'package:flutter/material.dart';
 import 'package:cortexia/core/themes/app_dimens.dart';
 import 'package:cortexia/core/themes/color_themes.dart';
 import 'package:cortexia/core/widgets/custom_app_bar.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-class ClinicalAlertsScreen extends StatelessWidget {
-  const ClinicalAlertsScreen({super.key});
+class ClinicalAlertsScreen extends StatefulWidget {
+  final String admissionId;
+  const ClinicalAlertsScreen({super.key, required this.admissionId});
+
+  @override
+  State<ClinicalAlertsScreen> createState() => _ClinicalAlertsScreenState();
+}
+
+class _ClinicalAlertsScreenState extends State<ClinicalAlertsScreen> {
+  @override
+  void initState() {
+    super.initState();
+    context.read<AlertsCubit>().getActiveAlerts(widget.admissionId);
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.scaffoldBg,
-      appBar: const CustomAppBar(title: 'Clinical Alarts'),
-      body: SingleChildScrollView(
-        padding: AppDimens.paddingAll16,
-        child: Column(
-          children: [
-            _buildTopCountsArea(),
-            SizedBox(height: AppDimens.space16),
-            _buildFiltersArea(),
-            SizedBox(height: AppDimens.space16),
-            _buildAlertCard(
-              title: 'Sepsis Alert',
-              badgeText: 'CRITICAL',
-              badgeColor: AppColors.errorRed,
-              description: 'SIRS criteria met: Temp 38.5°C, HR 105, WBC 15.2',
-              timeText: '5 min ago',
-              typeBadge: 'clinical',
-              primaryAction: 'Review',
-              secondaryAction: 'Acknowledge',
-              iconData: Icons.warning_amber_rounded,
-              iconColor: AppColors.errorRed,
-              cardBorderColor: const Color(0x4DF44336), // 30% opacity
-              cardBgColor: const Color(0x1AF44336), // 10% opacity
-            ),
-            SizedBox(height: AppDimens.space12),
-            _buildAlertCard(
-              title: 'Low Oxygen Saturation',
-              badgeText: 'HIGH',
-              badgeColor: AppColors.warningOrange,
-              description: 'SpO₂ dropped to 91% - Patient may need oxygen adjustment',
-              timeText: '15 min ago',
-              typeBadge: 'vitals',
-              primaryAction: 'Check Patient',
-              secondaryAction: 'Dismiss',
-              iconData: Icons.air,
-              iconColor: AppColors.warningOrange,
-              cardBorderColor: const Color(0x4DFF9800),
-              cardBgColor: const Color(0x1AFF9800),
-            ),
-            SizedBox(height: AppDimens.space12),
-            _buildAlertCard(
-              title: 'Drug Interaction Warning',
-              badgeText: 'HIGH',
-              badgeColor: AppColors.warningOrange,
-              description: 'Warfarin + Aspirin: Increased bleeding risk',
-              timeText: '30 min ago',
-              typeBadge: 'medication',
-              primaryAction: 'Review Meds',
-              secondaryAction: 'Consult',
-              iconData: Icons.medication,
-              iconColor: AppColors.warningOrange,
-              cardBorderColor: const Color(0x4DFF9800),
-              cardBgColor: const Color(0x1AFF9800),
-            ),
-             SizedBox(height: AppDimens.space12),
-            _buildAlertCard(
-              title: 'Abnormal Lab Result',
-              badgeText: 'MEDIUM',
-              badgeColor: AppColors.infoBlue, 
-              description: 'Potassium 3.2 mEq/L (Low) - Consider supplementation',
-              timeText: '1 hour ago',
-              typeBadge: 'lab',
-              primaryAction: 'Order K+',
-              secondaryAction: 'Monitor',
-              iconData: Icons.science,
-              iconColor: AppColors.infoBlue,
-              cardBorderColor: const Color(0x4D0066CC), // derived from the blue hex
-              cardBgColor: const Color(0x1A0066CC),
-            ),
-            SizedBox(height: AppDimens.space12),
-            _buildAlertCard(
-              title: 'Elevated Temperature',
-              badgeText: 'MEDIUM',
-              badgeColor: AppColors.infoBlue,
-              description: 'Temperature trending up: 38.2°C → 38.5°C',
-              timeText: '2 hours ago',
-              typeBadge: 'vitals',
-              primaryAction: 'Give Antipyretic',
-              secondaryAction: 'Culture',
-              iconData: Icons.thermostat,
-              iconColor: AppColors.infoBlue,
-              cardBorderColor: const Color(0x4D0066CC),
-              cardBgColor: const Color(0x1A0066CC),
-            ),
-             SizedBox(height: AppDimens.space12),
-            _buildAlertCard(
-              title: 'Medication Due',
-              badgeText: 'LOW',
-              badgeColor: AppColors.infoBlue, 
-              description: 'Amoxicillin 500mg PO due in 15 minutes',
-              timeText: 'Now',
-              typeBadge: 'medication',
-              primaryAction: 'Administer',
-              secondaryAction: 'Delay',
-              iconData: Icons.access_time,
-              iconColor: AppColors.infoBlue,
-              cardBorderColor: const Color(0x4D0066CC),
-              cardBgColor: const Color(0x1A0066CC),
-            ),
-             SizedBox(height: AppDimens.space12),
-            _buildAlertCard(
-              title: 'IV Bag Low',
-              badgeText: 'LOW',
-              badgeColor: AppColors.infoBlue,
-              description: 'Normal Saline remaining: <200mL',
-              timeText: '10 min ago',
-              typeBadge: 'clinical',
-              primaryAction: 'Replace',
-              secondaryAction: 'Dismiss',
-              iconData: Icons.water_drop,
-              iconColor: AppColors.infoBlue,
-              cardBorderColor: const Color(0x4D0066CC),
-              cardBgColor: const Color(0x1A0066CC),
-            ),
-          ],
-        ),
+      appBar: const CustomAppBar(title: 'Clinical Alerts'),
+      body: BlocConsumer<AlertsCubit, AlertsState>(
+        listener: (context, state) {
+          if (state is OverrideAlertSuccess) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(state.message), backgroundColor: Colors.green),
+            );
+          } else if (state is OverrideAlertError) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(state.message), backgroundColor: AppColors.errorRed),
+            );
+          }
+        },
+        builder: (context, state) {
+          if (state is AlertsLoading) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (state is AlertsError) {
+            return Center(child: Text(state.message));
+          } else if (state is AlertsLoaded || state is OverrideAlertLoading || state is OverrideAlertSuccess || state is OverrideAlertError) {
+            final alerts = context.read<AlertsCubit>().activeAlerts;
+            if (alerts.isEmpty) {
+              return const Center(child: Text('No active alerts'));
+            }
+            return SingleChildScrollView(
+              padding: AppDimens.paddingAll16,
+              child: Column(
+                children: [
+                  _buildTopCountsArea(alerts),
+                  SizedBox(height: AppDimens.space16),
+                  _buildFiltersArea(alerts.length),
+                  SizedBox(height: AppDimens.space16),
+                  ListView.separated(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: alerts.length,
+                    separatorBuilder: (_, __) => SizedBox(height: AppDimens.space12),
+                    itemBuilder: (context, index) {
+                      final alert = alerts[index];
+                      return _buildAlertCardFromModel(alert);
+                    },
+                  ),
+                ],
+              ),
+            );
+          }
+          return const SizedBox.shrink();
+        },
       ),
     );
   }
 
-  Widget _buildTopCountsArea() {
+  Widget _buildTopCountsArea(List<AlertModel> alerts) {
+    int critical = alerts.where((a) => a.severity == 3).length;
+    int high = alerts.where((a) => a.severity == 2).length;
+    int other = alerts.where((a) => a.severity == 1 || a.severity == 0).length;
+
     return Row(
       children: [
         Expanded(
           child: _buildCountCard(
-            count: '1',
+            count: critical.toString(),
             label: 'Critical',
             labelColor: AppColors.textSecondary,
             countColor: AppColors.errorRed,
@@ -145,7 +99,7 @@ class ClinicalAlertsScreen extends StatelessWidget {
         SizedBox(width: AppDimens.space12),
         Expanded(
           child: _buildCountCard(
-            count: '2',
+            count: high.toString(),
             label: 'High',
              labelColor: AppColors.textSecondary,
             countColor: AppColors.warningOrange,
@@ -156,10 +110,10 @@ class ClinicalAlertsScreen extends StatelessWidget {
         SizedBox(width: AppDimens.space12),
         Expanded(
           child: _buildCountCard(
-            count: '4',
+            count: other.toString(),
             label: 'Other',
              labelColor: AppColors.textSecondary,
-            countColor: AppColors.infoBlue, // Figma uses the primary blue color
+            countColor: AppColors.infoBlue, 
             bgColor: const Color(0x1A0066CC),   
             borderColor: const Color(0x4D0066CC), 
           ),
@@ -206,7 +160,7 @@ class ClinicalAlertsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildFiltersArea() {
+  Widget _buildFiltersArea(int total) {
     return Container(
       padding: EdgeInsets.symmetric(vertical: AppDimens.space8),
       decoration: BoxDecoration(
@@ -219,9 +173,9 @@ class ClinicalAlertsScreen extends StatelessWidget {
         padding: EdgeInsets.symmetric(horizontal: AppDimens.space12),
         child: Row(
           children: [
-            _buildFilterChip(label: 'All (7)', isSelected: true),
+            _buildFilterChip(label: 'All ($total)', isSelected: true),
             SizedBox(width: AppDimens.space8),
-            _buildFilterChip(label: 'Critical (1)', isSelected: false),
+            _buildFilterChip(label: 'Critical', isSelected: false),
             SizedBox(width: AppDimens.space8),
             _buildFilterChip(label: 'Vitals', isSelected: false),
             SizedBox(width: AppDimens.space8),
@@ -236,7 +190,7 @@ class ClinicalAlertsScreen extends StatelessWidget {
 
   Widget _buildFilterChip({required String label, required bool isSelected}) {
     return Container(
-       padding: EdgeInsets.symmetric(horizontal: AppDimens.space12, vertical: 6),
+       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
         color: isSelected ? AppColors.infoBlue : AppColors.scaffoldBg,
         borderRadius: AppDimens.radius8,
@@ -253,7 +207,66 @@ class ClinicalAlertsScreen extends StatelessWidget {
     );
   }
 
+  Widget _buildAlertCardFromModel(AlertModel alert) {
+    Color badgeColor = AppColors.infoBlue;
+    String badgeText = 'LOW';
+    Color iconColor = AppColors.infoBlue;
+    IconData iconData = Icons.info_outline;
+    Color cardBorderColor = const Color(0x4D0066CC);
+    Color cardBgColor = const Color(0x1A0066CC);
+
+    if (alert.severity == 3) {
+      badgeColor = AppColors.errorRed;
+      badgeText = 'CRITICAL';
+      iconColor = AppColors.errorRed;
+      iconData = Icons.warning_amber_rounded;
+      cardBorderColor = const Color(0x4DF44336);
+      cardBgColor = const Color(0x1AF44336);
+    } else if (alert.severity == 2) {
+      badgeColor = AppColors.warningOrange;
+      badgeText = 'HIGH';
+      iconColor = AppColors.warningOrange;
+      iconData = Icons.priority_high;
+      cardBorderColor = const Color(0x4DFF9800);
+      cardBgColor = const Color(0x1AFF9800);
+    }
+
+    // Rough parsing of time from generatedAt
+    String timeText = 'Just now';
+    if (alert.generatedAt != null) {
+      try {
+        final dt = DateTime.parse(alert.generatedAt!);
+        final now = DateTime.now();
+        final diff = now.difference(dt);
+        if (diff.inMinutes < 60) {
+          timeText = '${diff.inMinutes} min ago';
+        } else if (diff.inHours < 24) {
+          timeText = '${diff.inHours} hours ago';
+        } else {
+          timeText = '${diff.inDays} days ago';
+        }
+      } catch (_) {}
+    }
+
+    return _buildAlertCard(
+      alertId: alert.id ?? '',
+      title: alert.alertMessage?.split(':').first ?? 'Alert',
+      badgeText: badgeText,
+      badgeColor: badgeColor,
+      description: alert.alertMessage ?? '',
+      timeText: timeText,
+      typeBadge: 'system', // Default since API doesn't specify type
+      primaryAction: 'Override',
+      secondaryAction: 'Review',
+      iconData: iconData,
+      iconColor: iconColor,
+      cardBorderColor: cardBorderColor,
+      cardBgColor: cardBgColor,
+    );
+  }
+
   Widget _buildAlertCard({
+    required String alertId,
     required String title,
     required String badgeText,
     required Color badgeColor,
@@ -307,14 +320,14 @@ class ClinicalAlertsScreen extends StatelessWidget {
                               ),
                            ),
                            Container(
-                              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                               decoration: BoxDecoration(
                                 color: badgeColor,
                                 borderRadius: AppDimens.radius8,
                               ),
                               child: Text(
                                 badgeText,
-                                style: TextStyle(
+                                style: const TextStyle(
                                   fontSize: 10,
                                   fontWeight: FontWeight.bold,
                                   color: AppColors.white,
@@ -336,21 +349,21 @@ class ClinicalAlertsScreen extends StatelessWidget {
                         children: [
                           Text(
                             timeText,
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontSize: 10,
                               color: AppColors.textSecondary,
                             ),
                           ),
                           SizedBox(width: AppDimens.space8),
                           Container(
-                            padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                             decoration: BoxDecoration(
                               border: Border.all(color: AppColors.border),
                               borderRadius: AppDimens.radius8,
                             ),
                             child: Text(
                               typeBadge,
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontSize: 10,
                                 color: AppColors.textSecondary,
                               ),
@@ -392,7 +405,7 @@ class ClinicalAlertsScreen extends StatelessWidget {
                 ),
                 SizedBox(width: AppDimens.space8),
                 InkWell(
-                  onTap: () {},
+                  onTap: () => _showOverrideDialog(alertId),
                   borderRadius: AppDimens.radius8,
                   child: Container(
                      padding: EdgeInsets.symmetric(horizontal: AppDimens.space16, vertical: 8),
@@ -412,6 +425,58 @@ class ClinicalAlertsScreen extends StatelessWidget {
                 ),
               ],
             ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showOverrideDialog(String alertId) {
+    final reasonController = TextEditingController();
+    final procedureController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Override Alert'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: reasonController,
+              decoration: const InputDecoration(labelText: 'Reason for override'),
+            ),
+            TextField(
+              controller: procedureController,
+              decoration: const InputDecoration(labelText: 'Related Procedure ID (Optional)'),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              final user = await AppCache.getUserData();
+              if (!context.mounted) return;
+              
+              final doctorId = user?.userIdInSystem ?? 'DOC-123';
+              final cubit = context.read<AlertsCubit>();
+              
+              cubit.overrideAlert(
+                OverrideAlertRequest(
+                  alertId: alertId,
+                  doctorId: doctorId,
+                  reason: reasonController.text.isEmpty ? 'Clinical Judgement' : reasonController.text,
+                  procedureId: procedureController.text,
+                ),
+                widget.admissionId,
+              );
+              Navigator.pop(context);
+            },
+            child: const Text('Confirm'),
           ),
         ],
       ),

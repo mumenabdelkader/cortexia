@@ -1,9 +1,12 @@
+import 'package:cortexia/features/alerts/presentation/ui/clinical_alerts_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:cortexia/core/themes/app_dimens.dart';
 import 'package:cortexia/core/themes/color_themes.dart';
-import 'package:cortexia/features/patient/presentation/ui/clinical_alerts_screen.dart';
 import 'package:cortexia/features/patient/presentation/ui/patient_list_screen.dart';
 import 'package:cortexia/features/doctor/presentation/ui/profile_screen.dart';
+import 'package:cortexia/features/alerts/presentation/controllers/alerts_cubit.dart';
+import 'package:cortexia/core/di/dependency_injection.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class MainNavigationScreen extends StatefulWidget {
   const MainNavigationScreen({super.key});
@@ -18,7 +21,10 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
 
   final List<Widget> _screens = [
     const PatientListScreen(),
-    const ClinicalAlertsScreen(),
+    BlocProvider(
+      create: (context) => locator<AlertsCubit>(),
+      child: const ClinicalAlertsScreen(admissionId: 'ADM-FB17DE805A62'),
+    ),
     const ProfileScreen(),
   ];
 

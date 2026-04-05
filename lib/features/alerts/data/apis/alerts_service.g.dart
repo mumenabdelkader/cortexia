@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'doctor_service.dart';
+part of 'alerts_service.dart';
 
 // dart format off
 
@@ -10,8 +10,8 @@ part of 'doctor_service.dart';
 
 // ignore_for_file: unnecessary_brace_in_string_interps,no_leading_underscores_for_local_identifiers,unused_element,unnecessary_string_interpolations,unused_element_parameter,avoid_unused_constructor_parameters,unreachable_from_main
 
-class _DoctorService implements DoctorService {
-  _DoctorService(this._dio, {this.baseUrl, this.errorLogger}) {
+class _AlertsService implements AlertsService {
+  _AlertsService(this._dio, {this.baseUrl, this.errorLogger}) {
     baseUrl ??= 'http://cortexaapp.runasp.net';
   }
 
@@ -22,16 +22,46 @@ class _DoctorService implements DoctorService {
   final ParseErrorLogger? errorLogger;
 
   @override
-  Future<dynamic> getDoctorDetails(String email) async {
+  Future<List<AlertModel>> getActiveAlerts(String admissionId) async {
     final _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{r'admissionId': admissionId};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
-    final _options = _setStreamType<dynamic>(
+    final _options = _setStreamType<List<AlertModel>>(
       Options(method: 'GET', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            '/api/Doctors/${email}/details',
+            '/api/SmartAssistant/alerts/active',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<List<dynamic>>(_options);
+    late List<AlertModel> _value;
+    try {
+      _value = _result.data!
+          .map((dynamic i) => AlertModel.fromJson(i as Map<String, dynamic>))
+          .toList();
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options, response: _result);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<dynamic> overrideAlert(String id, OverrideAlertRequest request) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    _data.addAll(request.toJson());
+    final _options = _setStreamType<dynamic>(
+      Options(method: 'POST', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/api/SmartAssistant/alerts/${id}/override',
             queryParameters: queryParameters,
             data: _data,
           )
