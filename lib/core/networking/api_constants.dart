@@ -234,4 +234,5 @@ class ApiConstants {
   static const String activeAlerts = '/api/SmartAssistant/alerts/active';
   static String overrideAlert(String id) =>
       '/api/SmartAssistant/alerts/$id/override';
+  static const String askSmartAssistantRag = '/api/SmartAssistant/rag/ask';
 }

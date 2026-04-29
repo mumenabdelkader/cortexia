@@ -7,21 +7,21 @@ part of 'doctor_model.dart';
 // **************************************************************************
 
 DoctorModel _$DoctorModelFromJson(Map<String, dynamic> json) => DoctorModel(
-      id: json['id'] as String?,
-      name: json['name'] as String?,
-      email: json['email'] as String?,
-      phoneNumber: json['phoneNumber'] as String?,
-      dateOfBirth: json['dateOfBirth'] as String?,
-      gender: (json['gender'] as num?)?.toInt(),
-      address: json['address'] == null
-          ? null
-          : DoctorAddress.fromJson(json['address'] as Map<String, dynamic>),
-      specialty: json['specialty'] as String?,
-      shift: (json['shift'] as num?)?.toInt(),
-      role: (json['role'] as num?)?.toInt(),
-      department: json['department'] as String?,
-      experienceYears: (json['experienceYears'] as num?)?.toInt(),
-    );
+  id: json['id'] as String?,
+  name: json['name'] as String?,
+  email: json['email'] as String?,
+  phoneNumber: json['phoneNumber'] as String?,
+  dateOfBirth: json['dateOfBirth'] as String?,
+  gender: (json['gender'] as num?)?.toInt(),
+  address: json['address'] == null
+      ? null
+      : DoctorAddress.fromJson(json['address'] as Map<String, dynamic>),
+  specialty: json['specialty'] as String?,
+  shift: (json['shift'] as num?)?.toInt(),
+  role: (json['role'] as num?)?.toInt(),
+  department: json['department'] as String?,
+  experienceYears: (json['experienceYears'] as num?)?.toInt(),
+);
 
 Map<String, dynamic> _$DoctorModelToJson(DoctorModel instance) =>
     <String, dynamic>{

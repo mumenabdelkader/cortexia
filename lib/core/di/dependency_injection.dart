@@ -4,7 +4,10 @@ import 'package:cortexia/features/admission/domain/repo/admission_repo_interface
 import 'package:cortexia/features/authentication/data/apis/auth_service.dart';
 import 'package:cortexia/features/authentication/data/repo/repo_imp.dart';
 import 'package:cortexia/features/authentication/domain/repo/repo_interface.dart';
-
+import 'package:cortexia/features/ai_assistant/data/apis/ai_assistant_service.dart';
+import 'package:cortexia/features/ai_assistant/data/repo/ai_assistant_repo_imp.dart';
+import 'package:cortexia/features/ai_assistant/domain/repo/ai_assistant_repo_interface.dart';
+import 'package:cortexia/features/ai_assistant/presentation/controllers/ai_assistant_cubit.dart';
 // Features
 import 'package:cortexia/features/case_history/data/apis/case_history_service.dart';
 import 'package:cortexia/features/case_history/data/repo/case_history_repo_imp.dart';
@@ -199,5 +202,15 @@ Future<void> setupGetIt() async {
   );
   locator.registerFactory<AlertsCubit>(
     () => AlertsCubit(locator<AlertsRepoInterface>()),
+  );
+  /* -------------------------- AI ASSISTANT FEATURE ------------------------- */
+  locator.registerLazySingleton<AiAssistantService>(
+    () => AiAssistantService(dio),
+  );
+  locator.registerLazySingleton<AiAssistantRepoInterface>(
+    () => AiAssistantRepoImp(locator<AiAssistantService>()),
+  );
+  locator.registerFactory<AiAssistantCubit>(
+    () => AiAssistantCubit(locator<AiAssistantRepoInterface>()),
   );
 }

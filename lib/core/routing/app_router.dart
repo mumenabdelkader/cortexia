@@ -5,7 +5,7 @@ import 'package:cortexia/features/fluid_balance/presentation/controllers/fluid_b
 import 'package:flutter/material.dart';
 import '../../features/authentication/presentation/ui/login_screen.dart';
 import '../../features/case_history/presentation/ui/case_history_screen.dart';
-import '../../features/patient/presentation/ui/chatbot_screen.dart';
+import '../../features/ai_assistant/presentation/ui/chatbot_screen.dart';
 import '../../features/patient/presentation/ui/new_patient_registration_screen.dart';
 import '../../features/patient/presentation/ui/patient_dashboard_screen.dart';
 import '../../features/patient/presentation/ui/patient_list_screen.dart';
@@ -116,7 +116,11 @@ class AppRouter {
           ),
         );
       case Routes.chatbotScreen:
-        return MaterialPageRoute(builder: (_) => const ChatbotScreen());
+        final args = arguments as Map<String, dynamic>?;
+        return MaterialPageRoute(builder: (_) =>  ChatbotScreen(
+          patientName: args?['patientName'] ?? 'Patient',
+          admissionId: args?['admissionId'] ?? '',
+        ));
       case Routes.newPatientRegistrationScreen:
         return MaterialPageRoute(
           builder: (_) => const NewPatientRegistrationScreen(),

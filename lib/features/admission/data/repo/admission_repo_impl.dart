@@ -41,10 +41,7 @@ class AdmissionRepoImpl implements AdmissionRepoInterface {
   @override
   Future<ApiResult<List<RoomModel>>> getRooms() async {
     try {
-      final rawList = await _admissionService.getRooms();
-      final rooms = rawList
-          .map((e) => RoomModel.fromJson(e as Map<String, dynamic>))
-          .toList();
+      final rooms = await _admissionService.getRooms();
       return ApiResult.success(rooms);
     } catch (error) {
       return ApiResult.error(ApiErrorHandler.handle(error));
