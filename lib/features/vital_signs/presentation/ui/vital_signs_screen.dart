@@ -1,3 +1,5 @@
+import 'package:cortexia/core/helpers/extensions.dart';
+import 'package:cortexia/features/patient/presentation/ui/patient_health_dashboard_screen.dart';
 import 'package:cortexia/features/vital_signs/presentation/controllers/vital_signs_opreations_const.dart';
 import 'package:cortexia/core/themes/app_dimens.dart';
 import 'package:cortexia/core/themes/color_themes.dart';
@@ -14,8 +16,9 @@ import 'package:intl/intl.dart';
 class VitalSignsScreen extends StatefulWidget {
   final String admissionId;
   final String nurseId;
+  List<dynamic> items=[];
 
-  const VitalSignsScreen({
+   VitalSignsScreen({
     super.key,
     this.admissionId = 'ADM-7A21F7EF3C7D',
     this.nurseId = 'NURSE-001',
@@ -197,11 +200,23 @@ class _VitalSignsScreenState extends State<VitalSignsScreen> {
         title: "Vital Signs",
         subtitle: "Admission: ${widget.admissionId}",
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        backgroundColor: AppColors.primaryBlue,
-        onPressed: () => _showAddOrEditDialog(context),
-        icon: const Icon(Icons.add, color: Colors.white),
-        label: const Text("Record Vitals", style: TextStyle(color: Colors.white)),
+      floatingActionButton: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children:[
+          FloatingActionButton.extended(
+            backgroundColor: AppColors.primaryBlue,
+            onPressed: () {
+              Navigator.push(context, MaterialPageRoute(builder: (_) =>  PatientVitalDashboardScreen( items: widget.items,)));
+            },
+            label: const Text("chart", style: TextStyle(color: Colors.white)),
+          ),
+          SizedBox(height: 7),
+          FloatingActionButton.extended(
+          backgroundColor: AppColors.primaryBlue,
+          onPressed: () => _showAddOrEditDialog(context),
+          icon: const Icon(Icons.add, color: Colors.white), label: const Text("vital", style: TextStyle(color: Colors.white))
+
+        ),]
       ),
       body: BlocConsumer<VitalSignsCubit, VitalSignsState>(
         listener: (context, state) {
@@ -222,6 +237,7 @@ class _VitalSignsScreenState extends State<VitalSignsScreen> {
           }
           if (state is VitalSignsStateSuccess && state.operation == kGetAdmissionsAdmissionidVitals) {
             final List<dynamic> data = state.data as List<dynamic>? ?? [];
+            widget.items=data;
             if (data.isEmpty) {
               return const Center(child: Text("No Vital Signs Recorded", style: TextStyle(fontSize: 18, color: Colors.grey)));
             }

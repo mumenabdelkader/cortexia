@@ -91,8 +91,8 @@ class _PhysicalExaminationScreenState
     context
         .read<PhysicalExaminationCubit>()
         .getAdmissionsAdmissionidPhysicalExamination(
-          admissionid: widget.admissionId!,
-        );
+      admissionid: widget.admissionId!,
+    );
   }
 
   void _clearForm() {
@@ -162,16 +162,16 @@ class _PhysicalExaminationScreenState
       context
           .read<PhysicalExaminationCubit>()
           .putAdmissionsAdmissionidPhysicalExamination(
-            admissionid: admissionId,
-            requestBody: command,
-          );
+        admissionid: admissionId,
+        requestBody: command,
+      );
     } else {
       context
           .read<PhysicalExaminationCubit>()
           .postAdmissionsAdmissionidPhysicalExamination(
-            admissionid: admissionId,
-            requestBody: command,
-          );
+        admissionid: admissionId,
+        requestBody: command,
+      );
     }
   }
 
@@ -199,9 +199,9 @@ class _PhysicalExaminationScreenState
               context
                   .read<PhysicalExaminationCubit>()
                   .deleteAdmissionsAdmissionidPhysicalExamination(
-                    admissionid: admissionId,
-                    id: id,
-                  );
+                admissionid: admissionId,
+                id: id,
+              );
             },
             child: const Text('Delete'),
           ),
@@ -223,94 +223,98 @@ class _PhysicalExaminationScreenState
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : BlocConsumer<PhysicalExaminationCubit, PhysicalExaminationState>(
-              listener: (context, state) {
-                if (state is PhysicalExaminationStateSuccess) {
-                  switch (state.operation) {
-                    case kPostAdmissionsAdmissionidPhysicalExamination:
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Examination created successfully ✅'),
-                          backgroundColor: Colors.green,
-                        ),
-                      );
-                      _fetchData();
-                      break;
-                    case kPutAdmissionsAdmissionidPhysicalExamination:
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Examination updated successfully ✅'),
-                          backgroundColor: Colors.blue,
-                        ),
-                      );
-                      _fetchData();
-                      break;
-                    case kDeleteAdmissionsAdmissionidPhysicalExamination:
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Examination deleted successfully 🗑️'),
-                          backgroundColor: Colors.orange,
-                        ),
-                      );
-                      _clearForm();
-                      break;
-                  }
-                } else if (state is PhysicalExaminationStateError) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('Error: ${state.message}'),
-                      backgroundColor: Colors.red,
-                    ),
-                  );
-                }
-              },
-              builder: (context, state) {
-                if (state is PhysicalExaminationStateLoading) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-                if (state is PhysicalExaminationStateSuccess &&
-                    state.operation ==
-                        kGetAdmissionsAdmissionidPhysicalExamination) {
-                  _populateData(state.data);
-                }
+        listener: (context, state) {
+          if (state is PhysicalExaminationStateSuccess) {
 
-                return Column(
-                  children: [
-                    Expanded(
-                      child: ListView(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 20, vertical: 10),
-                        children: [
-                          // ── Record banner (shown when record exists) ───────
-                          if (_existingId != null)
-                            _buildRecordBanner(context),
-                          if (_existingId != null)
-                            const SizedBox(height: 16),
-                          _buildVitalSignsInputs(),
-                          const SizedBox(height: 24),
-                          SystemExaminationSection(
-                            generalApperanceController: _genApperanceController,
-                            eyeController: _eyeController,
-                            heartController: _heartController,
-                            respController: _respController,
-                            abdomenController: _abdomenController,
-                          ),
-                          const SizedBox(height: 16),
-                          NeurologicalExaminationSection(
-                            eyeController: _neuroEyeController,
-                            skinController: _neuroSkinController,
-                            lipsController: _neuroLipsController,
-                          ),
-                          const SizedBox(height: 16),
-                          AdditionalNotesSection(controller: _localController),
-                          const SizedBox(height: 20),
-                        ],
-                      ),
-                    ),
-                    _buildBottomActions(context),
-                  ],
+            // التعديل: استدعاء _populateData داخل الـ listener لضمان التحديث الآمن للحالة
+            if (state.operation == kGetAdmissionsAdmissionidPhysicalExamination) {
+              _populateData(state.data);
+            }
+
+            switch (state.operation) {
+              case kPostAdmissionsAdmissionidPhysicalExamination:
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Examination created successfully ✅'),
+                    backgroundColor: Colors.green,
+                  ),
                 );
-              },
-            ),
+                _fetchData();
+                break;
+              case kPutAdmissionsAdmissionidPhysicalExamination:
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Examination updated successfully ✅'),
+                    backgroundColor: Colors.blue,
+                  ),
+                );
+                _fetchData();
+                break;
+              case kDeleteAdmissionsAdmissionidPhysicalExamination:
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Examination deleted successfully 🗑️'),
+                    backgroundColor: Colors.orange,
+                  ),
+                );
+                _clearForm();
+                break;
+            }
+          } else if (state is PhysicalExaminationStateError) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Error: ${state.message}'),
+                backgroundColor: Colors.red,
+              ),
+            );
+          }
+        },
+        builder: (context, state) {
+          if (state is PhysicalExaminationStateLoading) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          // التعديل: تم حذف شرط (state.operation == kGetAdmissionsAdmissionidPhysicalExamination)
+          // و _populateData(state.data) من هنا لتجنب خطأ الـ setState
+
+          return Column(
+            children: [
+              Expanded(
+                child: ListView(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 20, vertical: 10),
+                  children: [
+                    // ── Record banner (shown when record exists) ───────
+                    if (_existingId != null)
+                      _buildRecordBanner(context),
+                    if (_existingId != null)
+                      const SizedBox(height: 16),
+                    _buildVitalSignsInputs(),
+                    const SizedBox(height: 24),
+                    SystemExaminationSection(
+                      generalApperanceController: _genApperanceController,
+                      eyeController: _eyeController,
+                      heartController: _heartController,
+                      respController: _respController,
+                      abdomenController: _abdomenController,
+                    ),
+                    const SizedBox(height: 16),
+                    NeurologicalExaminationSection(
+                      eyeController: _neuroEyeController,
+                      skinController: _neuroSkinController,
+                      lipsController: _neuroLipsController,
+                    ),
+                    const SizedBox(height: 16),
+                    AdditionalNotesSection(controller: _localController),
+                    const SizedBox(height: 20),
+                  ],
+                ),
+              ),
+              _buildBottomActions(context),
+            ],
+          );
+        },
+      ),
     );
   }
 
