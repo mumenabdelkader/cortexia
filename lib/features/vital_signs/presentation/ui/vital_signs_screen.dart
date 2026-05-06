@@ -8,6 +8,7 @@ import 'package:cortexia/core/widgets/custom_form_field.dart';
 import 'package:cortexia/core/widgets/custom_elevated_button.dart';
 import 'package:cortexia/features/vital_signs/presentation/controllers/vital_signs_cubit.dart';
 import 'package:cortexia/features/vital_signs/data/models/record_vitals_command_model.dart';
+import 'package:cortexia/features/vital_signs/data/models/vitals_model.dart';
 import 'package:cortexia/features/vital_signs/data/models/consciousness_level.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -16,7 +17,7 @@ import 'package:intl/intl.dart';
 class VitalSignsScreen extends StatefulWidget {
   final String admissionId;
   final String nurseId;
-  List<dynamic> items=[];
+  List<VitalsModel> items=[];
 
    VitalSignsScreen({
     super.key,
@@ -39,31 +40,21 @@ class _VitalSignsScreenState extends State<VitalSignsScreen> {
     context.read<VitalSignsCubit>().getAdmissionsAdmissionidVitals(admissionid: widget.admissionId);
   }
 
-  void _showAddOrEditDialog(BuildContext ctx, {dynamic existingRecord}) {
+  void _showAddOrEditDialog(BuildContext ctx, {VitalsModel? existingRecord}) {
     final isEdit = existingRecord != null;
-    final tempCtrl = TextEditingController(text: isEdit ? existingRecord['temperature']?.toString() : '');
-    final sysCtrl = TextEditingController(text: isEdit ? existingRecord['bP_Systolic']?.toString() : '');
-    final diaCtrl = TextEditingController(text: isEdit ? existingRecord['bP_Diastolic']?.toString() : '');
-    final heartCtrl = TextEditingController(text: isEdit ? existingRecord['heartRate']?.toString() : '');
-    final respCtrl = TextEditingController(text: isEdit ? existingRecord['respRate']?.toString() : '');
-    final oxyCtrl = TextEditingController(text: isEdit ? existingRecord['pulseOxy']?.toString() : '');
+    final tempCtrl = TextEditingController(text: isEdit ? existingRecord.temperature?.toString() : '');
+    final sysCtrl = TextEditingController(text: isEdit ? existingRecord.bpSystolic?.toString() : '');
+    final diaCtrl = TextEditingController(text: isEdit ? existingRecord.bpDiastolic?.toString() : '');
+    final heartCtrl = TextEditingController(text: isEdit ? existingRecord.heartRate?.toString() : '');
+    final respCtrl = TextEditingController(text: isEdit ? existingRecord.respRate?.toString() : '');
+    final oxyCtrl = TextEditingController(text: isEdit ? existingRecord.pulseOxy?.toString() : '');
     
-    bool hasSupplOxygen = isEdit ? (existingRecord['supplementalOxygen'] == true) : false;
+    bool hasSupplOxygen = isEdit ? (existingRecord.supplementalOxygen == true) : false;
     
     // Determine initial enum
     int initialConsciousnessIndex = 0; // Default to Alert
-    if (isEdit && existingRecord['consciousnessLevel'] != null) {
-      if (existingRecord['consciousnessLevel'] is int) {
-        initialConsciousnessIndex = existingRecord['consciousnessLevel'];
-      } else if (existingRecord['consciousnessLevel'] == 'Alert') {
-        initialConsciousnessIndex = 0;
-      } else if (existingRecord['consciousnessLevel'] == 'Voice') {
-        initialConsciousnessIndex = 1;
-      } else if (existingRecord['consciousnessLevel'] == 'Pain') {
-        initialConsciousnessIndex = 2;
-      } else if (existingRecord['consciousnessLevel'] == 'Unresponsive') {
-        initialConsciousnessIndex = 3;
-      }
+    if (isEdit && existingRecord.consciousnessLevel != null) {
+      initialConsciousnessIndex = existingRecord.consciousnessLevel!;
     }
     int selectedConscIndex = initialConsciousnessIndex;
 
@@ -131,7 +122,7 @@ class _VitalSignsScreenState extends State<VitalSignsScreen> {
                 width: 100,
                 onPressed: () {
                   final command = RecordVitalsCommandModel(
-                    id: isEdit ? existingRecord['id'] : null,
+                    id: isEdit ? existingRecord.id : null,
                     admissionId: widget.admissionId,
                     nurseId: widget.nurseId,
                     temperature: double.tryParse(tempCtrl.text),
@@ -141,7 +132,7 @@ class _VitalSignsScreenState extends State<VitalSignsScreen> {
                     respRate: int.tryParse(respCtrl.text),
                     pulseOxy: int.tryParse(oxyCtrl.text),
                     supplementalOxygen: hasSupplOxygen,
-                    recordedAt: isEdit ? existingRecord['recordedAt'] : DateTime.now().toIso8601String(),
+                    recordedAt: isEdit ? existingRecord.recordedAt : DateTime.now().toIso8601String(),
                     consciousnessLevel: ConsciousnessLevel.values.firstWhere(
                       (e) => e.index == selectedConscIndex,
                       orElse: () => ConsciousnessLevel.alert,
@@ -169,7 +160,7 @@ class _VitalSignsScreenState extends State<VitalSignsScreen> {
     );
   }
 
-  void _confirmDelete(BuildContext ctx, dynamic entry) {
+  void _confirmDelete(BuildContext ctx, VitalsModel entry) {
     showDialog(
       context: ctx,
       builder: (dialogCtx) => AlertDialog(
@@ -182,7 +173,7 @@ class _VitalSignsScreenState extends State<VitalSignsScreen> {
               Navigator.pop(dialogCtx);
               context.read<VitalSignsCubit>().deleteAdmissionsAdmissionidVitals(
                     admissionid: widget.admissionId,
-                    id: entry['id'] as String? ?? '',
+                    id: entry.id ?? '',
                   );
             },
             child: const Text("Delete", style: TextStyle(color: Colors.red)),
@@ -236,7 +227,7 @@ class _VitalSignsScreenState extends State<VitalSignsScreen> {
             return const Center(child: CircularProgressIndicator());
           }
           if (state is VitalSignsStateSuccess && state.operation == kGetAdmissionsAdmissionidVitals) {
-            final List<dynamic> data = state.data as List<dynamic>? ?? [];
+            final List<VitalsModel> data = state.data as List<VitalsModel>? ?? [];
             widget.items=data;
             if (data.isEmpty) {
               return const Center(child: Text("No Vital Signs Recorded", style: TextStyle(fontSize: 18, color: Colors.grey)));
@@ -247,7 +238,7 @@ class _VitalSignsScreenState extends State<VitalSignsScreen> {
               itemCount: data.length,
               itemBuilder: (context, index) {
                 final item = data[index];
-                final dateStr = item['recordedAt'] != null ? DateFormat('MMM d, y, hh:mm a').format(DateTime.parse(item['recordedAt']).toLocal()) : 'Unknown Time';
+                final dateStr = item.recordedAt != null ? DateFormat('MMM d, y, hh:mm a').format(DateTime.parse(item.recordedAt!).toLocal()) : 'Unknown Time';
 
                 return Card(
                   margin: const EdgeInsets.only(bottom: 12),
@@ -275,18 +266,18 @@ class _VitalSignsScreenState extends State<VitalSignsScreen> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            _buildInfoCol("Temp", "${item['temperature']}°C", Icons.thermostat),
-                            _buildInfoCol("BP", "${item['bP_Systolic']}/${item['bP_Diastolic']}", Icons.favorite_border),
-                            _buildInfoCol("HR", "${item['heartRate']}", Icons.favorite),
+                            _buildInfoCol("Temp", "${item.temperature}°C", Icons.thermostat),
+                            _buildInfoCol("BP", "${item.bpSystolic}/${item.bpDiastolic}", Icons.favorite_border),
+                            _buildInfoCol("HR", "${item.heartRate}", Icons.favorite),
                           ],
                         ),
                         const SizedBox(height: 12),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            _buildInfoCol("Resp", "${item['respRate']}/m", Icons.air),
-                            _buildInfoCol("SpO2", "${item['pulseOxy']}%", Icons.bloodtype),
-                            _buildInfoCol("O2 Suppl", (item['supplementalOxygen'] == true) ? "Yes" : "No", Icons.vaccines),
+                            _buildInfoCol("Resp", "${item.respRate}/m", Icons.air),
+                            _buildInfoCol("SpO2", "${item.pulseOxy}%", Icons.bloodtype),
+                            _buildInfoCol("O2 Suppl", (item.supplementalOxygen == true) ? "Yes" : "No", Icons.vaccines),
                           ],
                         ),
                       ],

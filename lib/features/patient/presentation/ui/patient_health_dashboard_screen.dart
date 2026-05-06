@@ -1,10 +1,11 @@
 import 'package:cortexia/core/widgets/custom_app_bar.dart';
+import 'package:cortexia/features/vital_signs/data/models/vitals_model.dart';
 import 'package:cortexia/features/patient/presentation/ui/patient_health_chart.dart';
 import 'package:cortexia/features/patient/presentation/widgets/legend_indicator.dart';
 import 'package:flutter/material.dart';
 
 class PatientVitalDashboardScreen extends StatelessWidget {
-  final List<dynamic> items;
+  final List<VitalsModel> items;
 
   const PatientVitalDashboardScreen({super.key, required this.items});
 

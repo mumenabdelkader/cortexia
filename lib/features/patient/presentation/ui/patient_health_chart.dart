@@ -1,9 +1,10 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:cortexia/features/vital_signs/data/models/vitals_model.dart';
 
 class PatientVitalChart extends StatelessWidget {
-  final List<dynamic> records;
+  final List<VitalsModel> records;
 
   const PatientVitalChart({super.key, required this.records});
 
@@ -22,19 +23,19 @@ class PatientVitalChart extends StatelessWidget {
     }
 
     // 2. أخذ نسخة من القائمة لتجنب تعديل القائمة الأصلية أثناء الترتيب
-    List<dynamic> sortedRecords = List.from(records);
+    List<VitalsModel> sortedRecords = List.from(records);
     sortedRecords.sort((a, b) {
-      final dateA = DateTime.parse(a['recordedAt']);
-      final dateB = DateTime.parse(b['recordedAt']);
+      final dateA = DateTime.parse(a.recordedAt!);
+      final dateB = DateTime.parse(b.recordedAt!);
       return dateA.compareTo(dateB);
     });
 
     // 3. تحديد الحدود
-    final double minX = DateTime.parse(sortedRecords.first['recordedAt'])
+    final double minX = DateTime.parse(sortedRecords.first.recordedAt!)
         .toLocal()
         .millisecondsSinceEpoch
         .toDouble();
-    final double maxX = DateTime.parse(sortedRecords.last['recordedAt'])
+    final double maxX = DateTime.parse(sortedRecords.last.recordedAt!)
         .toLocal()
         .millisecondsSinceEpoch
         .toDouble();
@@ -49,18 +50,18 @@ class PatientVitalChart extends StatelessWidget {
     List<FlSpot> o2Spots = [];
 
     for (var record in sortedRecords) {
-      final double timeX = DateTime.parse(record['recordedAt'])
+      final double timeX = DateTime.parse(record.recordedAt!)
           .toLocal()
           .millisecondsSinceEpoch
           .toDouble();
 
-      final temp = _parseDouble(record['temperature']);
-      final sys = _parseDouble(record['bpSystolic'] ?? record['bP_Systolic']); // للتعامل مع أي من الاسمين
-      final dia = _parseDouble(record['bpDiastolic'] ?? record['bP_Diastolic']);
-      final hr = _parseDouble(record['heartRate']);
-      final rr = _parseDouble(record['respRate']);
-      final spo2 = _parseDouble(record['pulseOxy']);
-      final o2 = _parseDouble(record['supplementalOxygen']);
+      final temp = _parseDouble(record.temperature);
+      final sys = _parseDouble(record.bpSystolic); // للتعامل مع أي من الاسمين
+      final dia = _parseDouble(record.bpDiastolic);
+      final hr = _parseDouble(record.heartRate);
+      final rr = _parseDouble(record.respRate);
+      final spo2 = _parseDouble(record.pulseOxy);
+      final o2 = _parseDouble(record.supplementalOxygen);
 
       if (temp != null) tempSpots.add(FlSpot(timeX, temp));
       if (sys != null) sysSpots.add(FlSpot(timeX, sys));

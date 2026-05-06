@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart' hide Headers;
 import 'package:retrofit/retrofit.dart';
 import 'package:cortexia/features/vital_signs/data/models/record_vitals_command_model.dart';
+import 'package:cortexia/features/vital_signs/data/models/vitals_model.dart';
 import 'package:cortexia/core/networking/api_constants.dart';
 
 part 'vital_signs_service.g.dart';
@@ -13,7 +14,7 @@ abstract class VitalSignsService {
   Future<dynamic> postAdmissionsAdmissionidVitals({@Path('admissionId') required String admissionid, @Body() required RecordVitalsCommandModel requestBody});
 
   @GET(ApiConstants.vitalSigns)
-  Future<dynamic> getAdmissionsAdmissionidVitals({@Path('admissionId') required String admissionid});
+  Future<List<VitalsModel>> getAdmissionsAdmissionidVitals({@Path('admissionId') required String admissionid});
 
   @PUT(ApiConstants.vitalSigns)
   Future<dynamic> putAdmissionsAdmissionidVitals({@Path('admissionId') required String admissionid, @Body() required RecordVitalsCommandModel requestBody});
