@@ -47,14 +47,15 @@ class _InterventionProceduresService implements InterventionProceduresService {
   }
 
   @override
-  Future<dynamic> getAdmissionsAdmissionidInterventionProcedures({
+  Future<List<InterventionProcedureModel>>
+  getAdmissionsAdmissionidInterventionProcedures({
     required String admissionid,
   }) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
-    final _options = _setStreamType<dynamic>(
+    final _options = _setStreamType<List<InterventionProcedureModel>>(
       Options(method: 'GET', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
@@ -64,8 +65,19 @@ class _InterventionProceduresService implements InterventionProceduresService {
           )
           .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
     );
-    final _result = await _dio.fetch(_options);
-    final _value = _result.data;
+    final _result = await _dio.fetch<List<dynamic>>(_options);
+    late List<InterventionProcedureModel> _value;
+    try {
+      _value = _result.data!
+          .map(
+            (dynamic i) =>
+                InterventionProcedureModel.fromJson(i as Map<String, dynamic>),
+          )
+          .toList();
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options, response: _result);
+      rethrow;
+    }
     return _value;
   }
 

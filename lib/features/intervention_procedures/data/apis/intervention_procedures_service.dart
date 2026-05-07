@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart' hide Headers;
 import 'package:cortexia/features/intervention_procedures/data/models/add_intervention_procedure_command_model.dart';
+import 'package:cortexia/features/intervention_procedures/data/models/intervention_procedure_model.dart';
 import 'package:retrofit/retrofit.dart';
 import 'package:cortexia/core/networking/api_constants.dart';
 
@@ -13,7 +14,7 @@ abstract class InterventionProceduresService {
   Future<dynamic> postAdmissionsAdmissionidInterventionProcedures({@Path('admissionId') required String admissionid, @Body() required AddInterventionProcedureCommandModel requestBody});
 
   @GET(ApiConstants.interventionProcedures)
-  Future<dynamic> getAdmissionsAdmissionidInterventionProcedures({@Path('admissionId') required String admissionid});
+  Future<List<InterventionProcedureModel>> getAdmissionsAdmissionidInterventionProcedures({@Path('admissionId') required String admissionid});
 
   @PUT(ApiConstants.interventionProcedures)
   Future<dynamic> putAdmissionsAdmissionidInterventionProcedures({@Path('admissionId') required String admissionid, @Body() required AddInterventionProcedureCommandModel requestBody});

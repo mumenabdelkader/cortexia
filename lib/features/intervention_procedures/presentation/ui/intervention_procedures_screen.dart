@@ -8,6 +8,7 @@ import 'package:cortexia/core/widgets/custom_elevated_button.dart';
 import 'package:cortexia/features/intervention_procedures/presentation/controllers/intervention_procedures_cubit.dart';
 import 'package:cortexia/features/intervention_procedures/data/models/add_intervention_procedure_command_model.dart';
 import 'package:cortexia/features/intervention_procedures/data/models/care_intervention_type.dart';
+import 'package:cortexia/features/intervention_procedures/data/models/intervention_procedure_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -57,26 +58,24 @@ class _InterventionProceduresScreenState
         );
   }
 
-  void _showAddOrEditDialog(BuildContext ctx, {dynamic existingRecord}) {
+  void _showAddOrEditDialog(BuildContext ctx, {InterventionProcedureModel? existingRecord}) {
     final isEdit = existingRecord != null;
     final sizeCtrl = TextEditingController(
-      text: isEdit ? existingRecord['size']?.toString() : '',
+      text: isEdit ? existingRecord.size?.toString() : '',
     );
 
     DateTime? selectedInsertionDate =
-        isEdit && existingRecord['insertionDate'] != null
-        ? DateTime.tryParse(existingRecord['insertionDate'])
+        isEdit && existingRecord.insertionDate != null
+        ? DateTime.tryParse(existingRecord.insertionDate!)
         : null;
     DateTime? selectedRemovalDate =
-        isEdit && existingRecord['removalDate'] != null
-        ? DateTime.tryParse(existingRecord['removalDate'])
+        isEdit && existingRecord.removalDate != null
+        ? DateTime.tryParse(existingRecord.removalDate!)
         : null;
 
     int initialTypeIndex = 0;
-    if (isEdit && existingRecord['type'] != null) {
-      if (existingRecord['type'] is int) {
-        initialTypeIndex = existingRecord['type'];
-      }
+    if (isEdit && existingRecord.type != null) {
+      initialTypeIndex = existingRecord.type!.index;
     }
     int selectedTypeIndex = initialTypeIndex;
 
@@ -167,7 +166,7 @@ class _InterventionProceduresScreenState
                 width: 100,
                 onPressed: () {
                   final command = AddInterventionProcedureCommandModel(
-                    id: isEdit ? existingRecord['id'] as String? : null,
+                    id: isEdit ? existingRecord.id : null,
                     admissionId: widget.admissionId,
                     nurseId: _nurseId,
                     size: int.tryParse(sizeCtrl.text),
@@ -204,7 +203,7 @@ class _InterventionProceduresScreenState
     );
   }
 
-  void _confirmDelete(BuildContext ctx, dynamic entry) {
+  void _confirmDelete(BuildContext ctx, InterventionProcedureModel entry) {
     showDialog(
       context: ctx,
       builder: (dialogCtx) => AlertDialog(
@@ -224,7 +223,7 @@ class _InterventionProceduresScreenState
                   .read<InterventionProceduresCubit>()
                   .deleteAdmissionsAdmissionidInterventionProcedures(
                     admissionid: widget.admissionId,
-                    id: entry['id'] as String? ?? '',
+                    id: entry.id ?? '',
                   );
             },
             child: const Text("Delete", style: TextStyle(color: Colors.red)),
@@ -282,7 +281,7 @@ class _InterventionProceduresScreenState
               if (state is InterventionProceduresStateSuccess &&
                   state.operation ==
                       kGetAdmissionsAdmissionidInterventionProcedures) {
-                final List<dynamic> data = state.data as List<dynamic>? ?? [];
+                final List<InterventionProcedureModel> data = state.data as List<InterventionProcedureModel>? ?? [];
                 if (data.isEmpty) {
                   return const Center(
                     child: Text(
@@ -297,14 +296,14 @@ class _InterventionProceduresScreenState
                   itemCount: data.length,
                   itemBuilder: (context, index) {
                     final item = data[index];
-                    final insertionStr = item['insertionDate'] != null
+                    final insertionStr = item.insertionDate != null
                         ? DateFormat('MMM d, y, hh:mm a').format(
-                            DateTime.parse(item['insertionDate']).toLocal(),
+                            DateTime.parse(item.insertionDate!).toLocal(),
                           )
                         : 'Unknown Date';
-                    final removalStr = item['removalDate'] != null
+                    final removalStr = item.removalDate != null
                         ? DateFormat('MMM d, y, hh:mm a').format(
-                            DateTime.parse(item['removalDate']).toLocal(),
+                            DateTime.parse(item.removalDate!).toLocal(),
                           )
                         : 'Active';
                     final typeName = [
@@ -313,7 +312,7 @@ class _InterventionProceduresScreenState
                       'NG Tube',
                       'Central Line',
                       'Wound Drain',
-                    ][item['type'] ?? 0];
+                    ][item.type?.index ?? 0];
 
                     return Card(
                       margin: const EdgeInsets.only(bottom: 12),
@@ -374,7 +373,7 @@ class _InterventionProceduresScreenState
                                 ),
                                 const SizedBox(width: 8),
                                 Text(
-                                  "Size: ${item['size'] ?? 'N/A'}",
+                                  "Size: ${item.size ?? 'N/A'}",
                                   style: const TextStyle(color: Colors.grey),
                                 ),
                               ],
