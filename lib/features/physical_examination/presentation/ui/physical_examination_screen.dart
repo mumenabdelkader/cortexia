@@ -10,6 +10,7 @@ import 'package:cortexia/core/widgets/custom_app_bar.dart';
 import 'package:cortexia/core/widgets/custom_elevated_button.dart';
 import 'package:cortexia/features/physical_examination/presentation/controllers/physical_examination_cubit.dart';
 import 'package:cortexia/features/physical_examination/data/models/add_physical_examination_command_model.dart';
+import 'package:cortexia/features/physical_examination/data/models/physical_examination_model.dart';
 
 class PhysicalExaminationScreen extends StatefulWidget {
   final String? admissionId;
@@ -114,25 +115,24 @@ class _PhysicalExaminationScreenState
     });
   }
 
-  void _populateData(dynamic data) {
-    if (data is Map<String, dynamic> ||
-        (data is List<dynamic> && data.isNotEmpty)) {
-      final item = (data is List<dynamic>) ? data.last : data;
+  void _populateData(List<PhysicalExaminationModel> data) {
+    if (data.isNotEmpty) {
+      final item = data.last;
       setState(() {
-        _existingId = item['id'];
-        _tempController.text = item['temperature']?.toString() ?? '';
-        _bpController.text = item['bloodPressure'] ?? '';
-        _hrController.text = item['pulse']?.toString() ?? '';
-        _rrController.text = item['respRate']?.toString() ?? '';
+        _existingId = item.id;
+        _tempController.text = item.temperature?.toString() ?? '';
+        _bpController.text = item.bloodPressure ?? '';
+        _hrController.text = item.pulse?.toString() ?? '';
+        _rrController.text = item.respRate?.toString() ?? '';
         _genApperanceController.text = '';
         _eyeController.text = '';
-        _heartController.text = item['heartExam'] ?? '';
+        _heartController.text = item.heartExam ?? '';
         _respController.text = '';
-        _abdomenController.text = item['abdomenExam'] ?? '';
-        _neuroEyeController.text = item['eyeStatus'] ?? '';
-        _neuroSkinController.text = item['skinStatus'] ?? '';
-        _neuroLipsController.text = item['lipsStatus'] ?? '';
-        _localController.text = item['localExamination'] ?? '';
+        _abdomenController.text = item.abdomenExam ?? '';
+        _neuroEyeController.text = item.eyeStatus ?? '';
+        _neuroSkinController.text = item.skinStatus ?? '';
+        _neuroLipsController.text = item.lipsStatus ?? '';
+        _localController.text = item.localExamination ?? '';
       });
     }
   }
@@ -228,7 +228,7 @@ class _PhysicalExaminationScreenState
 
             // التعديل: استدعاء _populateData داخل الـ listener لضمان التحديث الآمن للحالة
             if (state.operation == kGetAdmissionsAdmissionidPhysicalExamination) {
-              _populateData(state.data);
+              _populateData(state.data as List<PhysicalExaminationModel>? ?? []);
             }
 
             switch (state.operation) {

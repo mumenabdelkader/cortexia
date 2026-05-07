@@ -2,6 +2,7 @@ import 'package:cortexia/core/networking/api_result.dart';
 import 'package:cortexia/core/networking/api_error_handler.dart';
 import 'package:cortexia/features/physical_examination/domain/repo/repo_interface.dart';
 import 'package:cortexia/features/physical_examination/data/models/add_physical_examination_command_model.dart';
+import 'package:cortexia/features/physical_examination/data/models/physical_examination_model.dart';
 import '../apis/physical_examination_service.dart';
 
 class PhysicalExaminationRepoImp implements PhysicalExaminationRepoInterface {
@@ -19,7 +20,7 @@ class PhysicalExaminationRepoImp implements PhysicalExaminationRepoInterface {
   }
 
   @override
-  Future<ApiResult<dynamic>> getAdmissionsAdmissionidPhysicalExamination({required String admissionid}) async {
+  Future<ApiResult<List<PhysicalExaminationModel>>> getAdmissionsAdmissionidPhysicalExamination({required String admissionid}) async {
     try {
       final response = await _apiService.getAdmissionsAdmissionidPhysicalExamination(admissionid: admissionid);
       return ApiResult.success(response);
