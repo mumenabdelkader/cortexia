@@ -1,6 +1,7 @@
 import 'package:cortexia/core/networking/api_result.dart';
 import '../apis/nursing_notes_service.dart';
 import 'package:cortexia/features/nursing_notes/data/models/add_nursing_note_command_model.dart';
+import 'package:cortexia/features/nursing_notes/data/models/nursing_note_model.dart';
 import 'package:cortexia/features/nursing_notes/domain/repo/repo_interface.dart';
 import 'package:cortexia/core/networking/api_error_handler.dart';
 
@@ -19,7 +20,7 @@ class NursingNotesRepoImp implements NursingNotesRepoInterface {
   }
 
   @override
-  Future<ApiResult<dynamic>> getAdmissionsAdmissionidNursingNotes({required String admissionid}) async {
+  Future<ApiResult<List<NursingNoteModel>>> getAdmissionsAdmissionidNursingNotes({required String admissionid}) async {
     try {
       final response = await _apiService.getAdmissionsAdmissionidNursingNotes(admissionid: admissionid);
       return ApiResult.success(response);

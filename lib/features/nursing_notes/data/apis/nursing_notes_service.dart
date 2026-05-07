@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart' hide Headers;
 import 'package:retrofit/retrofit.dart';
 import 'package:cortexia/features/nursing_notes/data/models/add_nursing_note_command_model.dart';
+import 'package:cortexia/features/nursing_notes/data/models/nursing_note_model.dart';
 import 'package:cortexia/core/networking/api_constants.dart';
 
 part 'nursing_notes_service.g.dart';
@@ -13,7 +14,7 @@ abstract class NursingNotesService {
   Future<dynamic> postAdmissionsAdmissionidNursingNotes({@Path('admissionId') required String admissionid, @Body() required AddNursingNoteCommandModel requestBody});
 
   @GET(ApiConstants.nursingNotes)
-  Future<dynamic> getAdmissionsAdmissionidNursingNotes({@Path('admissionId') required String admissionid});
+  Future<List<NursingNoteModel>> getAdmissionsAdmissionidNursingNotes({@Path('admissionId') required String admissionid});
 
   @PUT(ApiConstants.nursingNotes)
   Future<dynamic> putAdmissionsAdmissionidNursingNotes({@Path('admissionId') required String admissionid, @Body() required AddNursingNoteCommandModel requestBody});

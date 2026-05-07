@@ -7,6 +7,7 @@ import 'package:cortexia/core/widgets/custom_app_bar.dart';
 import 'package:cortexia/core/widgets/custom_elevated_button.dart';
 import 'package:cortexia/core/widgets/custom_form_field.dart';
 import 'package:cortexia/features/nursing_notes/data/models/add_nursing_note_command_model.dart';
+import 'package:cortexia/features/nursing_notes/data/models/nursing_note_model.dart';
 import 'package:cortexia/features/nursing_notes/presentation/controllers/nursing_notes_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -112,10 +113,8 @@ class _ClinicalNotesView extends StatelessWidget {
                 (state is NursingNotesStateSuccess &&
                     state.operation == kGetAdmissionsAdmissionidNursingNotes &&
                     state.data is List)
-                ? List<Map<String, dynamic>>.from(
-                    (state.data as List).map((e) => e as Map<String, dynamic>),
-                  )
-                : <Map<String, dynamic>>[];
+                ? state.data as List<NursingNoteModel>
+                : <NursingNoteModel>[];
 
             final isFetching = state is NursingNotesStateLoading;
 
@@ -339,7 +338,7 @@ class _AddNoteFormState extends State<_AddNoteForm> {
 // Individual note card (from API)
 // ─────────────────────────────────────────────
 class _NoteCard extends StatelessWidget {
-  final Map<String, dynamic> note;
+  final NursingNoteModel note;
   final String admissionId;
   final String nurseId;
   const _NoteCard({
@@ -388,7 +387,7 @@ class _NoteCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        note['nurseId'] ?? 'Nurse',
+                        note.nurseId ?? 'Nurse',
                         style: TextStyle(
                           fontSize: AppDimens.fontLarge,
                           fontWeight: FontWeight.bold,
@@ -404,7 +403,7 @@ class _NoteCard extends StatelessWidget {
                           ),
                           SizedBox(width: AppDimens.space4),
                           Text(
-                            _formatDateTime(note['noteDateTime'] as String?),
+                            _formatDateTime(note.noteDateTime),
                             style: TextStyle(
                               fontSize: AppDimens.fontSmall,
                               color: AppColors.textSecondary,
@@ -486,7 +485,7 @@ class _NoteCard extends StatelessWidget {
             SizedBox(height: AppDimens.space12),
             // Note text
             Text(
-              note['noteText'] as String? ?? '',
+              note.noteText ?? '',
               style: TextStyle(
                 fontSize: AppDimens.fontMedium,
                 color: AppColors.textMain,
@@ -495,7 +494,7 @@ class _NoteCard extends StatelessWidget {
             ),
             SizedBox(height: AppDimens.space8),
             Text(
-              'ID: ${note['id'] ?? ''}',
+              'ID: ${note.id ?? ''}',
               style: TextStyle(
                 fontSize: AppDimens.fontSmall,
                 color: AppColors.textLight,
@@ -527,7 +526,7 @@ class _NoteCard extends StatelessWidget {
                   .read<NursingNotesCubit>()
                   .deleteAdmissionsAdmissionidNursingNotes(
                     admissionid: admissionId,
-                    id: note['id'] as String? ?? '',
+                    id: note.id ?? '',
                   );
             },
             child: const Text(
@@ -568,7 +567,7 @@ class _NoteCard extends StatelessWidget {
 // Edit Note Bottom Sheet
 // ─────────────────────────────────────────────
 class _EditNoteBottomSheet extends StatefulWidget {
-  final Map<String, dynamic> note;
+  final NursingNoteModel note;
   final String admissionId;
   final String nurseId;
 
@@ -590,7 +589,7 @@ class _EditNoteBottomSheetState extends State<_EditNoteBottomSheet> {
   void initState() {
     super.initState();
     _noteCtrl = TextEditingController(
-      text: widget.note['noteText'] as String? ?? '',
+      text: widget.note.noteText ?? '',
     );
   }
 
@@ -609,7 +608,7 @@ class _EditNoteBottomSheetState extends State<_EditNoteBottomSheet> {
     context.read<NursingNotesCubit>().putAdmissionsAdmissionidNursingNotes(
       admissionid: widget.admissionId,
       requestBody: AddNursingNoteCommandModel(
-        id: widget.note['id'] as String?,
+        id: widget.note.id,
         admissionId: widget.admissionId,
         noteText: _noteCtrl.text.trim(),
         noteDateTime: now,
