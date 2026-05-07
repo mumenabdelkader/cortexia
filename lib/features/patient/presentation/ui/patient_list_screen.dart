@@ -27,8 +27,17 @@ class PatientListScreen extends StatelessWidget {
   }
 }
 
-class _PatientListView extends StatelessWidget {
+// 1. تحويل الكلاس إلى StatefulWidget
+class _PatientListView extends StatefulWidget {
   const _PatientListView();
+
+  @override
+  State<_PatientListView> createState() => _PatientListViewState();
+}
+
+class _PatientListViewState extends State<_PatientListView> {
+  // 2. متغير لحفظ نص البحث
+  String _searchQuery = '';
 
   @override
   Widget build(BuildContext context) {
@@ -48,22 +57,34 @@ class _PatientListView extends StatelessWidget {
           }
         },
         builder: (context, state) {
-          // ── Derive patient list from state ─────────────────────────────
-          final List<PatientModel> patients = [];
+          // ── جلب كل المرضى من الـ state ─────────────────────────────
+          final List<PatientModel> allPatients = [];
           if (state is PatientsStateSuccess &&
               state.operation == 'getPatients') {
             final raw = state.data;
             if (raw is List) {
               for (final item in raw) {
                 if (item is Map<String, dynamic>) {
-                  patients.add(PatientModel.fromJson(item));
+                  allPatients.add(PatientModel.fromJson(item));
                 }
               }
             }
           }
 
+          // 3. فلترة المرضى بناءً على نص البحث
+          final List<PatientModel> filteredPatients = allPatients.where((p) {
+            if (_searchQuery.isEmpty) return true;
+
+            final query = _searchQuery.toLowerCase();
+            final name = (p.name ?? '').toLowerCase();
+            final id = (p.fileNumber ?? p.id ?? '').toLowerCase();
+            final diagnosis = (p.diagnosisSummary ?? '').toLowerCase();
+
+            return name.contains(query) || id.contains(query) || diagnosis.contains(query);
+          }).toList();
+
           final isLoading = state is PatientsStateLoading;
-          final totalCount = patients.length;
+          final totalCount = filteredPatients.length; // عدد المرضى بعد الفلترة
 
           return CustomScrollView(
             slivers: [
@@ -73,10 +94,16 @@ class _PatientListView extends StatelessWidget {
                   child: Column(
                     children: [
                       // ── Search bar ──────────────────────────────────────
-                      const CustomTextFormField(
+                      CustomTextFormField(
                         hintText: "Search by name, ID, or diagnosis...",
                         prefixIcon: Icons.search,
                         fillColor: Colors.white70,
+                        // 4. إضافة دالة onChanged
+                        onChanged: (value) {
+                          setState(() {
+                            _searchQuery = value!;
+                          });
+                        },
                       ),
                       const SizedBox(height: 16),
 
@@ -135,7 +162,7 @@ class _PatientListView extends StatelessWidget {
                 const SliverFillRemaining(
                   child: Center(child: CircularProgressIndicator()),
                 )
-              else if (patients.isEmpty)
+              else if (filteredPatients.isEmpty) // استخدام القائمة المفلترة
                 const SliverFillRemaining(
                   child: Center(
                     child: Text(
@@ -148,9 +175,9 @@ class _PatientListView extends StatelessWidget {
                 SliverPadding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   sliver: SliverList.builder(
-                    itemCount: patients.length,
+                    itemCount: filteredPatients.length, // استخدام القائمة المفلترة
                     itemBuilder: (context, index) {
-                      final p = patients[index];
+                      final p = filteredPatients[index]; // استخدام القائمة المفلترة
                       return GestureDetector(
                         onTap: () => Navigator.of(context).push(
                           MaterialPageRoute(

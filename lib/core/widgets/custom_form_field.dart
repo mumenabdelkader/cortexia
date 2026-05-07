@@ -13,6 +13,7 @@ class CustomTextFormField extends StatelessWidget {
   final Color? fillColor;
   final Color? textColor;
   final int maxLines;
+  final String? Function(String?)? onChanged;
 
   const CustomTextFormField({
     super.key,
@@ -27,6 +28,7 @@ class CustomTextFormField extends StatelessWidget {
     this.fillColor,
     this.textColor,
     this.maxLines = 1,
+    this.onChanged,
   });
 
   @override
@@ -53,6 +55,7 @@ class CustomTextFormField extends StatelessWidget {
           keyboardType: keyboardType,
           validator: validator,
           maxLines: maxLines,
+          onChanged: onChanged,
           style: TextStyle(color: activeColor),
           decoration: InputDecoration(
             hintText: hintText,
