@@ -3,6 +3,7 @@ import 'package:cortexia/features/fluid_balance/domain/repo/repo_interface.dart'
 import 'package:cortexia/core/networking/api_error_handler.dart';
 import '../apis/fluid_balance_service.dart';
 import 'package:cortexia/features/fluid_balance/data/models/add_fluid_balance_command_model.dart';
+import 'package:cortexia/features/fluid_balance/data/models/fluid_balance_model.dart';
 
 class FluidBalanceRepoImp implements FluidBalanceRepoInterface {
   final FluidBalanceService _apiService;
@@ -19,7 +20,7 @@ class FluidBalanceRepoImp implements FluidBalanceRepoInterface {
   }
 
   @override
-  Future<ApiResult<dynamic>> getAdmissionsAdmissionidFluidBalance({required String admissionid}) async {
+  Future<ApiResult<List<FluidBalanceModel>>> getAdmissionsAdmissionidFluidBalance({required String admissionid}) async {
     try {
       final response = await _apiService.getAdmissionsAdmissionidFluidBalance(admissionid: admissionid);
       return ApiResult.success(response);

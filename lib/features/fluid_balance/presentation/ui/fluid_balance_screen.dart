@@ -13,6 +13,7 @@ import 'package:cortexia/features/fluid_balance/presentation/controllers/fluid_b
 import 'package:cortexia/features/fluid_balance/data/models/fluid_balance_category.dart';
 import 'package:cortexia/features/fluid_balance/data/models/fluid_type.dart';
 import 'package:cortexia/features/fluid_balance/data/models/add_fluid_balance_command_model.dart';
+import 'package:cortexia/features/fluid_balance/data/models/fluid_balance_model.dart';
 
 class FluidBalanceScreen extends StatefulWidget {
   final String? admissionId;
@@ -58,7 +59,7 @@ class _FluidBalanceScreenState extends State<FluidBalanceScreen> {
     );
   }
 
-  void _confirmDelete(BuildContext ctx, dynamic entry) {
+  void _confirmDelete(BuildContext ctx, FluidBalanceModel entry) {
     showDialog(
       context: ctx,
       builder: (dialogCtx) => AlertDialog(
@@ -76,7 +77,7 @@ class _FluidBalanceScreenState extends State<FluidBalanceScreen> {
                   .read<FluidBalanceCubit>()
                   .deleteAdmissionsAdmissionidFluidBalance(
                     admissionid: widget.admissionId!,
-                    id: entry['id'] as String? ?? '',
+                    id: entry.id ?? '',
                   );
             },
             child: const Text('Delete', style: TextStyle(color: Colors.red)),
@@ -115,19 +116,17 @@ class _FluidBalanceScreenState extends State<FluidBalanceScreen> {
             return const Center(child: CircularProgressIndicator());
           }
 
-          List<dynamic> inputs = [];
-          List<dynamic> outputs = [];
+          List<FluidBalanceModel> inputs = [];
+          List<FluidBalanceModel> outputs = [];
           int totalInput = 0;
           int totalOutput = 0;
 
           if (state is FluidBalanceStateSuccess &&
               state.operation == kGetAdmissionsAdmissionidFluidBalance) {
-            final data = state.data as List<dynamic>? ?? [];
+            final data = state.data as List<FluidBalanceModel>? ?? [];
             for (var item in data) {
-              int amount = (item['amountMl'] as num?)?.toInt() ?? 0;
-              // JSON parses category enum usually as index if it's int, or exact string
-              bool isInput =
-                  item['category'] == 0 || item['category'] == 'Intake';
+              int amount = item.amountMl ?? 0;
+              bool isInput = item.category == FluidBalanceCategory.intake;
 
               if (isInput) {
                 inputs.add(item);
@@ -297,7 +296,7 @@ class _FluidBalanceScreenState extends State<FluidBalanceScreen> {
     );
   }
 
-  Widget _buildFluidInputSection(BuildContext context, List<dynamic> inputs) {
+  Widget _buildFluidInputSection(BuildContext context, List<FluidBalanceModel> inputs) {
     return Container(
       padding: AppDimens.paddingAll16,
       decoration: BoxDecoration(
@@ -347,7 +346,7 @@ class _FluidBalanceScreenState extends State<FluidBalanceScreen> {
     );
   }
 
-  Widget _buildFluidOutputSection(BuildContext context, List<dynamic> outputs) {
+  Widget _buildFluidOutputSection(BuildContext context, List<FluidBalanceModel> outputs) {
     return Container(
       padding: AppDimens.paddingAll16,
       decoration: BoxDecoration(
@@ -397,12 +396,12 @@ class _FluidBalanceScreenState extends State<FluidBalanceScreen> {
     );
   }
 
-  Widget _buildRecordCard(dynamic entry, {required bool isInput}) {
+  Widget _buildRecordCard(FluidBalanceModel entry, {required bool isInput}) {
     Color themeColor = isInput ? AppColors.infoBlue : AppColors.warningOrange;
-    int typeIdx = entry['type'] is int ? entry['type'] : 0;
+    int typeIdx = entry.type?.index ?? 0;
     String typeName = fluidTypeNames[typeIdx] ?? 'Unknown';
-    String time = entry['recordedAt'] != null
-        ? entry['recordedAt'].toString().split('T').last.split('.').first
+    String time = entry.recordedAt != null
+        ? entry.recordedAt.toString().split('T').last.split('.').first
         : '';
 
     return Container(
@@ -441,7 +440,7 @@ class _FluidBalanceScreenState extends State<FluidBalanceScreen> {
           Row(
             children: [
               Text(
-                '${entry['amountMl']} mL',
+                '${entry.amountMl ?? 0} mL',
                 style: TextStyle(
                   fontSize: AppDimens.fontMedium,
                   fontWeight: FontWeight.bold,

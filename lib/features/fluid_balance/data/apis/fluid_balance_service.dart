@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart' hide Headers;
 import 'package:retrofit/retrofit.dart';
 import 'package:cortexia/features/fluid_balance/data/models/add_fluid_balance_command_model.dart';
+import 'package:cortexia/features/fluid_balance/data/models/fluid_balance_model.dart';
 import 'package:cortexia/core/networking/api_constants.dart';
 
 part 'fluid_balance_service.g.dart';
@@ -13,7 +14,7 @@ abstract class FluidBalanceService {
   Future<dynamic> postAdmissionsAdmissionidFluidBalance({@Path('admissionId') required String admissionid, @Body() required AddFluidBalanceCommandModel requestBody});
 
   @GET(ApiConstants.fluidBalance)
-  Future<dynamic> getAdmissionsAdmissionidFluidBalance({@Path('admissionId') required String admissionid});
+  Future<List<FluidBalanceModel>> getAdmissionsAdmissionidFluidBalance({@Path('admissionId') required String admissionid});
 
   @PUT(ApiConstants.fluidBalance)
   Future<dynamic> putAdmissionsAdmissionidFluidBalance({@Path('admissionId') required String admissionid, @Body() required AddFluidBalanceCommandModel requestBody});
