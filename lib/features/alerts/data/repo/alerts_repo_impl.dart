@@ -10,7 +10,7 @@ class AlertsRepoImpl implements AlertsRepoInterface {
   AlertsRepoImpl(this._apiService);
 
   @override
-  Future<ApiResult<List<AlertModel>>> getActiveAlerts(String admissionId) async {
+  Future<ApiResult<List<AlertModel>>> getActiveAlerts(String? admissionId) async {
     try {
       final response = await _apiService.getActiveAlerts(admissionId);
       return ApiResult.success(response);

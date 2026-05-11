@@ -11,6 +11,9 @@ import 'package:cortexia/features/patient/presentation/widgets/department_banner
 import 'package:cortexia/features/patient/presentation/widgets/patient_card.dart';
 import 'package:cortexia/core/themes/color_themes.dart';
 import 'package:cortexia/features/patient/presentation/widgets/app_bar_trailing.dart';
+import 'package:cortexia/features/alerts/presentation/controllers/alerts_cubit.dart';
+import 'package:cortexia/features/alerts/presentation/controllers/alerts_state.dart';
+import 'package:cortexia/features/alerts/data/models/alert_severity.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 
@@ -19,9 +22,17 @@ class PatientListScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => PatientsCubit(GetIt.I.get())
-        ..getPatients(query: GetAllPatientsQueryModel()),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (_) => PatientsCubit(GetIt.I.get())
+            ..getPatients(query: GetAllPatientsQueryModel()),
+        ),
+        BlocProvider(
+          create: (_) => AlertsCubit(GetIt.I.get())
+            ..getActiveAlerts(null),
+        ),
+      ],
       child: const _PatientListView(),
     );
   }
@@ -115,41 +126,60 @@ class _PatientListViewState extends State<_PatientListView> {
                       const SizedBox(height: 16),
 
                       // ── Stats Row ───────────────────────────────────────
-                      Row(
-                        children: [
-                          Expanded(
-                            child: CustomInfoCard(
-                              title: "Total Patients",
-                              value: "$totalCount",
-                              icon: Icons.people_alt_outlined,
-                              themeColor: AppColors.primaryBlue,
-                              bgColor: AppColors.infoBg,
-                              isSmall: false,
-                            ),
-                          ),
-                          const SizedBox(width: 10),
-                          Expanded(
-                            child: CustomInfoCard(
-                              title: "Critical Cases",
-                              value: "—",
-                              icon: Icons.report_problem_outlined,
-                              themeColor: AppColors.errorRed,
-                              bgColor: AppColors.errorBg,
-                              isSmall: false,
-                            ),
-                          ),
-                          const SizedBox(width: 10),
-                          Expanded(
-                            child: CustomInfoCard(
-                              title: "Active Alerts",
-                              value: "—",
-                              icon: Icons.notifications_active_outlined,
-                              themeColor: Colors.orange,
-                              bgColor: const Color(0xFFFFF7ED),
-                              isSmall: false,
-                            ),
-                          ),
-                        ],
+                      BlocBuilder<AlertsCubit, AlertsState>(
+                        builder: (context, alertsState) {
+                          int criticalCases = 0;
+                          int activeAlertsCount = 0;
+
+                          if (alertsState is AlertsLoaded) {
+                            activeAlertsCount = alertsState.activeAlerts.length;
+                            criticalCases = alertsState.activeAlerts.where((a) => a.severity == AlertSeverity.critical).length;
+                          } else if (context.read<AlertsCubit>().activeAlerts.isNotEmpty) {
+                            final alerts = context.read<AlertsCubit>().activeAlerts;
+                            activeAlertsCount = alerts.length;
+                            criticalCases = alerts.where((a) => a.severity == AlertSeverity.critical).length;
+                          }
+
+                          String criticalStr = (alertsState is AlertsLoading && activeAlertsCount == 0) ? "—" : "$criticalCases";
+                          String activeAlertsStr = (alertsState is AlertsLoading && activeAlertsCount == 0) ? "—" : "$activeAlertsCount";
+
+                          return Row(
+                            children: [
+                              Expanded(
+                                child: CustomInfoCard(
+                                  title: "Total Patients",
+                                  value: "$totalCount",
+                                  icon: Icons.people_alt_outlined,
+                                  themeColor: AppColors.primaryBlue,
+                                  bgColor: AppColors.infoBg,
+                                  isSmall: false,
+                                ),
+                              ),
+                              const SizedBox(width: 10),
+                              Expanded(
+                                child: CustomInfoCard(
+                                  title: "Critical Cases",
+                                  value: criticalStr,
+                                  icon: Icons.report_problem_outlined,
+                                  themeColor: AppColors.errorRed,
+                                  bgColor: AppColors.errorBg,
+                                  isSmall: false,
+                                ),
+                              ),
+                              const SizedBox(width: 10),
+                              Expanded(
+                                child: CustomInfoCard(
+                                  title: "Active Alerts",
+                                  value: activeAlertsStr,
+                                  icon: Icons.notifications_active_outlined,
+                                  themeColor: Colors.orange,
+                                  bgColor: const Color(0xFFFFF7ED),
+                                  isSmall: false,
+                                ),
+                              ),
+                            ],
+                          );
+                        },
                       ),
                       const SizedBox(height: 24),
                     ],

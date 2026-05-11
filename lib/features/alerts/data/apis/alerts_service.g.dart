@@ -22,9 +22,10 @@ class _AlertsService implements AlertsService {
   final ParseErrorLogger? errorLogger;
 
   @override
-  Future<List<AlertModel>> getActiveAlerts(String admissionId) async {
+  Future<List<AlertModel>> getActiveAlerts(String? admissionId) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{r'admissionId': admissionId};
+    queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
     final _options = _setStreamType<List<AlertModel>>(

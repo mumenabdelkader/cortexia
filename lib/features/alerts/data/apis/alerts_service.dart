@@ -12,7 +12,7 @@ abstract class AlertsService {
 
   @GET(ApiConstants.activeAlerts)
   Future<List<AlertModel>> getActiveAlerts(
-    @Query('admissionId') String admissionId,
+    @Query('admissionId') String? admissionId,
   );
 
   @POST('/api/SmartAssistant/alerts/{id}/override')

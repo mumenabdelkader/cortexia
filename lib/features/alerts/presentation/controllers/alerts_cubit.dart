@@ -11,7 +11,7 @@ class AlertsCubit extends Cubit<AlertsState> {
 
   List<AlertModel> activeAlerts = [];
 
-  Future<void> getActiveAlerts(String admissionId) async {
+  Future<void> getActiveAlerts(String? admissionId) async {
     emit(AlertsLoading());
     final result = await _alertsRepo.getActiveAlerts(admissionId);
     result.when(
