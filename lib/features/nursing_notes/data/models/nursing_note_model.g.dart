@@ -13,6 +13,7 @@ NursingNoteModel _$NursingNoteModelFromJson(Map<String, dynamic> json) =>
       noteDateTime: json['noteDateTime'] as String?,
       admissionId: json['admissionId'] as String?,
       nurseId: json['nurseId'] as String?,
+      nurseName: json['nurseName'] as String?,
     );
 
 Map<String, dynamic> _$NursingNoteModelToJson(NursingNoteModel instance) =>
@@ -22,4 +23,5 @@ Map<String, dynamic> _$NursingNoteModelToJson(NursingNoteModel instance) =>
       'noteDateTime': instance.noteDateTime,
       'admissionId': instance.admissionId,
       'nurseId': instance.nurseId,
+      'nurseName': instance.nurseName,
     };

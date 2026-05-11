@@ -9,6 +9,7 @@ class NursingNoteModel {
   final String? noteDateTime;
   final String? admissionId;
   final String? nurseId;
+  final String? nurseName;
 
   NursingNoteModel({
     this.id,
@@ -16,6 +17,7 @@ class NursingNoteModel {
     this.noteDateTime,
     this.admissionId,
     this.nurseId,
+    this.nurseName,
   });
 
   factory NursingNoteModel.fromJson(Map<String, dynamic> json) => _$NursingNoteModelFromJson(json);

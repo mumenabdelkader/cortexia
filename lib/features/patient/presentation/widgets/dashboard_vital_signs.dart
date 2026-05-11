@@ -1,4 +1,5 @@
 import 'package:cortexia/core/routing/routes.dart';
+import 'package:cortexia/features/vital_signs/data/models/vitals_model.dart';
 import 'package:cortexia/features/vital_signs/presentation/controllers/vital_signs_cubit.dart';
 import 'package:cortexia/features/vital_signs/presentation/controllers/vital_signs_opreations_const.dart';
 import 'package:flutter/material.dart';
@@ -124,28 +125,27 @@ class DashboardVitalSigns extends StatelessWidget {
     }
 
     // Extract vitals from success state or fall back to placeholders
-    Map<String, dynamic>? vitals;
+    VitalsModel? vitals;
     if (state is VitalSignsStateSuccess &&
         state.operation == kGetAdmissionsAdmissionidVitals) {
       try {
         final data = state.data;
-        if (data is List && data.isNotEmpty) {
-          // Most recent vital signs record
-          vitals = Map<String, dynamic>.from(data.first as Map);
-        } else if (data is Map) {
-          vitals = Map<String, dynamic>.from(data);
+        if (data is List<VitalsModel> && data.isNotEmpty) {
+          vitals = data.first;
+        } else if (data is List && data.isNotEmpty && data.first is VitalsModel) {
+          vitals = data.first as VitalsModel;
         }
       } catch (_) {}
     }
 
-    final heartRate = vitals?['heartRate']?.toString() ?? '--';
-    final temperature = vitals?['temperature']?.toString() ?? '--';
-    final bpSystolic = vitals?['bP_Systolic']?.toString();
-    final bpDiastolic = vitals?['bP_Diastolic']?.toString();
+    final heartRate = vitals?.heartRate?.toString() ?? '--';
+    final temperature = vitals?.temperature?.toString() ?? '--';
+    final bpSystolic = vitals?.bpSystolic?.toString();
+    final bpDiastolic = vitals?.bpDiastolic?.toString();
     final bloodPressure = (bpSystolic != null && bpDiastolic != null)
         ? '$bpSystolic/$bpDiastolic'
         : '--';
-    final spo2 = vitals?['pulseOxy']?.toString() ?? '--';
+    final spo2 = vitals?.pulseOxy?.toString() ?? '--';
 
     if (admissionId == null || admissionId!.isEmpty) {
       return const Padding(

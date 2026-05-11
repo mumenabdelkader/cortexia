@@ -1,6 +1,7 @@
 import 'package:cortexia/core/cache/app_cahe.dart';
 import 'package:cortexia/features/alerts/data/models/alert_model.dart';
 import 'package:cortexia/features/alerts/data/models/override_alert_request.dart';
+import 'package:cortexia/features/alerts/data/models/alert_severity.dart';
 import 'package:cortexia/features/alerts/presentation/controllers/alerts_cubit.dart';
 import 'package:cortexia/features/alerts/presentation/controllers/alerts_state.dart';
 import 'package:flutter/material.dart';
@@ -18,6 +19,8 @@ class ClinicalAlertsScreen extends StatefulWidget {
 }
 
 class _ClinicalAlertsScreenState extends State<ClinicalAlertsScreen> {
+  String _selectedFilter = 'All';
+
   @override
   void initState() {
     super.initState();
@@ -47,25 +50,40 @@ class _ClinicalAlertsScreenState extends State<ClinicalAlertsScreen> {
           } else if (state is AlertsError) {
             return Center(child: Text(state.message));
           } else if (state is AlertsLoaded || state is OverrideAlertLoading || state is OverrideAlertSuccess || state is OverrideAlertError) {
-            final alerts = context.read<AlertsCubit>().activeAlerts;
-            if (alerts.isEmpty) {
+            final allAlerts = context.read<AlertsCubit>().activeAlerts;
+            if (allAlerts.isEmpty) {
               return const Center(child: Text('No active alerts'));
             }
+
+            List<AlertModel> displayedAlerts = allAlerts;
+            if (_selectedFilter == 'Critical') {
+              displayedAlerts = displayedAlerts.where((a) => a.severity == AlertSeverity.critical).toList();
+            } else if (_selectedFilter != 'All') {
+              displayedAlerts = displayedAlerts.where((a) {
+                final text = (a.alertMessage ?? '').toLowerCase();
+                final filter = _selectedFilter.toLowerCase();
+                if (filter == 'vitals') return text.contains('vital');
+                if (filter == 'labs') return text.contains('lab');
+                if (filter == 'medications') return text.contains('med');
+                return text.contains(filter);
+              }).toList();
+            }
+
             return SingleChildScrollView(
               padding: AppDimens.paddingAll16,
               child: Column(
                 children: [
-                  _buildTopCountsArea(alerts),
+                  _buildTopCountsArea(allAlerts),
                   SizedBox(height: AppDimens.space16),
-                  _buildFiltersArea(alerts.length),
+                  _buildFiltersArea(allAlerts.length),
                   SizedBox(height: AppDimens.space16),
                   ListView.separated(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
-                    itemCount: alerts.length,
+                    itemCount: displayedAlerts.length,
                     separatorBuilder: (_, __) => SizedBox(height: AppDimens.space12),
                     itemBuilder: (context, index) {
-                      final alert = alerts[index];
+                      final alert = displayedAlerts[index];
                       return _buildAlertCardFromModel(alert);
                     },
                   ),
@@ -80,9 +98,9 @@ class _ClinicalAlertsScreenState extends State<ClinicalAlertsScreen> {
   }
 
   Widget _buildTopCountsArea(List<AlertModel> alerts) {
-    int critical = alerts.where((a) => a.severity == 3).length;
-    int high = alerts.where((a) => a.severity == 2).length;
-    int other = alerts.where((a) => a.severity == 1 || a.severity == 0).length;
+    int critical = alerts.where((a) => a.severity == AlertSeverity.critical).length;
+    int high = alerts.where((a) => a.severity == AlertSeverity.high).length;
+    int other = alerts.where((a) => a.severity == AlertSeverity.medium || a.severity == AlertSeverity.low || a.severity == AlertSeverity.info).length;
 
     return Row(
       children: [
@@ -173,35 +191,45 @@ class _ClinicalAlertsScreenState extends State<ClinicalAlertsScreen> {
         padding: EdgeInsets.symmetric(horizontal: AppDimens.space12),
         child: Row(
           children: [
-            _buildFilterChip(label: 'All ($total)', isSelected: true),
+            _buildFilterChip(label: 'All', count: total),
             SizedBox(width: AppDimens.space8),
-            _buildFilterChip(label: 'Critical', isSelected: false),
+            _buildFilterChip(label: 'Critical'),
             SizedBox(width: AppDimens.space8),
-            _buildFilterChip(label: 'Vitals', isSelected: false),
+            _buildFilterChip(label: 'Vitals'),
             SizedBox(width: AppDimens.space8),
-            _buildFilterChip(label: 'Labs', isSelected: false),
+            _buildFilterChip(label: 'Labs'),
             SizedBox(width: AppDimens.space8),
-            _buildFilterChip(label: 'Medications', isSelected: false),
+            _buildFilterChip(label: 'Medications'),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildFilterChip({required String label, required bool isSelected}) {
-    return Container(
-       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      decoration: BoxDecoration(
-        color: isSelected ? AppColors.infoBlue : AppColors.scaffoldBg,
-        borderRadius: AppDimens.radius8,
-        border: Border.all(color: isSelected ? Colors.transparent : AppColors.border),
-      ),
-      child: Text(
-        label,
-        style: TextStyle(
-          color: isSelected ? AppColors.white : AppColors.textSecondary,
-          fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
-          fontSize: AppDimens.fontMedium,
+  Widget _buildFilterChip({required String label, int? count}) {
+    bool isSelected = _selectedFilter == label;
+    String displayText = count != null ? '$label ($count)' : label;
+
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          _selectedFilter = label;
+        });
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        decoration: BoxDecoration(
+          color: isSelected ? AppColors.infoBlue : AppColors.scaffoldBg,
+          borderRadius: AppDimens.radius8,
+          border: Border.all(color: isSelected ? Colors.transparent : AppColors.border),
+        ),
+        child: Text(
+          displayText,
+          style: TextStyle(
+            color: isSelected ? AppColors.white : AppColors.textSecondary,
+            fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+            fontSize: AppDimens.fontMedium,
+          ),
         ),
       ),
     );
@@ -215,14 +243,14 @@ class _ClinicalAlertsScreenState extends State<ClinicalAlertsScreen> {
     Color cardBorderColor = const Color(0x4D0066CC);
     Color cardBgColor = const Color(0x1A0066CC);
 
-    if (alert.severity == 3) {
+    if (alert.severity == AlertSeverity.critical) {
       badgeColor = AppColors.errorRed;
       badgeText = 'CRITICAL';
       iconColor = AppColors.errorRed;
       iconData = Icons.warning_amber_rounded;
       cardBorderColor = const Color(0x4DF44336);
       cardBgColor = const Color(0x1AF44336);
-    } else if (alert.severity == 2) {
+    } else if (alert.severity == AlertSeverity.high) {
       badgeColor = AppColors.warningOrange;
       badgeText = 'HIGH';
       iconColor = AppColors.warningOrange;
@@ -262,6 +290,7 @@ class _ClinicalAlertsScreenState extends State<ClinicalAlertsScreen> {
       iconColor: iconColor,
       cardBorderColor: cardBorderColor,
       cardBgColor: cardBgColor,
+      patientName: alert.patientName,
     );
   }
 
@@ -279,6 +308,7 @@ class _ClinicalAlertsScreenState extends State<ClinicalAlertsScreen> {
     required Color iconColor,
     required Color cardBorderColor,
     required Color cardBgColor,
+    String? patientName,
   }) {
     return Container(
       decoration: BoxDecoration(
@@ -369,6 +399,19 @@ class _ClinicalAlertsScreenState extends State<ClinicalAlertsScreen> {
                               ),
                             ),
                           ),
+                          if (patientName != null && patientName.isNotEmpty) ...[
+                            SizedBox(width: AppDimens.space8),
+                            Icon(Icons.person, size: 12, color: AppColors.textSecondary),
+                            SizedBox(width: AppDimens.space4),
+                            Text(
+                              patientName,
+                              style: const TextStyle(
+                                fontSize: 10,
+                                color: AppColors.textSecondary,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
                         ],
                       ),
                     ],

@@ -195,6 +195,7 @@ class _VitalSignsScreenState extends State<VitalSignsScreen> {
         mainAxisAlignment: MainAxisAlignment.end,
         children:[
           FloatingActionButton.extended(
+            heroTag: 'vital_signs_chart_fab',
             backgroundColor: AppColors.primaryBlue,
             onPressed: () {
               Navigator.push(context, MaterialPageRoute(builder: (_) =>  PatientVitalDashboardScreen( items: widget.items,)));
@@ -203,11 +204,13 @@ class _VitalSignsScreenState extends State<VitalSignsScreen> {
           ),
           SizedBox(height: 7),
           FloatingActionButton.extended(
-          backgroundColor: AppColors.primaryBlue,
-          onPressed: () => _showAddOrEditDialog(context),
-          icon: const Icon(Icons.add, color: Colors.white), label: const Text("vital", style: TextStyle(color: Colors.white))
-
-        ),]
+            heroTag: 'vital_signs_add_fab',
+            backgroundColor: AppColors.primaryBlue,
+            onPressed: () => _showAddOrEditDialog(context),
+            icon: const Icon(Icons.add, color: Colors.white), 
+            label: const Text("vital", style: TextStyle(color: Colors.white))
+          ),
+        ]
       ),
       body: BlocConsumer<VitalSignsCubit, VitalSignsState>(
         listener: (context, state) {

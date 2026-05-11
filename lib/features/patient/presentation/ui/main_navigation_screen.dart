@@ -23,7 +23,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
     const PatientListScreen(),
     BlocProvider(
       create: (context) => locator<AlertsCubit>(),
-      child: const ClinicalAlertsScreen(admissionId: 'ADM-FB17DE805A62'),
+      child: const ClinicalAlertsScreen(admissionId: ''),
     ),
     const ProfileScreen(),
   ];

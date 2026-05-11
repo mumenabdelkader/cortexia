@@ -1,5 +1,4 @@
 import 'package:cortexia/core/routing/routes.dart';
-import 'package:cortexia/features/ai_assistant/presentation/ui/chatbot_screen.dart';
 import 'package:cortexia/features/patient/presentation/widgets/dashboar_patient_card.dart';
 import 'package:cortexia/features/patient/presentation/widgets/dashboard_action_card.dart';
 import 'package:cortexia/features/patient/presentation/widgets/dashboard_active_medications.dart';
@@ -123,10 +122,13 @@ class PatientDashboardScreen extends StatelessWidget {
                               colors: [Color(0xFF00D2FF), Color(0xFF00E5FF)],
                             ),
                             onPressed: () {
-                              Navigator.of(context).pushNamed(arguments: {
-                                'admissionId': admission?.id,
-                                'patientName': patient.name,
-                              }, Routes.chatbotScreen);
+                              Navigator.of(context).pushNamed(
+                                arguments: {
+                                  'admissionId': admission?.id,
+                                  'patientName': patient.name,
+                                },
+                                Routes.chatbotScreen,
+                              );
                             },
                           ),
 

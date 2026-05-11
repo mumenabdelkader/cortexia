@@ -387,7 +387,7 @@ class _NoteCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        note.nurseId ?? 'Nurse',
+                        note.nurseName ?? note.nurseId ?? 'Nurse',
                         style: TextStyle(
                           fontSize: AppDimens.fontLarge,
                           fontWeight: FontWeight.bold,
