@@ -58,9 +58,9 @@ class DoctorModel {
 
   String get roleLabel {
     switch (role) {
-      case 0: return 'Resident';
-      case 1: return 'Specialist';
-      case 2: return 'Consultant';
+      case 0: return 'Specialist';
+      case 1: return 'Consultant';
+      case 2: return 'Intern';
       default: return 'N/A';
     }
   }

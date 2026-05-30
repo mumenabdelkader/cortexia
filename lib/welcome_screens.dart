@@ -22,7 +22,18 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
 
   Future<void> _checkLoginStatus() async {
     final loggedIn = await AppCache.isLoggedIn();
-    if (loggedIn && mounted) {
+    if (!loggedIn || !mounted) return;
+
+    // Role-based navigation: Admin → Admin Dashboard, others → main app
+    final userData = await AppCache.getUserData();
+    final isAdmin =
+        userData?.roles?.any((r) => r.toLowerCase() == 'admin') ?? false;
+
+    if (!mounted) return;
+
+    if (isAdmin) {
+      Navigator.pushReplacementNamed(context, Routes.adminDashboardScreen);
+    } else {
       Navigator.pushReplacementNamed(context, Routes.mainNavigationScreen);
     }
   }

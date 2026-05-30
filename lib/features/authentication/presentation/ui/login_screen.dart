@@ -1,3 +1,4 @@
+import 'package:cortexia/core/cache/app_cahe.dart';
 import 'package:cortexia/core/di/dependency_injection.dart';
 import 'package:cortexia/core/routing/routes.dart';
 import 'package:cortexia/core/widgets/custom_elevated_button.dart';
@@ -29,11 +30,26 @@ class LoginScreen extends StatelessWidget {
                   // التعامل مع حالات النجاح والفشل (Navigation & Popups)
                   listener: (context, state) {
                     if (state is LoginSuccess) {
-                      Navigator.pushNamedAndRemoveUntil(
-                        context,
-                        Routes.mainNavigationScreen,
-                        (route) => false,
-                      );
+                      Future.microtask(() async {
+                        final userData = await AppCache.getUserData();
+                        final isAdmin = userData?.roles?.any((r) => r.toLowerCase() == 'admin') ?? false;
+                        
+                        if (context.mounted) {
+                          if (isAdmin) {
+                            Navigator.pushNamedAndRemoveUntil(
+                              context,
+                              Routes.adminDashboardScreen,
+                              (route) => false,
+                            );
+                          } else {
+                            Navigator.pushNamedAndRemoveUntil(
+                              context,
+                              Routes.mainNavigationScreen,
+                              (route) => false,
+                            );
+                          }
+                        }
+                      });
                     } else if (state is LoginError) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(

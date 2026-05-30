@@ -1,4 +1,5 @@
 import 'package:cortexia/core/networking/api_error_handler.dart';
+import 'package:cortexia/core/networking/api_error_model.dart';
 import 'package:cortexia/core/networking/api_result.dart';
 import 'package:cortexia/features/authentication/data/models/login_request_model.dart';
 import 'package:cortexia/features/authentication/data/models/login_response_model.dart';
@@ -7,6 +8,7 @@ import 'package:cortexia/features/authentication/data/models/forgot_password_res
 import 'package:cortexia/features/authentication/data/models/reset_password_request_body.dart';
 import 'package:cortexia/features/authentication/data/models/reset_password_response_body.dart';
 import 'package:cortexia/features/authentication/domain/repo/repo_interface.dart';
+import 'package:flutter/material.dart';
 import '../apis/auth_service.dart';
 
 class AuthRepositoryImp implements AuthRepoInterface {
@@ -16,9 +18,19 @@ class AuthRepositoryImp implements AuthRepoInterface {
 
   @override
   Future<ApiResult<LoginResponseModel>> login(
-      LoginRequestModel loginRequest) async {
+    LoginRequestModel loginRequest,
+  ) async {
     try {
       final response = await _authService.login(loginRequest);
+      if (response.success == false) {
+        return ApiResult.error(
+          ApiErrorModel(
+            messages: [response.message!],
+            icon: Icons.error,
+            statusCode: 400,
+          ),
+        );
+      }
       return ApiResult.success(response);
     } catch (error) {
       return ApiResult.error(ApiErrorHandler.handle(error));
@@ -27,7 +39,8 @@ class AuthRepositoryImp implements AuthRepoInterface {
 
   @override
   Future<ApiResult<ForgotPasswordResponseBody>> forgotPassword(
-      ForgotPasswordRequestBody forgotPasswordRequest) async {
+    ForgotPasswordRequestBody forgotPasswordRequest,
+  ) async {
     try {
       final response = await _authService.forgotPassword(forgotPasswordRequest);
       return ApiResult.success(response);
@@ -38,7 +51,8 @@ class AuthRepositoryImp implements AuthRepoInterface {
 
   @override
   Future<ApiResult<ResetPasswordResponseBody>> resetPassword(
-      ResetPasswordRequestBody resetPasswordRequest) async {
+    ResetPasswordRequestBody resetPasswordRequest,
+  ) async {
     try {
       final response = await _authService.resetPassword(resetPasswordRequest);
       return ApiResult.success(response);

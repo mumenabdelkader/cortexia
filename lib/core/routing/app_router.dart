@@ -28,6 +28,7 @@ import 'package:cortexia/features/intervention_procedures/presentation/ui/interv
 import 'package:cortexia/features/intervention_procedures/presentation/controllers/intervention_procedures_cubit.dart';
 import 'package:cortexia/features/physical_examination/presentation/controllers/physical_examination_cubit.dart';
 import 'package:cortexia/features/alerts/presentation/controllers/alerts_cubit.dart';
+import 'package:cortexia/features/admin_dashboard/presentation/screens/admin_shell_screen.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'routes.dart';
@@ -165,6 +166,11 @@ class AppRouter {
             create: (context) => InterventionProceduresCubit(GetIt.I.get()),
             child: InterventionProceduresScreen(admissionId: admId),
           ),
+        );
+
+      case Routes.adminDashboardScreen:
+        return MaterialPageRoute(
+          builder: (_) => const AdminShellScreen(),
         );
 
       default:

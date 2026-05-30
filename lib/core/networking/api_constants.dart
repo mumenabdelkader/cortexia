@@ -235,4 +235,29 @@ class ApiConstants {
   static String overrideAlert(String id) =>
       '/api/SmartAssistant/alerts/$id/override';
   static const String askSmartAssistantRag = '/api/SmartAssistant/rag/ask';
+
+  // ── Admin Dashboard ────────────────────────────────────────────────────────
+  static const String adminDashboardSummary = '/api/admin-dashboard/summary';
+  static const String adminAuditLogs = '/api/admin-dashboard/audit-logs';
+  static const String adminCreateAdmin = '/api/admin-dashboard/create-admin';
+  static const String adminRoles = '/api/admin-dashboard/roles';
+  static const String adminCreateRole = '/api/admin-dashboard/create-role';
+  static String adminDeleteRole(String roleId) =>
+      '/api/admin-dashboard/delete-role/$roleId';
+  static const String adminAssignRole = '/api/admin-dashboard/assign-role';
+  static const String adminRemoveRole = '/api/admin-dashboard/remove-role';
+  static const String adminUsersWithRoles =
+      '/api/admin-dashboard/users-with-roles';
+  static const String adminToggleUserStatus =
+      '/api/admin-dashboard/toggle-user-status';
+  static const String adminForceResetPassword =
+      '/api/admin-dashboard/force-reset-password';
+  static const String adminCreateRoom = '/api/admin-dashboard/create-room';
+  static const String adminUpdateRoom = '/api/admin-dashboard/update-room';
+  static const String adminToggleRoomAvailability =
+      '/api/admin-dashboard/toggle-room-availability';
+  static const String adminCreateBed = '/api/admin-dashboard/create-bed';
+  static const String adminUpdateBed = '/api/admin-dashboard/update-bed';
+  static String adminDeleteBed(String bedId) =>
+      '/api/admin-dashboard/delete-bed/$bedId';
 }

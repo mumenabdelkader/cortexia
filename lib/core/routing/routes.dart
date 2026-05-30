@@ -73,4 +73,12 @@ class Routes {
   static const String physicalExaminationScreen = '/physical-examination';
   static const String vitalSignsScreen = '/vital-signs';
   static const String interventionProceduresScreen = '/intervention-procedures';
+
+  // ── Admin Dashboard Routes ─────────────────────────────────────────────────
+  static const String adminDashboardScreen = '/admin-dashboard';
+  static const String adminUsersScreen = '/admin-users';
+  static const String adminRolesScreen = '/admin-roles';
+  static const String adminRoomsScreen = '/admin-rooms';
+  static const String adminBedsScreen = '/admin-beds';
+  static const String adminAuditLogsScreen = '/admin-audit-logs';
 }

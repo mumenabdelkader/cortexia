@@ -53,6 +53,17 @@ import 'package:cortexia/features/alerts/data/apis/alerts_service.dart';
 import 'package:cortexia/features/alerts/data/repo/alerts_repo_impl.dart';
 import 'package:cortexia/features/alerts/domain/repo/alerts_repo_interface.dart';
 import 'package:cortexia/features/alerts/presentation/controllers/alerts_cubit.dart';
+import 'package:cortexia/features/admin_dashboard/data/apis/admin_dashboard_service.dart';
+import 'package:cortexia/features/admin_dashboard/data/repo/admin_dashboard_repo_impl.dart';
+import 'package:cortexia/features/admin_dashboard/domain/repo/admin_dashboard_repo_interface.dart';
+import 'package:cortexia/features/admin_dashboard/presentation/controllers/admin_dashboard_cubit.dart';
+import 'package:cortexia/features/admin_dashboard/presentation/controllers/admin_audit_logs_cubit.dart';
+import 'package:cortexia/features/admin_dashboard/presentation/controllers/admin_roles_cubit.dart';
+import 'package:cortexia/features/admin_dashboard/presentation/controllers/admin_users_cubit.dart';
+import 'package:cortexia/features/admin_dashboard/presentation/controllers/admin_rooms_cubit.dart';
+import 'package:cortexia/features/admin_dashboard/presentation/controllers/admin_beds_cubit.dart';
+import 'package:cortexia/features/admin_dashboard/presentation/controllers/admin_doctors_cubit.dart';
+import 'package:cortexia/features/admin_dashboard/presentation/controllers/admin_nurses_cubit.dart';
 
 import 'package:get_it/get_it.dart';
 
@@ -212,5 +223,37 @@ Future<void> setupGetIt() async {
   );
   locator.registerFactory<AiAssistantCubit>(
     () => AiAssistantCubit(locator<AiAssistantRepoInterface>()),
+  );
+
+  /* ---------------------- ADMIN DASHBOARD FEATURE ----------------------- */
+  locator.registerLazySingleton<AdminDashboardService>(
+    () => AdminDashboardService(dio),
+  );
+  locator.registerLazySingleton<AdminDashboardRepoInterface>(
+    () => AdminDashboardRepoImpl(locator<AdminDashboardService>()),
+  );
+  locator.registerFactory<AdminDashboardCubit>(
+    () => AdminDashboardCubit(locator<AdminDashboardRepoInterface>()),
+  );
+  locator.registerFactory<AdminAuditLogsCubit>(
+    () => AdminAuditLogsCubit(locator<AdminDashboardRepoInterface>()),
+  );
+  locator.registerFactory<AdminRolesCubit>(
+    () => AdminRolesCubit(locator<AdminDashboardRepoInterface>()),
+  );
+  locator.registerFactory<AdminUsersCubit>(
+    () => AdminUsersCubit(locator<AdminDashboardRepoInterface>()),
+  );
+  locator.registerFactory<AdminRoomsCubit>(
+    () => AdminRoomsCubit(locator<AdminDashboardRepoInterface>()),
+  );
+  locator.registerFactory<AdminBedsCubit>(
+    () => AdminBedsCubit(locator<AdminDashboardRepoInterface>()),
+  );
+  locator.registerFactory<AdminDoctorsCubit>(
+    () => AdminDoctorsCubit(locator<AdminDashboardRepoInterface>()),
+  );
+  locator.registerFactory<AdminNursesCubit>(
+    () => AdminNursesCubit(locator<AdminDashboardRepoInterface>()),
   );
 }
