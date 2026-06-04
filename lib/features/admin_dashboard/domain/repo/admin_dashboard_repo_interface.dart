@@ -7,6 +7,7 @@ import 'package:cortexia/features/admin_dashboard/data/models/user_with_roles_mo
 import 'package:cortexia/features/admin_dashboard/data/models/room_model.dart';
 import 'package:cortexia/features/admin_dashboard/data/models/nurse_model.dart';
 import 'package:cortexia/features/doctor/data/models/doctor_model.dart';
+import 'package:cortexia/features/admin_dashboard/data/models/schedule_model.dart';
 
 abstract class AdminDashboardRepoInterface {
   // Summary
@@ -55,4 +56,9 @@ abstract class AdminDashboardRepoInterface {
   Future<ApiResult<dynamic>> createBed(CreateBedRequest request);
   Future<ApiResult<dynamic>> updateBed(UpdateBedRequest request);
   Future<ApiResult<dynamic>> deleteBed(String bedId);
+
+  // Schedules
+  Future<ApiResult<List<ScheduleModel>>> getStaffSchedules(String staffId);
+  Future<ApiResult<dynamic>> createStaffSchedule(
+      String staffId, CreateScheduleRequest request);
 }

@@ -4,24 +4,44 @@ part 'dashboard_summary_model.g.dart';
 
 @JsonSerializable()
 class DashboardSummaryModel {
-  final int totalActivePatients;
-  final double bedOccupancyPercentage;
   final int highRiskAlertsCount;
   final int totalRAGQueriesToday;
   final List<SystemActivityModel> recentSystemActivities;
+  final HospitalStatsModel hospitalStats;
 
   const DashboardSummaryModel({
-    required this.totalActivePatients,
-    required this.bedOccupancyPercentage,
     required this.highRiskAlertsCount,
     required this.totalRAGQueriesToday,
     required this.recentSystemActivities,
+    required this.hospitalStats,
   });
 
   factory DashboardSummaryModel.fromJson(Map<String, dynamic> json) =>
       _$DashboardSummaryModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$DashboardSummaryModelToJson(this);
+}
+
+@JsonSerializable()
+class HospitalStatsModel {
+  final int totalActivePatients;
+  final int admissionsToday;
+  final int dischargesToday;
+  final double bedOccupancyPercentage;
+  final int activeStaffOnShift;
+
+  const HospitalStatsModel({
+    required this.totalActivePatients,
+    required this.admissionsToday,
+    required this.dischargesToday,
+    required this.bedOccupancyPercentage,
+    required this.activeStaffOnShift,
+  });
+
+  factory HospitalStatsModel.fromJson(Map<String, dynamic> json) =>
+      _$HospitalStatsModelFromJson(json);
+
+  Map<String, dynamic> toJson() => _$HospitalStatsModelToJson(this);
 }
 
 @JsonSerializable()

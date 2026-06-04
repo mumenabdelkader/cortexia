@@ -91,4 +91,12 @@ abstract class AdminDashboardService {
 
   @DELETE('/api/admin-dashboard/delete-bed/{bedId}')
   Future<dynamic> deleteBed(@Path('bedId') String bedId);
+
+  // ── Schedules ──────────────────────────────────────────────────────────────
+  @GET('/api/admin-dashboard/staff/{staffId}/schedules')
+  Future<dynamic> getStaffSchedules(@Path('staffId') String staffId);
+
+  @POST('/api/admin-dashboard/staff/{staffId}/schedules')
+  Future<dynamic> createStaffSchedule(
+      @Path('staffId') String staffId, @Body() CreateScheduleRequest body);
 }

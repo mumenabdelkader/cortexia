@@ -246,3 +246,25 @@ Map<String, dynamic> _$UpdateBedRequestToJson(UpdateBedRequest instance) =>
       'bedNumber': instance.bedNumber,
       'status': instance.status,
     };
+
+CreateScheduleRequest _$CreateScheduleRequestFromJson(
+  Map<String, dynamic> json,
+) => CreateScheduleRequest(
+  startDate: json['startDate'] as String,
+  endDate: json['endDate'] as String,
+  daysOfWeek: (json['daysOfWeek'] as List<dynamic>)
+      .map((e) => (e as num).toInt())
+      .toList(),
+  startTime: json['startTime'] as String,
+  endTime: json['endTime'] as String,
+);
+
+Map<String, dynamic> _$CreateScheduleRequestToJson(
+  CreateScheduleRequest instance,
+) => <String, dynamic>{
+  'startDate': instance.startDate,
+  'endDate': instance.endDate,
+  'daysOfWeek': instance.daysOfWeek,
+  'startTime': instance.startTime,
+  'endTime': instance.endTime,
+};

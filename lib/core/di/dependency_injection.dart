@@ -64,6 +64,7 @@ import 'package:cortexia/features/admin_dashboard/presentation/controllers/admin
 import 'package:cortexia/features/admin_dashboard/presentation/controllers/admin_beds_cubit.dart';
 import 'package:cortexia/features/admin_dashboard/presentation/controllers/admin_doctors_cubit.dart';
 import 'package:cortexia/features/admin_dashboard/presentation/controllers/admin_nurses_cubit.dart';
+import 'package:cortexia/features/admin_dashboard/presentation/controllers/admin_schedules_cubit.dart';
 
 import 'package:get_it/get_it.dart';
 
@@ -255,5 +256,8 @@ Future<void> setupGetIt() async {
   );
   locator.registerFactory<AdminNursesCubit>(
     () => AdminNursesCubit(locator<AdminDashboardRepoInterface>()),
+  );
+  locator.registerFactory<AdminSchedulesCubit>(
+    () => AdminSchedulesCubit(locator<AdminDashboardRepoInterface>()),
   );
 }

@@ -318,3 +318,27 @@ class UpdateBedRequest {
 
   Map<String, dynamic> toJson() => _$UpdateBedRequestToJson(this);
 }
+
+// ── Create Schedule ──────────────────────────────────────────────────────────
+
+@JsonSerializable()
+class CreateScheduleRequest {
+  final String startDate;
+  final String endDate;
+  final List<int> daysOfWeek;
+  final String startTime;
+  final String endTime;
+
+  const CreateScheduleRequest({
+    required this.startDate,
+    required this.endDate,
+    required this.daysOfWeek,
+    required this.startTime,
+    required this.endTime,
+  });
+
+  factory CreateScheduleRequest.fromJson(Map<String, dynamic> json) =>
+      _$CreateScheduleRequestFromJson(json);
+
+  Map<String, dynamic> toJson() => _$CreateScheduleRequestToJson(this);
+}

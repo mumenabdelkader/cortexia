@@ -4,6 +4,7 @@ import 'package:cortexia/features/admin_dashboard/data/models/nurse_model.dart';
 import 'package:cortexia/features/admin_dashboard/presentation/controllers/admin_nurses_cubit.dart';
 import 'package:cortexia/features/admin_dashboard/presentation/widgets/admin_form_dialog.dart';
 import 'package:cortexia/features/admin_dashboard/presentation/widgets/admin_section_header.dart';
+import 'package:cortexia/features/admin_dashboard/presentation/widgets/admin_schedules_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -194,9 +195,20 @@ class _AdminNursesScreenState extends State<AdminNursesScreen> {
                     ],
                   ),
                 ),
-                IconButton(
-                  icon: const Icon(Icons.edit_outlined, size: 20, color: AppColors.infoBlue),
-                  onPressed: () => _showEditNurseDialog(nurse),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.calendar_month_outlined, size: 20, color: AppColors.infoBlue),
+                      onPressed: () => AdminSchedulesDialog.show(context, nurse.id ?? '', nurse.displayName),
+                      tooltip: 'View Schedules',
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.edit_outlined, size: 20, color: AppColors.infoBlue),
+                      onPressed: () => _showEditNurseDialog(nurse),
+                      tooltip: 'Edit Nurse',
+                    ),
+                  ],
                 ),
               ],
             ),

@@ -4,6 +4,7 @@ import 'package:cortexia/features/doctor/data/models/doctor_model.dart';
 import 'package:cortexia/features/admin_dashboard/presentation/controllers/admin_doctors_cubit.dart';
 import 'package:cortexia/features/admin_dashboard/presentation/widgets/admin_form_dialog.dart';
 import 'package:cortexia/features/admin_dashboard/presentation/widgets/admin_section_header.dart';
+import 'package:cortexia/features/admin_dashboard/presentation/widgets/admin_schedules_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -194,9 +195,20 @@ class _AdminDoctorsScreenState extends State<AdminDoctorsScreen> {
                     ],
                   ),
                 ),
-                IconButton(
-                  icon: const Icon(Icons.edit_outlined, size: 20, color: AppColors.primaryBlue),
-                  onPressed: () => _showEditDoctorDialog(doctor),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.calendar_month_outlined, size: 20, color: AppColors.primaryBlue),
+                      onPressed: () => AdminSchedulesDialog.show(context, doctor.id ?? '', doctor.displayName),
+                      tooltip: 'View Schedules',
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.edit_outlined, size: 20, color: AppColors.primaryBlue),
+                      onPressed: () => _showEditDoctorDialog(doctor),
+                      tooltip: 'Edit Doctor',
+                    ),
+                  ],
                 ),
               ],
             ),

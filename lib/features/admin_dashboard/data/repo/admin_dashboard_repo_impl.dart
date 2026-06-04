@@ -9,6 +9,7 @@ import 'package:cortexia/features/admin_dashboard/data/models/room_model.dart';
 import 'package:cortexia/features/admin_dashboard/data/models/user_with_roles_model.dart';
 import 'package:cortexia/features/admin_dashboard/data/models/nurse_model.dart';
 import 'package:cortexia/features/doctor/data/models/doctor_model.dart';
+import 'package:cortexia/features/admin_dashboard/data/models/schedule_model.dart';
 import 'package:cortexia/features/admin_dashboard/domain/repo/admin_dashboard_repo_interface.dart';
 
 class AdminDashboardRepoImpl implements AdminDashboardRepoInterface {
@@ -296,6 +297,33 @@ class AdminDashboardRepoImpl implements AdminDashboardRepoInterface {
   Future<ApiResult<dynamic>> deleteBed(String bedId) async {
     try {
       final response = await _service.deleteBed(bedId);
+      return ApiResult.success(response);
+    } catch (e) {
+      return ApiResult.error(ApiErrorHandler.handle(e));
+    }
+  }
+
+  // ── Schedules ─────────────────────────────────────────────────────────────
+
+  @override
+  Future<ApiResult<List<ScheduleModel>>> getStaffSchedules(String staffId) async {
+    try {
+      final response = await _service.getStaffSchedules(staffId);
+      final dataList = response['data'] as List<dynamic>;
+      final schedules = dataList
+          .map((e) => ScheduleModel.fromJson(e as Map<String, dynamic>))
+          .toList();
+      return ApiResult.success(schedules);
+    } catch (e) {
+      return ApiResult.error(ApiErrorHandler.handle(e));
+    }
+  }
+
+  @override
+  Future<ApiResult<dynamic>> createStaffSchedule(
+      String staffId, CreateScheduleRequest request) async {
+    try {
+      final response = await _service.createStaffSchedule(staffId, request);
       return ApiResult.success(response);
     } catch (e) {
       return ApiResult.error(ApiErrorHandler.handle(e));

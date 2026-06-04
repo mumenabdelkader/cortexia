@@ -104,7 +104,7 @@ class _AdminOverviewScreenState extends State<AdminOverviewScreen> {
             children: [
               AdminStatCard(
                 title: 'Active Patients',
-                value: '${summary.totalActivePatients}',
+                value: '${summary.hospitalStats.totalActivePatients}',
                 icon: Icons.person_outline,
                 accentColor: AppColors.primaryBlue,
                 subtitle: 'Currently admitted',
@@ -112,7 +112,7 @@ class _AdminOverviewScreenState extends State<AdminOverviewScreen> {
               AdminStatCard(
                 title: 'Bed Occupancy',
                 value:
-                    '${summary.bedOccupancyPercentage.toStringAsFixed(1)}%',
+                    '${summary.hospitalStats.bedOccupancyPercentage.toStringAsFixed(1)}%',
                 icon: Icons.bed_outlined,
                 accentColor: AppColors.warningOrange,
                 subtitle: 'Of total beds in use',
@@ -130,6 +130,27 @@ class _AdminOverviewScreenState extends State<AdminOverviewScreen> {
                 icon: Icons.psychology_outlined,
                 accentColor: AppColors.successGreen,
                 subtitle: 'AI assistant queries',
+              ),
+              AdminStatCard(
+                title: 'Admissions Today',
+                value: '${summary.hospitalStats.admissionsToday}',
+                icon: Icons.person_add_outlined,
+                accentColor: AppColors.primaryBlue,
+                subtitle: 'New patients admitted',
+              ),
+              AdminStatCard(
+                title: 'Discharges Today',
+                value: '${summary.hospitalStats.dischargesToday}',
+                icon: Icons.hail_outlined,
+                accentColor: AppColors.successGreen,
+                subtitle: 'Patients discharged',
+              ),
+              AdminStatCard(
+                title: 'Staff On Shift',
+                value: '${summary.hospitalStats.activeStaffOnShift}',
+                icon: Icons.badge_outlined,
+                accentColor: AppColors.warningOrange,
+                subtitle: 'Currently active staff',
               ),
             ],
           ),
