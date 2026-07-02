@@ -9,6 +9,7 @@ import 'package:cortexia/core/themes/app_dimens.dart';
 import 'package:cortexia/core/themes/color_themes.dart';
 import 'package:cortexia/core/widgets/custom_app_bar.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:cortexia/core/routing/routes.dart';
 
 class ClinicalAlertsScreen extends StatefulWidget {
   final String admissionId;
@@ -36,11 +37,17 @@ class _ClinicalAlertsScreenState extends State<ClinicalAlertsScreen> {
         listener: (context, state) {
           if (state is OverrideAlertSuccess) {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(state.message), backgroundColor: Colors.green),
+              SnackBar(
+                content: Text(state.message),
+                backgroundColor: Colors.green,
+              ),
             );
           } else if (state is OverrideAlertError) {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(state.message), backgroundColor: AppColors.errorRed),
+              SnackBar(
+                content: Text(state.message),
+                backgroundColor: AppColors.errorRed,
+              ),
             );
           }
         },
@@ -49,7 +56,10 @@ class _ClinicalAlertsScreenState extends State<ClinicalAlertsScreen> {
             return const Center(child: CircularProgressIndicator());
           } else if (state is AlertsError) {
             return Center(child: Text(state.message));
-          } else if (state is AlertsLoaded || state is OverrideAlertLoading || state is OverrideAlertSuccess || state is OverrideAlertError) {
+          } else if (state is AlertsLoaded ||
+              state is OverrideAlertLoading ||
+              state is OverrideAlertSuccess ||
+              state is OverrideAlertError) {
             final allAlerts = context.read<AlertsCubit>().activeAlerts;
             if (allAlerts.isEmpty) {
               return const Center(child: Text('No active alerts'));
@@ -57,7 +67,9 @@ class _ClinicalAlertsScreenState extends State<ClinicalAlertsScreen> {
 
             List<AlertModel> displayedAlerts = allAlerts;
             if (_selectedFilter == 'Critical') {
-              displayedAlerts = displayedAlerts.where((a) => a.severity == AlertSeverity.critical).toList();
+              displayedAlerts = displayedAlerts
+                  .where((a) => a.severity == AlertSeverity.critical)
+                  .toList();
             } else if (_selectedFilter != 'All') {
               displayedAlerts = displayedAlerts.where((a) {
                 final text = (a.alertMessage ?? '').toLowerCase();
@@ -81,7 +93,8 @@ class _ClinicalAlertsScreenState extends State<ClinicalAlertsScreen> {
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
                     itemCount: displayedAlerts.length,
-                    separatorBuilder: (_, __) => SizedBox(height: AppDimens.space12),
+                    separatorBuilder: (_, __) =>
+                        SizedBox(height: AppDimens.space12),
                     itemBuilder: (context, index) {
                       final alert = displayedAlerts[index];
                       return _buildAlertCardFromModel(alert);
@@ -98,9 +111,18 @@ class _ClinicalAlertsScreenState extends State<ClinicalAlertsScreen> {
   }
 
   Widget _buildTopCountsArea(List<AlertModel> alerts) {
-    int critical = alerts.where((a) => a.severity == AlertSeverity.critical).length;
+    int critical = alerts
+        .where((a) => a.severity == AlertSeverity.critical)
+        .length;
     int high = alerts.where((a) => a.severity == AlertSeverity.high).length;
-    int other = alerts.where((a) => a.severity == AlertSeverity.medium || a.severity == AlertSeverity.low || a.severity == AlertSeverity.info).length;
+    int other = alerts
+        .where(
+          (a) =>
+              a.severity == AlertSeverity.medium ||
+              a.severity == AlertSeverity.low ||
+              a.severity == AlertSeverity.info,
+        )
+        .length;
 
     return Row(
       children: [
@@ -110,8 +132,8 @@ class _ClinicalAlertsScreenState extends State<ClinicalAlertsScreen> {
             label: 'Critical',
             labelColor: AppColors.textSecondary,
             countColor: AppColors.errorRed,
-            bgColor: const Color(0x1AF44336), 
-            borderColor: const Color(0x4DF44336), 
+            bgColor: const Color(0x1AF44336),
+            borderColor: const Color(0x4DF44336),
           ),
         ),
         SizedBox(width: AppDimens.space12),
@@ -119,10 +141,10 @@ class _ClinicalAlertsScreenState extends State<ClinicalAlertsScreen> {
           child: _buildCountCard(
             count: high.toString(),
             label: 'High',
-             labelColor: AppColors.textSecondary,
+            labelColor: AppColors.textSecondary,
             countColor: AppColors.warningOrange,
-            bgColor: const Color(0x1AFF9800),     
-            borderColor: const Color(0x4DFF9800), 
+            bgColor: const Color(0x1AFF9800),
+            borderColor: const Color(0x4DFF9800),
           ),
         ),
         SizedBox(width: AppDimens.space12),
@@ -130,10 +152,10 @@ class _ClinicalAlertsScreenState extends State<ClinicalAlertsScreen> {
           child: _buildCountCard(
             count: other.toString(),
             label: 'Other',
-             labelColor: AppColors.textSecondary,
-            countColor: AppColors.infoBlue, 
-            bgColor: const Color(0x1A0066CC),   
-            borderColor: const Color(0x4D0066CC), 
+            labelColor: AppColors.textSecondary,
+            countColor: AppColors.infoBlue,
+            bgColor: const Color(0x1A0066CC),
+            borderColor: const Color(0x4D0066CC),
           ),
         ),
       ],
@@ -168,10 +190,7 @@ class _ClinicalAlertsScreenState extends State<ClinicalAlertsScreen> {
           SizedBox(height: AppDimens.space4),
           Text(
             label,
-            style: TextStyle(
-              fontSize: AppDimens.fontSmall,
-              color: labelColor,
-            ),
+            style: TextStyle(fontSize: AppDimens.fontSmall, color: labelColor),
           ),
         ],
       ),
@@ -221,7 +240,9 @@ class _ClinicalAlertsScreenState extends State<ClinicalAlertsScreen> {
         decoration: BoxDecoration(
           color: isSelected ? AppColors.infoBlue : AppColors.scaffoldBg,
           borderRadius: AppDimens.radius8,
-          border: Border.all(color: isSelected ? Colors.transparent : AppColors.border),
+          border: Border.all(
+            color: isSelected ? Colors.transparent : AppColors.border,
+          ),
         ),
         child: Text(
           displayText,
@@ -291,6 +312,21 @@ class _ClinicalAlertsScreenState extends State<ClinicalAlertsScreen> {
       cardBorderColor: cardBorderColor,
       cardBgColor: cardBgColor,
       patientName: alert.patientName,
+      onReview: () {
+        if (alert.admissionId != null) {
+          Navigator.pushNamed(
+            context,
+            Routes.patientDashboardScreen,
+            arguments: {'admissionId': alert.admissionId},
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Cannot navigate: missing admission ID'),
+            ),
+          );
+        }
+      },
     );
   }
 
@@ -309,6 +345,7 @@ class _ClinicalAlertsScreenState extends State<ClinicalAlertsScreen> {
     required Color cardBorderColor,
     required Color cardBgColor,
     String? patientName,
+    required VoidCallback onReview,
   }) {
     return Container(
       decoration: BoxDecoration(
@@ -338,33 +375,36 @@ class _ClinicalAlertsScreenState extends State<ClinicalAlertsScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(
-                         children: [
-                           Expanded(
-                              child: Text(
-                                title,
-                                style: TextStyle(
-                                  fontSize: AppDimens.fontMedium,
-                                  fontWeight: FontWeight.bold,
-                                  color: iconColor, 
-                                ),
+                        children: [
+                          Expanded(
+                            child: Text(
+                              title,
+                              style: TextStyle(
+                                fontSize: AppDimens.fontMedium,
+                                fontWeight: FontWeight.bold,
+                                color: iconColor,
                               ),
-                           ),
-                           Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                              decoration: BoxDecoration(
-                                color: badgeColor,
-                                borderRadius: AppDimens.radius8,
+                            ),
+                          ),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 2,
+                            ),
+                            decoration: BoxDecoration(
+                              color: badgeColor,
+                              borderRadius: AppDimens.radius8,
+                            ),
+                            child: Text(
+                              badgeText,
+                              style: const TextStyle(
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold,
+                                color: AppColors.white,
                               ),
-                              child: Text(
-                                badgeText,
-                                style: const TextStyle(
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.bold,
-                                  color: AppColors.white,
-                                ),
-                              ),
-                           ),
-                         ],
+                            ),
+                          ),
+                        ],
                       ),
                       SizedBox(height: AppDimens.space4),
                       Text(
@@ -386,7 +426,10 @@ class _ClinicalAlertsScreenState extends State<ClinicalAlertsScreen> {
                           ),
                           SizedBox(width: AppDimens.space8),
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 6,
+                              vertical: 2,
+                            ),
                             decoration: BoxDecoration(
                               border: Border.all(color: AppColors.border),
                               borderRadius: AppDimens.radius8,
@@ -399,9 +442,14 @@ class _ClinicalAlertsScreenState extends State<ClinicalAlertsScreen> {
                               ),
                             ),
                           ),
-                          if (patientName != null && patientName.isNotEmpty) ...[
+                          if (patientName != null &&
+                              patientName.isNotEmpty) ...[
                             SizedBox(width: AppDimens.space8),
-                            Icon(Icons.person, size: 12, color: AppColors.textSecondary),
+                            Icon(
+                              Icons.person,
+                              size: 12,
+                              color: AppColors.textSecondary,
+                            ),
                             SizedBox(width: AppDimens.space4),
                             Text(
                               patientName,
@@ -427,23 +475,26 @@ class _ClinicalAlertsScreenState extends State<ClinicalAlertsScreen> {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 InkWell(
-                  onTap: () {},
+                  onTap: onReview,
                   borderRadius: AppDimens.radius8,
                   child: Container(
-                     padding: EdgeInsets.symmetric(horizontal: AppDimens.space16, vertical: 8),
-                     decoration: BoxDecoration(
-                        color: AppColors.scaffoldBg,
-                        borderRadius: AppDimens.radius8,
-                        border: Border.all(color: AppColors.border),
-                     ),
-                     child: Text(
-                        secondaryAction,
-                        style: TextStyle(
-                           color: AppColors.textSecondary,
-                           fontWeight: FontWeight.w600,
-                           fontSize: AppDimens.fontMedium,
-                        ),
-                     ),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: AppDimens.space16,
+                      vertical: 8,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppColors.scaffoldBg,
+                      borderRadius: AppDimens.radius8,
+                      border: Border.all(color: AppColors.border),
+                    ),
+                    child: Text(
+                      secondaryAction,
+                      style: TextStyle(
+                        color: AppColors.textSecondary,
+                        fontWeight: FontWeight.w600,
+                        fontSize: AppDimens.fontMedium,
+                      ),
+                    ),
                   ),
                 ),
                 SizedBox(width: AppDimens.space8),
@@ -451,19 +502,22 @@ class _ClinicalAlertsScreenState extends State<ClinicalAlertsScreen> {
                   onTap: () => _showOverrideDialog(alertId),
                   borderRadius: AppDimens.radius8,
                   child: Container(
-                     padding: EdgeInsets.symmetric(horizontal: AppDimens.space16, vertical: 8),
-                     decoration: BoxDecoration(
-                        color: badgeColor,
-                        borderRadius: AppDimens.radius8,
-                     ),
-                     child: Text(
-                        primaryAction,
-                        style: TextStyle(
-                           color: AppColors.white,
-                           fontWeight: FontWeight.w600,
-                           fontSize: AppDimens.fontMedium,
-                        ),
-                     ),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: AppDimens.space16,
+                      vertical: 8,
+                    ),
+                    decoration: BoxDecoration(
+                      color: badgeColor,
+                      borderRadius: AppDimens.radius8,
+                    ),
+                    child: Text(
+                      primaryAction,
+                      style: TextStyle(
+                        color: AppColors.white,
+                        fontWeight: FontWeight.w600,
+                        fontSize: AppDimens.fontMedium,
+                      ),
+                    ),
                   ),
                 ),
               ],
@@ -477,47 +531,55 @@ class _ClinicalAlertsScreenState extends State<ClinicalAlertsScreen> {
   void _showOverrideDialog(String alertId) {
     final reasonController = TextEditingController();
     final procedureController = TextEditingController();
+    final cubit = context.read<AlertsCubit>();
 
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (dialogContext) => AlertDialog(
         title: const Text('Override Alert'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             TextField(
               controller: reasonController,
-              decoration: const InputDecoration(labelText: 'Reason for override'),
+              decoration: const InputDecoration(
+                labelText: 'Reason for override',
+              ),
             ),
             TextField(
               controller: procedureController,
-              decoration: const InputDecoration(labelText: 'Related Procedure ID (Optional)'),
+              decoration: const InputDecoration(
+                labelText: 'Related Procedure ID (Optional)',
+              ),
             ),
           ],
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => Navigator.pop(dialogContext),
             child: const Text('Cancel'),
           ),
           ElevatedButton(
             onPressed: () async {
               final user = await AppCache.getUserData();
-              if (!context.mounted) return;
-              
+              if (!mounted) return;
+
               final doctorId = user?.userIdInSystem ?? 'DOC-123';
-              final cubit = context.read<AlertsCubit>();
-              
+
               cubit.overrideAlert(
                 OverrideAlertRequest(
                   alertId: alertId,
                   doctorId: doctorId,
-                  reason: reasonController.text.isEmpty ? 'Clinical Judgement' : reasonController.text,
-                  procedureId: procedureController.text,
+                  reason: reasonController.text.isEmpty
+                      ? 'Clinical Judgement'
+                      : reasonController.text,
+                  procedureId: procedureController.text.isEmpty
+                      ? null
+                      : procedureController.text,
                 ),
                 widget.admissionId,
               );
-              Navigator.pop(context);
+              Navigator.pop(dialogContext);
             },
             child: const Text('Confirm'),
           ),

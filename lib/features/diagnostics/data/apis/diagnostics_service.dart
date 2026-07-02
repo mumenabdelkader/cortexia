@@ -18,7 +18,7 @@ abstract class DiagnosticsService {
   Future<dynamic> postDiagnosticsLabResults({@Body() required AddLabResultCommandModel requestBody});
 
   @POST(ApiConstants.diagnosticsImaging)
-  Future<dynamic> postDiagnosticsImaging({@Body() required UploadImagingCommandModel requestBody});
+  Future<dynamic> postDiagnosticsImaging({@Body() required FormData requestBody});
 
   @GET(ApiConstants.diagnosticsLabOrdersByAdmission)
   Future<dynamic> getDiagnosticsLabOrdersAdmissionid({@Path('admissionId') required String admissionid});

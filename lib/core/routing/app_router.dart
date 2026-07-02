@@ -129,9 +129,9 @@ class AppRouter {
       case Routes.patientDashboardScreen:
         final id = arguments is String
             ? arguments
-            : (arguments is Map ? arguments['patientId'] : null);
+            : (arguments is Map ? arguments['admissionId'] : null);
         return MaterialPageRoute(
-          builder: (_) => PatientDashboardScreen(patientId: id as String?),
+          builder: (_) => PatientDashboardScreen(admissionId: id as String?),
         );
       case Routes.patientListScreen:
         return MaterialPageRoute(builder: (_) => const PatientListScreen());

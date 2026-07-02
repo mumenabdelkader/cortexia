@@ -27,6 +27,9 @@ class AlertModel {
   @JsonKey(name: 'patientName')
   final String? patientName;
 
+  @JsonKey(name: 'patientId')
+  final String? patientId;
+
   AlertModel({
     this.id,
     this.alertMessage,
@@ -35,6 +38,7 @@ class AlertModel {
     this.status,
     this.admissionId,
     this.patientName,
+    this.patientId,
   });
 
   factory AlertModel.fromJson(Map<String, dynamic> json) =>

@@ -1,9 +1,8 @@
 import 'package:cortexia/features/patient/presentation/ui/patient_dashboard_screen.dart';
 import 'package:cortexia/features/patient/presentation/widgets/custom_info_card.dart';
-import 'package:cortexia/features/patients/data/models/get_all_patients_query_model.dart';
-import 'package:cortexia/features/patients/data/models/blood_type.dart';
-import 'package:cortexia/features/patients/data/models/patient_model.dart';
-import 'package:cortexia/features/patients/presentation/controllers/patients_cubit.dart';
+import 'package:cortexia/features/admission/data/models/active_admission_model.dart';
+import 'package:cortexia/features/admission/presentation/controllers/admission_cubit.dart';
+import 'package:cortexia/features/admission/presentation/controllers/admission_state.dart';
 import 'package:flutter/material.dart';
 import 'package:cortexia/core/widgets/custom_app_bar.dart';
 import 'package:cortexia/core/widgets/custom_form_field.dart';
@@ -25,8 +24,8 @@ class PatientListScreen extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (_) => PatientsCubit(GetIt.I.get())
-            ..getPatients(query: GetAllPatientsQueryModel()),
+          create: (_) => AdmissionCubit(GetIt.I.get())
+            ..getActiveAdmissions(),
         ),
         BlocProvider(
           create: (_) => AlertsCubit(GetIt.I.get())
@@ -59,9 +58,9 @@ class _PatientListViewState extends State<_PatientListView> {
         subtitle: "Patients",
         trailing: const AppBarTrailing(),
       ),
-      body: BlocConsumer<PatientsCubit, PatientsState>(
+      body: BlocConsumer<AdmissionCubit, AdmissionState>(
         listener: (context, state) {
-          if (state is PatientsStateError) {
+          if (state is AdmissionError) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text(state.message)),
             );
@@ -69,32 +68,24 @@ class _PatientListViewState extends State<_PatientListView> {
         },
         builder: (context, state) {
           // ── جلب كل المرضى من الـ state ─────────────────────────────
-          final List<PatientModel> allPatients = [];
-          if (state is PatientsStateSuccess &&
-              state.operation == 'getPatients') {
-            final raw = state.data;
-            if (raw is List) {
-              for (final item in raw) {
-                if (item is Map<String, dynamic>) {
-                  allPatients.add(PatientModel.fromJson(item));
-                }
-              }
-            }
+          final List<ActiveAdmissionModel> allPatients = [];
+          if (state is ActiveAdmissionsLoaded) {
+             allPatients.addAll(state.admissions);
           }
 
           // 3. فلترة المرضى بناءً على نص البحث
-          final List<PatientModel> filteredPatients = allPatients.where((p) {
+          final List<ActiveAdmissionModel> filteredPatients = allPatients.where((p) {
             if (_searchQuery.isEmpty) return true;
 
             final query = _searchQuery.toLowerCase();
             final name = (p.name ?? '').toLowerCase();
-            final id = (p.fileNumber ?? p.id ?? '').toLowerCase();
-            final diagnosis = (p.diagnosisSummary ?? '').toLowerCase();
+            final id = (p.fileNumber ?? p.patientId ?? '').toLowerCase();
+            final diagnosis = (p.diagnosisSummary ?? p.initialDiagnosis ?? '').toLowerCase();
 
             return name.contains(query) || id.contains(query) || diagnosis.contains(query);
           }).toList();
 
-          final isLoading = state is PatientsStateLoading;
+          final isLoading = state is AdmissionLoading;
           final totalCount = filteredPatients.length; // عدد المرضى بعد الفلترة
 
           return CustomScrollView(
@@ -212,20 +203,24 @@ class _PatientListViewState extends State<_PatientListView> {
                         onTap: () => Navigator.of(context).push(
                           MaterialPageRoute(
                             builder: (_) => PatientDashboardScreen(
-                              patientId: p.id ?? '',
+                              admissionId: p.admissionId ?? '',
                             ),
                           ),
                         ),
                         child: PatientCard(
                           name: p.name ?? '—',
-                          patientId: p.fileNumber ?? p.id ?? '—',
-                          status: 'Active',
-                          diagnosis: p.diagnosisSummary ?? '—',
+                          patientId: p.fileNumber ?? p.patientId ?? '—',
+                          status: p.status ?? 'Active',
+                          diagnosis: p.diagnosisSummary ?? p.initialDiagnosis ?? '—',
                           age: p.age?.toString(),
-                          gender: p.sex ?? p.gender?.name,
-                          bloodType: p.bloodType?.displayLabel,
-                          phone: p.phoneNumber,
+                          gender: p.gender == 1 ? 'Male' : (p.gender == 2 ? 'Female' : '—'),
+                          bloodType: p.bloodType != null ? 'Type ${p.bloodType}' : null, // Adjust if you have an enum mapping
+                          phone: p.phone,
                           email: p.email,
+                          hrValue: p.latestVitalSigns?.heartRate != null ? "${p.latestVitalSigns!.heartRate} bpm" : "—",
+                          tempValue: p.latestVitalSigns?.temperature != null ? "${p.latestVitalSigns!.temperature}°C" : "—",
+                          bpValue: (p.latestVitalSigns?.bpSystolic != null && p.latestVitalSigns?.bpDiastolic != null) ? "${p.latestVitalSigns!.bpSystolic}/${p.latestVitalSigns!.bpDiastolic}" : "—",
+                          spo2Value: p.latestVitalSigns?.pulseOxy != null ? "${p.latestVitalSigns!.pulseOxy}%" : "—",
                         ),
                       );
                     },

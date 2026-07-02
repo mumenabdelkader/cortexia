@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:cortexia/features/diagnostics/data/models/imaging_file_model.dart';
 
 part 'imaging_model.g.dart';
 
@@ -10,6 +11,7 @@ class ImagingModel {
   final String? date;
   final String? admissionId;
   final String? doctorId;
+  final List<ImagingFileModel>? files;
 
   const ImagingModel({
     this.id,
@@ -18,6 +20,7 @@ class ImagingModel {
     this.date,
     this.admissionId,
     this.doctorId,
+    this.files,
   });
 
   factory ImagingModel.fromJson(Map<String, dynamic> json) =>

@@ -12,7 +12,7 @@ OverrideAlertRequest _$OverrideAlertRequestFromJson(
   alertId: json['alertId'] as String,
   doctorId: json['doctorId'] as String,
   reason: json['reason'] as String,
-  procedureId: json['procedureId'] as String,
+  procedureId: json['procedureId'] as String?,
 );
 
 Map<String, dynamic> _$OverrideAlertRequestToJson(
@@ -21,5 +21,5 @@ Map<String, dynamic> _$OverrideAlertRequestToJson(
   'alertId': instance.alertId,
   'doctorId': instance.doctorId,
   'reason': instance.reason,
-  'procedureId': instance.procedureId,
+  'procedureId': ?instance.procedureId,
 };

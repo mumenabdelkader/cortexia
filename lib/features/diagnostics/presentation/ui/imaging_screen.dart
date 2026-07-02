@@ -8,6 +8,8 @@ import 'package:cortexia/features/diagnostics/data/models/imaging_model.dart';
 import 'package:cortexia/features/diagnostics/data/models/upload_imaging_command_model.dart';
 import 'package:cortexia/features/diagnostics/data/models/imaging_type.dart';
 import 'package:cortexia/features/diagnostics/presentation/controllers/diagnostics_cubit.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
 
 class ImagingScreen extends StatefulWidget {
   final String admissionId;
@@ -38,6 +40,8 @@ class _ImagingScreenState extends State<ImagingScreen> {
     final findingsCtrl = TextEditingController();
     final formKey = GlobalKey<FormState>();
     ImagingType selectedType = ImagingType.value1; // Chest X-Ray default
+    List<XFile> selectedFiles = [];
+    final ImagePicker picker = ImagePicker();
 
     final typeLabels = {
       ImagingType.value0: 'X-Ray',
@@ -97,6 +101,65 @@ class _ImagingScreenState extends State<ImagingScreen> {
                     validator: (v) =>
                         (v == null || v.trim().isEmpty) ? 'Required' : null,
                   ),
+                  SizedBox(height: AppDimens.space12),
+                  OutlinedButton.icon(
+                    onPressed: () async {
+                      final List<XFile> images = await picker.pickMultiImage();
+                      if (images.isNotEmpty) {
+                        setInner(() {
+                          selectedFiles.addAll(images);
+                        });
+                      }
+                    },
+                    icon: const Icon(Icons.add_photo_alternate),
+                    label: const Text('Add Images'),
+                  ),
+                  if (selectedFiles.isNotEmpty) ...[
+                    SizedBox(height: AppDimens.space8),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: selectedFiles.map((file) {
+                        return Stack(
+                          clipBehavior: Clip.none,
+                          children: [
+                            Container(
+                              width: 60,
+                              height: 60,
+                              decoration: BoxDecoration(
+                                borderRadius: AppDimens.radius8,
+                                border: Border.all(color: AppColors.border),
+                                image: DecorationImage(
+                                  image: FileImage(File(file.path)),
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            ),
+                            Positioned(
+                              right: -8,
+                              top: -8,
+                              child: GestureDetector(
+                                onTap: () {
+                                  setInner(() {
+                                    selectedFiles.remove(file);
+                                  });
+                                },
+                                child: Container(
+                                  padding: const EdgeInsets.all(2),
+                                  decoration: const BoxDecoration(
+                                    color: Colors.red,
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: const Icon(Icons.close,
+                                      size: 14, color: Colors.white),
+                                ),
+                              ),
+                            ),
+                          ],
+                        );
+                      }).toList(),
+                    ),
+                  ],
                 ],
               ),
             ),
@@ -106,7 +169,7 @@ class _ImagingScreenState extends State<ImagingScreen> {
               onPressed: () => Navigator.pop(ctx),
               child: const Text('Cancel'),
             ),
-            FilledButton(
+              FilledButton(
               onPressed: () async {
                 if (!formKey.currentState!.validate()) return;
                 Navigator.pop(ctx);
@@ -121,6 +184,7 @@ class _ImagingScreenState extends State<ImagingScreen> {
                         findings: findingsCtrl.text.trim(),
                         date: DateTime.now().toUtc().toIso8601String(),
                         doctorId: userData?.userIdInSystem,
+                        files: selectedFiles.map((f) => f.path).toList(),
                       ),
                     );
                 if (!mounted) return;
@@ -386,6 +450,42 @@ class _ImagingScreenState extends State<ImagingScreen> {
               ],
             ),
           ),
+          if (imaging.files != null && imaging.files!.isNotEmpty) ...[
+            Divider(height: 1, color: AppColors.border),
+            Padding(
+              padding: AppDimens.paddingAll16,
+              child: Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: imaging.files!.map((file) {
+                  return GestureDetector(
+                    onTap: () {
+                      if (file.url != null && file.url!.isNotEmpty) {
+                        _showImageViewer(file.url!);
+                      }
+                    },
+                    child: Container(
+                      width: 60,
+                      height: 60,
+                      decoration: BoxDecoration(
+                        borderRadius: AppDimens.radius8,
+                        border: Border.all(color: AppColors.border),
+                      ),
+                      child: ClipRRect(
+                        borderRadius: AppDimens.radius8,
+                        child: Image.network(
+                          file.url ?? '',
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) =>
+                              const Icon(Icons.broken_image, color: Colors.grey),
+                        ),
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
+            ),
+          ],
           if (imaging.id != null) ...[
             Divider(height: 1, color: AppColors.border),
             Padding(
@@ -403,6 +503,44 @@ class _ImagingScreenState extends State<ImagingScreen> {
             ),
           ],
         ],
+      ),
+    );
+  }
+
+  void _showImageViewer(String url) {
+    showDialog(
+      context: context,
+      builder: (ctx) => Dialog(
+        backgroundColor: Colors.transparent,
+        insetPadding: EdgeInsets.zero,
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            InteractiveViewer(
+              panEnabled: true,
+              minScale: 0.5,
+              maxScale: 4.0,
+              child: Image.network(
+                url,
+                fit: BoxFit.contain,
+                errorBuilder: (ctx, err, stack) =>
+                    const Center(child: Icon(Icons.broken_image, color: Colors.white, size: 64)),
+                loadingBuilder: (ctx, child, progress) {
+                  if (progress == null) return child;
+                  return const Center(child: CircularProgressIndicator(color: Colors.white));
+                },
+              ),
+            ),
+            Positioned(
+              top: 40,
+              right: 20,
+              child: IconButton(
+                icon: const Icon(Icons.close, color: Colors.white, size: 30),
+                onPressed: () => Navigator.pop(ctx),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

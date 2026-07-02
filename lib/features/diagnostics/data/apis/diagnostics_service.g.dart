@@ -71,13 +71,12 @@ class _DiagnosticsService implements DiagnosticsService {
 
   @override
   Future<dynamic> postDiagnosticsImaging({
-    required UploadImagingCommandModel requestBody,
+    required FormData requestBody,
   }) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
-    final _data = <String, dynamic>{};
-    _data.addAll(requestBody.toJson());
+    final _data = requestBody;
     final _options = _setStreamType<dynamic>(
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(

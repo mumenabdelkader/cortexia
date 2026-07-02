@@ -33,7 +33,8 @@ class DiagnosticsRepoImp implements DiagnosticsRepoInterface {
   @override
   Future<ApiResult<dynamic>> postDiagnosticsImaging({required UploadImagingCommandModel requestBody}) async {
     try {
-      final response = await _apiService.postDiagnosticsImaging(requestBody: requestBody);
+      final formData = await requestBody.toFormData();
+      final response = await _apiService.postDiagnosticsImaging(requestBody: formData);
       return ApiResult.success(response);
     } catch (error) {
       return ApiResult.error(ApiErrorHandler.handle(error));

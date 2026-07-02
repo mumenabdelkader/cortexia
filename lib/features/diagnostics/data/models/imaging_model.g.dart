@@ -13,6 +13,9 @@ ImagingModel _$ImagingModelFromJson(Map<String, dynamic> json) => ImagingModel(
   date: json['date'] as String?,
   admissionId: json['admissionId'] as String?,
   doctorId: json['doctorId'] as String?,
+  files: (json['files'] as List<dynamic>?)
+      ?.map((e) => ImagingFileModel.fromJson(e as Map<String, dynamic>))
+      .toList(),
 );
 
 Map<String, dynamic> _$ImagingModelToJson(ImagingModel instance) =>
@@ -23,4 +26,5 @@ Map<String, dynamic> _$ImagingModelToJson(ImagingModel instance) =>
       'date': instance.date,
       'admissionId': instance.admissionId,
       'doctorId': instance.doctorId,
+      'files': instance.files,
     };

@@ -13,14 +13,14 @@ class OverrideAlertRequest {
   @JsonKey(name: 'reason')
   final String reason;
 
-  @JsonKey(name: 'procedureId')
-  final String procedureId;
+  @JsonKey(name: 'procedureId', includeIfNull: false)
+  final String? procedureId;
 
   OverrideAlertRequest({
     required this.alertId,
     required this.doctorId,
     required this.reason,
-    required this.procedureId,
+    this.procedureId,
   });
 
   factory OverrideAlertRequest.fromJson(Map<String, dynamic> json) =>

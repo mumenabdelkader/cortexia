@@ -23,4 +23,10 @@ abstract class AdmissionService {
 
   @GET(ApiConstants.rooms)
   Future<List<RoomModel>> getRooms();
+
+  @GET(ApiConstants.activeAdmissions)
+  Future<dynamic> getActiveAdmissions();
+
+  @GET(ApiConstants.admissionById)
+  Future<dynamic> getAdmissionById(@Path("id") String id);
 }

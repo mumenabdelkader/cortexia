@@ -54,4 +54,22 @@ class AdmissionCubit extends Cubit<AdmissionState> {
       onError: (err) => emit(AdmissionError(message: err.messages.first)),
     );
   }
+
+  Future<void> getActiveAdmissions() async {
+    emit(AdmissionLoading());
+    final response = await _admissionRepo.getActiveAdmissions();
+    response.when(
+      onSuccess: (admissions) => emit(ActiveAdmissionsLoaded(admissions)),
+      onError: (err) => emit(AdmissionError(message: err.messages.first)),
+    );
+  }
+
+  Future<void> getAdmissionById(String id) async {
+    emit(AdmissionLoading());
+    final response = await _admissionRepo.getAdmissionById(id);
+    response.when(
+      onSuccess: (admission) => emit(AdmissionDetailsLoaded(admission)),
+      onError: (err) => emit(AdmissionError(message: err.messages.isNotEmpty ? err.messages.join(', ') : 'Failed to load admission details')),
+    );
+  }
 }

@@ -14,6 +14,7 @@ AlertModel _$AlertModelFromJson(Map<String, dynamic> json) => AlertModel(
   status: $enumDecodeNullable(_$AlertStatusEnumMap, json['status']),
   admissionId: json['admissionId'] as String?,
   patientName: json['patientName'] as String?,
+  patientId: json['patientId'] as String?,
 );
 
 Map<String, dynamic> _$AlertModelToJson(AlertModel instance) =>
@@ -25,6 +26,7 @@ Map<String, dynamic> _$AlertModelToJson(AlertModel instance) =>
       'status': _$AlertStatusEnumMap[instance.status],
       'admissionId': instance.admissionId,
       'patientName': instance.patientName,
+      'patientId': instance.patientId,
     };
 
 const _$AlertSeverityEnumMap = {

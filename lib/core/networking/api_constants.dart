@@ -9,6 +9,8 @@ class ApiConstants {
       "/api/admissions/{admissionId}/case-history";
   static const String createAdmission = "/api/Admission/patients/{patientId}";
   static const String admitPatient = "/api/Admission/admit";
+  static const String activeAdmissions = "/api/admission/active";
+  static const String admissionById = "/api/admission/{id}";
   static const String rooms = "/api/Rooms";
   static const String doctorDetails = "/api/Doctors/{email}/details";
   static const String createPatientOrGetAll = "/api/Patients"; // Assumed

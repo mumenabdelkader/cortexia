@@ -15,7 +15,6 @@ class DioHelper implements ApiHelper {
           baseUrl: ApiConstants.baseUrl,
           receiveTimeout: const Duration(seconds: 60),
           connectTimeout: const Duration(seconds: 30),
-          sendTimeout: const Duration(seconds: 60),
           headers: {"Accept": "application/json"},
         ),
       ) {

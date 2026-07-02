@@ -8,28 +8,30 @@ import 'package:flutter/material.dart';
 import 'package:cortexia/core/widgets/custom_app_bar.dart'; // تأكد من المسار الصحيح
 import 'package:cortexia/core/widgets/custom_elevated_button.dart'; // تأكد من المسار الصحيح
 
-import 'package:cortexia/features/patients/data/models/patient_details_response_model.dart';
-import 'package:cortexia/features/patients/presentation/controllers/patients_cubit.dart';
+import 'package:cortexia/features/admission/presentation/controllers/admission_cubit.dart';
+import 'package:cortexia/features/admission/presentation/controllers/admission_state.dart';
+import 'package:cortexia/features/admission/data/models/active_admission_model.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:intl/intl.dart';
 
 class PatientDashboardScreen extends StatelessWidget {
-  final String? patientId;
-  const PatientDashboardScreen({super.key, this.patientId});
+  final String? admissionId;
+  const PatientDashboardScreen({super.key, this.admissionId});
+  
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) =>
-          PatientsCubit(GetIt.I.get())
-            ..getPatientsIdDetails(id: patientId ?? ""),
+          AdmissionCubit(GetIt.I.get())
+            ..getAdmissionById(admissionId ?? ""),
       child: Scaffold(
         backgroundColor: const Color(0xFFF8FAFC),
         appBar: const CustomAppBar(
           title: "Patient Dashboard",
           subtitle: "Medical Overview",
         ),
-        body: patientId == null || patientId!.isEmpty
+        body: admissionId == null || admissionId!.isEmpty
             ? const Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -37,7 +39,7 @@ class PatientDashboardScreen extends StatelessWidget {
                     Icon(Icons.person_search, size: 80, color: Colors.grey),
                     SizedBox(height: 16),
                     Text(
-                      "No Patient Selected",
+                      "No Admission Selected",
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -46,33 +48,25 @@ class PatientDashboardScreen extends StatelessWidget {
                     ),
                     SizedBox(height: 8),
                     Text(
-                      "Please select a patient from the list.",
+                      "Please select an admission from the list.",
                       style: TextStyle(color: Colors.grey),
                     ),
                   ],
                 ),
               )
-            : BlocBuilder<PatientsCubit, PatientsState>(
+            : BlocBuilder<AdmissionCubit, AdmissionState>(
                 builder: (context, state) {
-                  if (state is PatientsStateLoading) {
+                  if (state is AdmissionLoading) {
                     return const Center(child: CircularProgressIndicator());
-                  } else if (state is PatientsStateError) {
+                  } else if (state is AdmissionError) {
                     return Center(child: Text(state.message));
-                  } else if (state is PatientsStateSuccess &&
-                      state.operation == 'getPatientsIdDetails') {
-                    final patient = state.data as PatientDetailsResponseModel;
-
-                    // تجهيز البيانات للـ Card
-                    final admission =
-                        (patient.admissions != null &&
-                            patient.admissions!.isNotEmpty)
-                        ? patient.admissions!.first
-                        : null;
+                  } else if (state is AdmissionDetailsLoaded) {
+                    final admission = state.admission;
 
                     String formattedDate = "N/A";
-                    if (admission?.admissionDate != null) {
+                    if (admission.admissionDate != null) {
                       try {
-                        DateTime dt = DateTime.parse(admission!.admissionDate!);
+                        DateTime dt = DateTime.parse(admission.admissionDate!);
                         formattedDate = DateFormat('MMM dd, yyyy').format(dt);
                       } catch (_) {}
                     }
@@ -82,35 +76,30 @@ class PatientDashboardScreen extends StatelessWidget {
                       child: Column(
                         children: [
                           DashboarPatientCard(
-                            name: patient.name,
-                            id: patient.fileNumber ?? patient.id,
-                            status:
-                                "Active", // أو حسب الـ status في الـ admission
-                            genderAge: patient.gender ?? 'N/A',
-                            room: admission?.roomId ?? "N/A",
+                            name: admission.name ?? 'Unknown',
+                            id: admission.fileNumber ?? admission.patientId ?? 'N/A',
+                            status: admission.status ?? "Active",
+                            genderAge: admission.gender == 1 ? 'Male' : (admission.gender == 2 ? 'Female' : 'N/A'),
+                            room: admission.roomId ?? "N/A",
                             admittedDate: formattedDate,
-                            diagnosis:
-                                patient.diagnosisSummary ??
-                                admission?.initialDiagnosis ??
-                                "N/A",
-                            daysCount:
-                                "Calculating...", // يمكن حسابه من فرق التواريخ
+                            diagnosis: admission.diagnosisSummary ?? admission.initialDiagnosis ?? "N/A",
+                            daysCount: "Active", // Or calculate difference based on admissionDate
                           ),
                           const SizedBox(height: 16),
-                          DashboardCurrentAlerts(admissionId: admission?.id),
+                          DashboardCurrentAlerts(admissionId: admission.admissionId),
                           const SizedBox(height: 16),
-                          DashboardVitalSigns(admissionId: admission?.id),
+                          DashboardVitalSigns(admissionId: admission.admissionId),
                           const SizedBox(height: 16),
                           GestureDetector(
                             onTap: () {
                               Navigator.pushNamed(
                                 context,
                                 Routes.medicationScreen,
-                                arguments: {'admissionId': admission?.id},
+                                arguments: {'admissionId': admission.admissionId},
                               );
                             },
                             child: DashboardActiveMedications(
-                              admissionId: admission?.id,
+                              admissionId: admission.admissionId,
                             ),
                           ),
                           const SizedBox(height: 20),
@@ -122,13 +111,13 @@ class PatientDashboardScreen extends StatelessWidget {
                               colors: [Color(0xFF00D2FF), Color(0xFF00E5FF)],
                             ),
                             onPressed: () {
-                              Navigator.of(context).pushNamed(
-                                arguments: {
-                                  'admissionId': admission?.id,
-                                  'patientName': patient.name,
-                                },
-                                Routes.chatbotScreen,
-                              );
+                                Navigator.of(context).pushNamed(
+                                  arguments: {
+                                    'admissionId': admission.admissionId,
+                                    'patientName': admission.name,
+                                  },
+                                  Routes.chatbotScreen,
+                                );
                             },
                           ),
 
@@ -156,7 +145,7 @@ class PatientDashboardScreen extends StatelessWidget {
                 onPressed: () => Navigator.pushNamed(
                   context,
                   Routes.clinicalNotesScreen,
-                  arguments: {'admissionId': admission?.id},
+                  arguments: {'admissionId': admission?.admissionId},
                 ),
                 title: "Clinical Notes",
                 subTitle: "View timeline",
@@ -170,7 +159,7 @@ class PatientDashboardScreen extends StatelessWidget {
                 onPressed: () => Navigator.pushNamed(
                   context,
                   Routes.labResultsScreen,
-                  arguments: {'admissionId': admission?.id},
+                  arguments: {'admissionId': admission?.admissionId},
                 ),
                 title: "Lab Results",
                 subTitle: "Check reports",
@@ -186,11 +175,11 @@ class PatientDashboardScreen extends StatelessWidget {
             Expanded(
               child: DashboardActionCard(
                 onPressed: () {
-                  if (admission?.id != null && admission!.id!.isNotEmpty) {
+                  if (admission?.admissionId != null && admission!.admissionId!.isNotEmpty) {
                     Navigator.pushNamed(
                       context,
                       Routes.medicalHistoryScreen,
-                      arguments: {'admissionId': admission.id},
+                      arguments: {'admissionId': admission.admissionId},
                     );
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(
@@ -215,7 +204,7 @@ class PatientDashboardScreen extends StatelessWidget {
                 onPressed: () => Navigator.pushNamed(
                   context,
                   Routes.fluidBalanceScreen,
-                  arguments: {'admissionId': admission?.id},
+                  arguments: {'admissionId': admission?.admissionId},
                 ),
                 title: "Fluid Balance",
                 subTitle: "I/O tracking",
@@ -233,7 +222,7 @@ class PatientDashboardScreen extends StatelessWidget {
                 onPressed: () => Navigator.pushNamed(
                   context,
                   Routes.medicationScreen,
-                  arguments: {'admissionId': admission?.id},
+                  arguments: {'admissionId': admission?.admissionId},
                 ),
                 title: "Medication",
                 subTitle: "View records",
@@ -247,7 +236,7 @@ class PatientDashboardScreen extends StatelessWidget {
                 onPressed: () => Navigator.pushNamed(
                   context,
                   Routes.imagingScreen,
-                  arguments: {'admissionId': admission?.id},
+                  arguments: {'admissionId': admission?.admissionId},
                 ),
                 title: "Imaging",
                 subTitle: "Radiology & Scans",
@@ -265,7 +254,7 @@ class PatientDashboardScreen extends StatelessWidget {
                 onPressed: () => Navigator.pushNamed(
                   context,
                   Routes.vitalSignsScreen,
-                  arguments: {'admissionId': admission?.id},
+                  arguments: {'admissionId': admission?.admissionId},
                 ),
                 title: "Vital Signs",
                 subTitle: "Record vitals",
@@ -279,7 +268,7 @@ class PatientDashboardScreen extends StatelessWidget {
                 onPressed: () => Navigator.pushNamed(
                   context,
                   Routes.interventionProceduresScreen,
-                  arguments: {'admissionId': admission?.id},
+                  arguments: {'admissionId': admission?.admissionId},
                 ),
                 title: "Interventions",
                 subTitle: "Log procedures",
@@ -297,7 +286,7 @@ class PatientDashboardScreen extends StatelessWidget {
                 onPressed: () => Navigator.pushNamed(
                   context,
                   Routes.physicalExaminationScreen,
-                  arguments: {'admissionId': admission?.id},
+                  arguments: {'admissionId': admission?.admissionId},
                 ),
                 title: "Physical Exam",
                 subTitle: "Examination findings",
