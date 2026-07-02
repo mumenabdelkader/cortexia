@@ -3,6 +3,7 @@ import 'package:cortexia/features/patient/presentation/widgets/custom_info_card.
 import 'package:cortexia/features/admission/data/models/active_admission_model.dart';
 import 'package:cortexia/features/admission/presentation/controllers/admission_cubit.dart';
 import 'package:cortexia/features/admission/presentation/controllers/admission_state.dart';
+import 'package:cortexia/core/services/room_cache_service.dart';
 import 'package:flutter/material.dart';
 import 'package:cortexia/core/widgets/custom_app_bar.dart';
 import 'package:cortexia/core/widgets/custom_form_field.dart';
@@ -21,6 +22,9 @@ class PatientListScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Warm the room cache as soon as the screen opens
+    GetIt.I.get<RoomCacheService>().ensureLoaded();
+
     return MultiBlocProvider(
       providers: [
         BlocProvider(
@@ -160,6 +164,7 @@ class _PatientListViewState extends State<_PatientListView> {
             onRefresh: () async {
               context.read<AdmissionCubit>().getActiveAdmissions();
               context.read<AlertsCubit>().getActiveAlerts(null);
+              GetIt.I.get<RoomCacheService>().refresh();
             },
             child: CustomScrollView(
               physics: const AlwaysScrollableScrollPhysics(),
@@ -339,21 +344,52 @@ class _PatientListViewState extends State<_PatientListView> {
                               ),
                             ),
                           ),
-                          child: PatientCard(
-                            name: p.name ?? '—',
-                            patientId: p.fileNumber ?? p.patientId ?? '—',
-                            status: p.status ?? 'Active',
-                            diagnosis: p.diagnosisSummary ?? p.initialDiagnosis ?? '—',
-                            age: p.age?.toString(),
-                            gender: p.gender == 1 ? 'Male' : (p.gender == 2 ? 'Female' : '—'),
-                            bloodType: p.bloodType != null ? 'Type ${p.bloodType}' : null,
-                            phone: p.phone,
-                            email: p.email,
-                            hrValue: p.latestVitalSigns?.heartRate != null ? "${p.latestVitalSigns!.heartRate} bpm" : "—",
-                            tempValue: p.latestVitalSigns?.temperature != null ? "${p.latestVitalSigns!.temperature}°C" : "—",
-                            bpValue: (p.latestVitalSigns?.bpSystolic != null && p.latestVitalSigns?.bpDiastolic != null) ? "${p.latestVitalSigns!.bpSystolic}/${p.latestVitalSigns!.bpDiastolic}" : "—",
-                            spo2Value: p.latestVitalSigns?.pulseOxy != null ? "${p.latestVitalSigns!.pulseOxy}%" : "—",
-                          ),
+                          child: () {
+                            final roomCache =
+                                GetIt.I.get<RoomCacheService>();
+                            final loc = roomCache.resolveLocation(
+                              roomId: p.roomId,
+                              bedId: p.bedId,
+                            );
+                            return PatientCard(
+                              name: p.name ?? '—',
+                              patientId:
+                                  p.fileNumber ?? p.patientId ?? '—',
+                              status: p.status ?? 'Active',
+                              diagnosis: p.diagnosisSummary ??
+                                  p.initialDiagnosis ??
+                                  '—',
+                              age: p.age?.toString(),
+                              gender: p.gender == 1
+                                  ? 'Male'
+                                  : (p.gender == 2 ? 'Female' : '—'),
+                              bloodType: p.bloodType != null
+                                  ? 'Type ${p.bloodType}'
+                                  : null,
+                              floor: loc.floor,
+                              roomNumber: loc.roomNumber,
+                              bedNumber: loc.bedNumber,
+                              roomType: loc.roomType,
+                              hrValue: p.latestVitalSigns?.heartRate !=
+                                      null
+                                  ? "${p.latestVitalSigns!.heartRate} bpm"
+                                  : "—",
+                              tempValue: p.latestVitalSigns?.temperature !=
+                                      null
+                                  ? "${p.latestVitalSigns!.temperature}°C"
+                                  : "—",
+                              bpValue: (p.latestVitalSigns?.bpSystolic !=
+                                          null &&
+                                      p.latestVitalSigns?.bpDiastolic !=
+                                          null)
+                                  ? "${p.latestVitalSigns!.bpSystolic}/${p.latestVitalSigns!.bpDiastolic}"
+                                  : "—",
+                              spo2Value: p.latestVitalSigns?.pulseOxy !=
+                                      null
+                                  ? "${p.latestVitalSigns!.pulseOxy}%"
+                                  : "—",
+                            );
+                          }(),
                         );
                       },
                     ),

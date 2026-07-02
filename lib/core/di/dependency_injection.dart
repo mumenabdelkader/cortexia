@@ -1,3 +1,4 @@
+import 'package:cortexia/core/services/room_cache_service.dart';
 import 'package:cortexia/features/admission/data/apis/admission_service.dart';
 import 'package:cortexia/features/admission/data/repo/admission_repo_impl.dart';
 import 'package:cortexia/features/admission/domain/repo/admission_repo_interface.dart';
@@ -98,6 +99,11 @@ Future<void> setupGetIt() async {
   // 2. تسجيل الـ Repository
   locator.registerLazySingleton<AdmissionRepoInterface>(
     () => AdmissionRepoImpl(locator<AdmissionService>()),
+  );
+
+  // Room cache – resolved labels for roomId / bedId
+  locator.registerLazySingleton<RoomCacheService>(
+    () => RoomCacheService(locator<AdmissionRepoInterface>()),
   );
 
   /* ---------------------- CASE HISTORY FEATURE --------------------------- */

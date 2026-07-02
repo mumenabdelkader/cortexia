@@ -12,6 +12,14 @@ class PatientCard extends StatelessWidget {
   final String? bloodType;
   final String? phone;
   final String? email;
+
+  // ── Location (resolved from RoomCacheService) ───────────────────────────
+  final int? floor;
+  final String? roomNumber;
+  final String? bedNumber;
+  final String? roomType;
+
+  // ── Vital signs ─────────────────────────────────────────────────────────
   final String hrValue;
   final String tempValue;
   final String bpValue;
@@ -28,6 +36,10 @@ class PatientCard extends StatelessWidget {
     this.bloodType,
     this.phone,
     this.email,
+    this.floor,
+    this.roomNumber,
+    this.bedNumber,
+    this.roomType,
     this.hrValue = "—",
     this.tempValue = "—",
     this.bpValue = "—",
@@ -36,6 +48,9 @@ class PatientCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final hasLocation =
+        floor != null || roomNumber != null || bedNumber != null;
+
     return Container(
       padding: const EdgeInsets.all(16),
       margin: const EdgeInsets.only(bottom: 16),
@@ -54,7 +69,7 @@ class PatientCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // ── Header: Avatar, Name, ID, Badges ────────────────────────────
+          // ── Header ──────────────────────────────────────────────────────
           Row(
             children: [
               _buildAvatar(),
@@ -66,18 +81,42 @@ class PatientCard extends StatelessWidget {
                     Text(
                       name,
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
-                            color: const Color(0xFF1E293B),
-                          ),
+                        fontWeight: FontWeight.bold,
+                        color: const Color(0xFF1E293B),
+                      ),
                     ),
                     const SizedBox(height: 3),
-                    Text(
-                      "ID: $patientId",
-                      style: TextStyle(
-                        color: Colors.grey[500],
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
-                      ),
+                    Row(
+                      children: [
+                        Text(
+                          "ID: $patientId",
+                          style: TextStyle(
+                            color: Colors.grey[500],
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        if (age != null) ...[
+                          const SizedBox(width: 8),
+                          Container(
+                            width: 4,
+                            height: 4,
+                            decoration: BoxDecoration(
+                              color: Colors.grey[400],
+                              shape: BoxShape.circle,
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            "$age yrs",
+                            style: TextStyle(
+                              color: Colors.grey[500],
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ],
                     ),
                   ],
                 ),
@@ -96,69 +135,27 @@ class PatientCard extends StatelessWidget {
           ),
 
           const Padding(
-            padding: EdgeInsets.symmetric(vertical: 14),
+            padding: EdgeInsets.symmetric(vertical: 12),
             child: Divider(height: 1, color: Color(0xFFF1F5F9)),
           ),
 
-          // ── Patient Details Row ─────────────────────────────────────────
+          // ── Diagnosis ────────────────────────────────────────────────────
           _buildDetailRow(
             icon: Icons.assignment_outlined,
             label: "Diagnosis",
             value: diagnosis,
             iconColor: Colors.blue[600]!,
           ),
-          const SizedBox(height: 10),
-          Row(
-            children: [
-              Expanded(
-                child: _buildDetailRow(
-                  icon: Icons.cake_outlined,
-                  label: "Age",
-                  value: age != null ? "$age yrs" : "—",
-                  iconColor: Colors.purple[600]!,
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: _buildDetailRow(
-                  icon: Icons.wc_outlined,
-                  label: "Gender",
-                  value: gender ?? "—",
-                  iconColor: Colors.teal[600]!,
-                ),
-              ),
-            ],
-          ),
-          if (phone != null || email != null) ...[
+
+          // ── Location badge ───────────────────────────────────────────────
+          if (hasLocation) ...[
             const SizedBox(height: 10),
-            Row(
-              children: [
-                if (phone != null)
-                  Expanded(
-                    child: _buildDetailRow(
-                      icon: Icons.phone_outlined,
-                      label: "Phone",
-                      value: phone!,
-                      iconColor: Colors.green[600]!,
-                    ),
-                  ),
-                if (phone != null && email != null) const SizedBox(width: 12),
-                if (email != null)
-                  Expanded(
-                    child: _buildDetailRow(
-                      icon: Icons.email_outlined,
-                      label: "Email",
-                      value: email!,
-                      iconColor: Colors.orange[600]!,
-                    ),
-                  ),
-              ],
-            ),
+            _buildLocationBadge(),
           ],
 
           const SizedBox(height: 16),
 
-          // ── Vital Signs Mini Cards ───────────────────────────────────────
+          // ── Vital Signs Mini Cards ────────────────────────────────────────
           Row(
             children: [
               Expanded(
@@ -211,6 +208,128 @@ class PatientCard extends StatelessWidget {
     );
   }
 
+  // ── Location badge ──────────────────────────────────────────────────────
+
+  Widget _buildLocationBadge() {
+    // Pick accent colour based on room type
+    final Color accent = _roomTypeColor();
+    final Color bgColor = accent.withValues(alpha: 0.07);
+    final Color borderColor = accent.withValues(alpha: 0.18);
+
+    return IntrinsicWidth(
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+        decoration: BoxDecoration(
+          color: bgColor,
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: borderColor),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Floor chip
+            if (floor != null) ...[
+              _locationChip(
+                icon: Icons.layers_outlined,
+                label: "Floor ${floor!}",
+                color: accent,
+              ),
+              _divider(accent),
+            ],
+
+            // Room chip
+            if (roomNumber != null) ...[
+              _locationChip(
+                icon: Icons.door_front_door_outlined,
+                label: roomNumber!,
+                color: accent,
+              ),
+              _divider(accent),
+            ],
+
+            // Bed chip
+            if (bedNumber != null)
+              _locationChip(
+                icon: Icons.single_bed_outlined,
+                label: bedNumber!,
+                color: accent,
+              ),
+
+            // Room type tag
+            if (roomType != null && roomType != 'Unknown') ...[
+              _divider(accent),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                decoration: BoxDecoration(
+                  color: accent.withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: Text(
+                  roomType!,
+                  style: TextStyle(
+                    color: accent,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 10,
+                    letterSpacing: 0.3,
+                  ),
+                ),
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _locationChip({
+    required IconData icon,
+    required String label,
+    required Color color,
+  }) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(icon, size: 13, color: color),
+        const SizedBox(width: 4),
+        Text(
+          label,
+          style: TextStyle(
+            color: color.withValues(alpha: 0.9),
+            fontWeight: FontWeight.w700,
+            fontSize: 12,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _divider(Color color) => Padding(
+    padding: const EdgeInsets.symmetric(horizontal: 7),
+    child: Container(
+      width: 1,
+      height: 12,
+      color: color.withValues(alpha: 0.25),
+    ),
+  );
+
+  /// Maps room type label to a meaningful accent colour.
+  Color _roomTypeColor() {
+    switch (roomType?.toLowerCase()) {
+      case 'icu':
+        return const Color(0xFFDC2626); // red
+      case 'emergency':
+        return const Color(0xFFD97706); // amber
+      case 'private':
+        return const Color(0xFF7C3AED); // purple
+      case 'operation':
+        return const Color(0xFF0284C7); // sky blue
+      default:
+        return const Color(0xFF0D9488); // teal (Ward / unknown)
+    }
+  }
+
+  // ── Avatar ──────────────────────────────────────────────────────────────
+
   Widget _buildAvatar() {
     final initials = name.trim().isNotEmpty
         ? name.trim().split(' ').map((w) => w[0]).take(2).join().toUpperCase()
@@ -223,10 +342,7 @@ class PatientCard extends StatelessWidget {
         gradient: const LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [
-            Color(0xFF007ADF),
-            Color(0xFF002B56),
-          ],
+          colors: [Color(0xFF007ADF), Color(0xFF002B56)],
         ),
         shape: BoxShape.circle,
         boxShadow: [
@@ -250,6 +366,8 @@ class PatientCard extends StatelessWidget {
       ),
     );
   }
+
+  // ── Status badge ─────────────────────────────────────────────────────────
 
   Widget _buildStatusBadge(String status) {
     final statusLower = status.toLowerCase();
@@ -282,6 +400,8 @@ class PatientCard extends StatelessWidget {
     );
   }
 
+  // ── Blood type badge ─────────────────────────────────────────────────────
+
   Widget _buildBloodTypeBadge(String type) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
@@ -307,6 +427,8 @@ class PatientCard extends StatelessWidget {
       ),
     );
   }
+
+  // ── Detail row ───────────────────────────────────────────────────────────
 
   Widget _buildDetailRow({
     required IconData icon,
