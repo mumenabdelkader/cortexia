@@ -28,12 +28,12 @@ class DashboarPatientCard extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: const Color(0xFFF8FAFC), // لون خلفية هادئ جداً
+        color: Colors.white,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.blue.withValues(alpha:0.1)),
+        border: Border.all(color: Colors.blue.withValues(alpha: 0.08)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha:0.03),
+            color: Colors.black.withValues(alpha: 0.03),
             blurRadius: 20,
             offset: const Offset(0, 10),
           ),
@@ -42,7 +42,7 @@ class DashboarPatientCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // الجزء العلوي: الصورة، الاسم، الـ ID والحالة
+          // Upper section: Avatar, name, ID, status
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -70,7 +70,7 @@ class DashboarPatientCard extends StatelessWidget {
                       style: const TextStyle(color: Colors.grey, fontSize: 14),
                     ),
                     const SizedBox(height: 8),
-                    // التاجات الصغيرة (Gender/Age & Room)
+                    // Small tags (Gender/Age & Room)
                     Wrap(
                       spacing: 8,
                       runSpacing: 4,
@@ -91,7 +91,7 @@ class DashboarPatientCard extends StatelessWidget {
             child: Divider(color: Color(0xFFE2E8F0), thickness: 1),
           ),
 
-          // الجزء السفلي: البيانات الموزعة بالعرض (Admitted & Days)
+          // Lower section: data rows
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -101,14 +101,12 @@ class DashboarPatientCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 16),
-          // الـ Diagnosis في صف مستقل علشان الداتا تظهر كاملة
           _buildDataColumn("Diagnosis", diagnosis ?? "N/A"),
         ],
       ),
     );
   }
 
-  // ميثود بناء العمود الصغير للبيانات
   Widget _buildDataColumn(String label, String value) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -130,14 +128,13 @@ class DashboarPatientCard extends StatelessWidget {
     );
   }
 
-  // ميثود بناء التاجات (Male, 45y / ICU-101)
   Widget _buildSmallTag(String text, Color bgColor, Color textColor) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
         color: bgColor,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: textColor.withValues(alpha:0.1)),
+        border: Border.all(color: textColor.withValues(alpha: 0.1)),
       ),
       child: Text(
         text,
@@ -146,17 +143,35 @@ class DashboarPatientCard extends StatelessWidget {
     );
   }
 
-  // ميثود الـ Status Badge
   Widget _buildStatusBadge(String status) {
+    final statusLower = status.toLowerCase();
+    final isCritical = statusLower == 'critical';
+    final isStable = statusLower == 'stable';
+    
+    final Color badgeColor = isCritical 
+        ? const Color(0xFFEF4444) 
+        : (isStable ? const Color(0xFF10B981) : const Color(0xFF3B82F6));
+        
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: const Color(0xFF4CAF50), // اللون الأخضر كما في الصورة
+        color: badgeColor,
         borderRadius: BorderRadius.circular(10),
+        boxShadow: [
+          BoxShadow(
+            color: badgeColor.withValues(alpha: 0.25),
+            blurRadius: 6,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Text(
         status,
-        style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12),
+        style: const TextStyle(
+          color: Colors.white, 
+          fontWeight: FontWeight.bold, 
+          fontSize: 12,
+        ),
       ),
     );
   }

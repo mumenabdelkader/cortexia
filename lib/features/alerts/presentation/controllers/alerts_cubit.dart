@@ -17,18 +17,25 @@ class AlertsCubit extends Cubit<AlertsState> {
     result.when(
       onSuccess: (alertsData) {
         activeAlerts = alertsData;
-        emit(AlertsLoaded(activeAlerts));
+        if (!isClosed) {
+          emit(AlertsLoaded(activeAlerts));
+        }
       },
       onError: (apiErrorModel) {
-        emit(AlertsError(message: apiErrorModel.messages.join('\n')));
+        if (!isClosed) {
+          emit(AlertsError(message: apiErrorModel.messages.join('\n')));
+        }
       },
     );
   }
 
-  Future<void> overrideAlert(OverrideAlertRequest request, String admissionId) async {
+  Future<void> overrideAlert(
+    OverrideAlertRequest request,
+    String admissionId,
+  ) async {
     emit(OverrideAlertLoading());
     final result = await _alertsRepo.overrideAlert(request.alertId, request);
-    
+
     result.when(
       onSuccess: (_) {
         emit(OverrideAlertSuccess('Alert overridden successfully'));

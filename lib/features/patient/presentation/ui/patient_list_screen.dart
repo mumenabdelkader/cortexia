@@ -37,7 +37,6 @@ class PatientListScreen extends StatelessWidget {
   }
 }
 
-// 1. تحويل الكلاس إلى StatefulWidget
 class _PatientListView extends StatefulWidget {
   const _PatientListView();
 
@@ -46,8 +45,66 @@ class _PatientListView extends StatefulWidget {
 }
 
 class _PatientListViewState extends State<_PatientListView> {
-  // 2. متغير لحفظ نص البحث
   String _searchQuery = '';
+  String _selectedStatus = 'All';
+
+  Widget _buildFilterChip(String label, IconData icon, {Color? color}) {
+    final isSelected = _selectedStatus == label;
+    final themeColor = color ?? AppColors.primaryBlue;
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          _selectedStatus = label;
+        });
+      },
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        decoration: BoxDecoration(
+          color: isSelected ? themeColor : Colors.white,
+          borderRadius: BorderRadius.circular(30),
+          border: Border.all(
+            color: isSelected ? themeColor : AppColors.border.withValues(alpha: 0.8),
+            width: 1.5,
+          ),
+          boxShadow: isSelected
+              ? [
+                  BoxShadow(
+                    color: themeColor.withValues(alpha: 0.25),
+                    blurRadius: 8,
+                    offset: const Offset(0, 4),
+                  )
+                ]
+              : [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.01),
+                    blurRadius: 4,
+                    offset: const Offset(0, 2),
+                  )
+                ],
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              icon,
+              size: 16,
+              color: isSelected ? Colors.white : (color ?? AppColors.textSecondary),
+            ),
+            const SizedBox(width: 6),
+            Text(
+              label,
+              style: TextStyle(
+                color: isSelected ? Colors.white : AppColors.textMain,
+                fontWeight: FontWeight.bold,
+                fontSize: 13,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -55,7 +112,7 @@ class _PatientListViewState extends State<_PatientListView> {
       backgroundColor: const Color(0xFFF8FAFC),
       appBar: CustomAppBar(
         title: "Patient List",
-        subtitle: "Patients",
+        subtitle: "Monitoring dashboard",
         trailing: const AppBarTrailing(),
       ),
       body: BlocConsumer<AdmissionCubit, AdmissionState>(
@@ -67,168 +124,244 @@ class _PatientListViewState extends State<_PatientListView> {
           }
         },
         builder: (context, state) {
-          // ── جلب كل المرضى من الـ state ─────────────────────────────
           final List<ActiveAdmissionModel> allPatients = [];
           if (state is ActiveAdmissionsLoaded) {
-             allPatients.addAll(state.admissions);
+            allPatients.addAll(state.admissions);
           }
 
-          // 3. فلترة المرضى بناءً على نص البحث
+          // Filter patients by both query and chosen status tab
           final List<ActiveAdmissionModel> filteredPatients = allPatients.where((p) {
-            if (_searchQuery.isEmpty) return true;
-
             final query = _searchQuery.toLowerCase();
             final name = (p.name ?? '').toLowerCase();
             final id = (p.fileNumber ?? p.patientId ?? '').toLowerCase();
             final diagnosis = (p.diagnosisSummary ?? p.initialDiagnosis ?? '').toLowerCase();
+            final matchesQuery = _searchQuery.isEmpty ||
+                name.contains(query) ||
+                id.contains(query) ||
+                diagnosis.contains(query);
 
-            return name.contains(query) || id.contains(query) || diagnosis.contains(query);
+            final statusStr = (p.status ?? 'Active').toLowerCase();
+            bool matchesStatus = true;
+            if (_selectedStatus == 'Critical') {
+              matchesStatus = statusStr == 'critical';
+            } else if (_selectedStatus == 'Stable') {
+              matchesStatus = statusStr == 'stable';
+            } else if (_selectedStatus == 'Active') {
+              matchesStatus = statusStr == 'active';
+            }
+
+            return matchesQuery && matchesStatus;
           }).toList();
 
           final isLoading = state is AdmissionLoading;
-          final totalCount = filteredPatients.length; // عدد المرضى بعد الفلترة
+          final totalCount = filteredPatients.length;
 
-          return CustomScrollView(
-            slivers: [
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-                  child: Column(
-                    children: [
-                      // ── Search bar ──────────────────────────────────────
-                      CustomTextFormField(
-                        hintText: "Search by name, ID, or diagnosis...",
-                        prefixIcon: Icons.search,
-                        fillColor: Colors.white70,
-                        // 4. إضافة دالة onChanged
-                        onChanged: (value) {
-                          setState(() {
-                            _searchQuery = value!;
-                          });
-                        },
-                      ),
-                      const SizedBox(height: 16),
-
-                      // ── Department Banner ───────────────────────────────
-                      DepartmentBanner(
-                        departmentName: "All Departments",
-                        patientCount: totalCount,
-                      ),
-                      const SizedBox(height: 16),
-
-                      // ── Stats Row ───────────────────────────────────────
-                      BlocBuilder<AlertsCubit, AlertsState>(
-                        builder: (context, alertsState) {
-                          int criticalCases = 0;
-                          int activeAlertsCount = 0;
-
-                          if (alertsState is AlertsLoaded) {
-                            activeAlertsCount = alertsState.activeAlerts.length;
-                            criticalCases = alertsState.activeAlerts.where((a) => a.severity == AlertSeverity.critical).length;
-                          } else if (context.read<AlertsCubit>().activeAlerts.isNotEmpty) {
-                            final alerts = context.read<AlertsCubit>().activeAlerts;
-                            activeAlertsCount = alerts.length;
-                            criticalCases = alerts.where((a) => a.severity == AlertSeverity.critical).length;
-                          }
-
-                          String criticalStr = (alertsState is AlertsLoading && activeAlertsCount == 0) ? "—" : "$criticalCases";
-                          String activeAlertsStr = (alertsState is AlertsLoading && activeAlertsCount == 0) ? "—" : "$activeAlertsCount";
-
-                          return Row(
-                            children: [
-                              Expanded(
-                                child: CustomInfoCard(
-                                  title: "Total Patients",
-                                  value: "$totalCount",
-                                  icon: Icons.people_alt_outlined,
-                                  themeColor: AppColors.primaryBlue,
-                                  bgColor: AppColors.infoBg,
-                                  isSmall: false,
-                                ),
-                              ),
-                              const SizedBox(width: 10),
-                              Expanded(
-                                child: CustomInfoCard(
-                                  title: "Critical Cases",
-                                  value: criticalStr,
-                                  icon: Icons.report_problem_outlined,
-                                  themeColor: AppColors.errorRed,
-                                  bgColor: AppColors.errorBg,
-                                  isSmall: false,
-                                ),
-                              ),
-                              const SizedBox(width: 10),
-                              Expanded(
-                                child: CustomInfoCard(
-                                  title: "Active Alerts",
-                                  value: activeAlertsStr,
-                                  icon: Icons.notifications_active_outlined,
-                                  themeColor: Colors.orange,
-                                  bgColor: const Color(0xFFFFF7ED),
-                                  isSmall: false,
-                                ),
+          return RefreshIndicator(
+            onRefresh: () async {
+              context.read<AdmissionCubit>().getActiveAdmissions();
+              context.read<AlertsCubit>().getActiveAlerts(null);
+            },
+            child: CustomScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              slivers: [
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // ── Search bar ──────────────────────────────────────
+                        Container(
+                          decoration: BoxDecoration(
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withValues(alpha: 0.02),
+                                blurRadius: 10,
+                                offset: const Offset(0, 4),
                               ),
                             ],
-                          );
-                        },
-                      ),
-                      const SizedBox(height: 24),
-                    ],
-                  ),
-                ),
-              ),
-
-              // ── Patient List ────────────────────────────────────────────
-              if (isLoading)
-                const SliverFillRemaining(
-                  child: Center(child: CircularProgressIndicator()),
-                )
-              else if (filteredPatients.isEmpty) // استخدام القائمة المفلترة
-                const SliverFillRemaining(
-                  child: Center(
-                    child: Text(
-                      "No patients found.",
-                      style: TextStyle(color: Colors.grey),
-                    ),
-                  ),
-                )
-              else
-                SliverPadding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  sliver: SliverList.builder(
-                    itemCount: filteredPatients.length, // استخدام القائمة المفلترة
-                    itemBuilder: (context, index) {
-                      final p = filteredPatients[index]; // استخدام القائمة المفلترة
-                      return GestureDetector(
-                        onTap: () => Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (_) => PatientDashboardScreen(
-                              admissionId: p.admissionId ?? '',
-                            ),
+                          ),
+                          child: CustomTextFormField(
+                            hintText: "Search by name, ID, or diagnosis...",
+                            prefixIcon: Icons.search,
+                            fillColor: Colors.white,
+                            onChanged: (value) {
+                              setState(() {
+                                _searchQuery = value ?? '';
+                              });
+                              return null;
+                            },
                           ),
                         ),
-                        child: PatientCard(
-                          name: p.name ?? '—',
-                          patientId: p.fileNumber ?? p.patientId ?? '—',
-                          status: p.status ?? 'Active',
-                          diagnosis: p.diagnosisSummary ?? p.initialDiagnosis ?? '—',
-                          age: p.age?.toString(),
-                          gender: p.gender == 1 ? 'Male' : (p.gender == 2 ? 'Female' : '—'),
-                          bloodType: p.bloodType != null ? 'Type ${p.bloodType}' : null, // Adjust if you have an enum mapping
-                          phone: p.phone,
-                          email: p.email,
-                          hrValue: p.latestVitalSigns?.heartRate != null ? "${p.latestVitalSigns!.heartRate} bpm" : "—",
-                          tempValue: p.latestVitalSigns?.temperature != null ? "${p.latestVitalSigns!.temperature}°C" : "—",
-                          bpValue: (p.latestVitalSigns?.bpSystolic != null && p.latestVitalSigns?.bpDiastolic != null) ? "${p.latestVitalSigns!.bpSystolic}/${p.latestVitalSigns!.bpDiastolic}" : "—",
-                          spo2Value: p.latestVitalSigns?.pulseOxy != null ? "${p.latestVitalSigns!.pulseOxy}%" : "—",
+                        const SizedBox(height: 16),
+
+                        // ── Filter Tabs ─────────────────────────────────────
+                        SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          physics: const BouncingScrollPhysics(),
+                          child: Row(
+                            children: [
+                              _buildFilterChip('All', Icons.dashboard_outlined),
+                              const SizedBox(width: 8),
+                              _buildFilterChip('Critical', Icons.report_problem_outlined, color: AppColors.errorRed),
+                              const SizedBox(width: 8),
+                              _buildFilterChip('Stable', Icons.check_circle_outline, color: AppColors.successGreen),
+                              const SizedBox(width: 8),
+                              _buildFilterChip('Active', Icons.pending_actions, color: AppColors.primaryBlue),
+                            ],
+                          ),
                         ),
-                      );
-                    },
+                        const SizedBox(height: 16),
+
+                        // ── Department Banner ───────────────────────────────
+                        DepartmentBanner(
+                          departmentName: _selectedStatus == 'All'
+                              ? "All Departments"
+                              : "$_selectedStatus Patients",
+                          patientCount: totalCount,
+                        ),
+                        const SizedBox(height: 16),
+
+                        // ── Stats Row ───────────────────────────────────────
+                        BlocBuilder<AlertsCubit, AlertsState>(
+                          builder: (context, alertsState) {
+                            int criticalCases = 0;
+                            int activeAlertsCount = 0;
+
+                            if (alertsState is AlertsLoaded) {
+                              activeAlertsCount = alertsState.activeAlerts.length;
+                              criticalCases = alertsState.activeAlerts.where((a) => a.severity == AlertSeverity.critical).length;
+                            } else if (context.read<AlertsCubit>().activeAlerts.isNotEmpty) {
+                              final alerts = context.read<AlertsCubit>().activeAlerts;
+                              activeAlertsCount = alerts.length;
+                              criticalCases = alerts.where((a) => a.severity == AlertSeverity.critical).length;
+                            }
+
+                            String criticalStr = (alertsState is AlertsLoading && activeAlertsCount == 0) ? "—" : "$criticalCases";
+                            String activeAlertsStr = (alertsState is AlertsLoading && activeAlertsCount == 0) ? "—" : "$activeAlertsCount";
+
+                            return Row(
+                              children: [
+                                Expanded(
+                                  child: CustomInfoCard(
+                                    title: "Total Patients",
+                                    value: "$totalCount",
+                                    icon: Icons.people_alt_outlined,
+                                    themeColor: AppColors.primaryBlue,
+                                    bgColor: AppColors.infoBg,
+                                    isSmall: false,
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: CustomInfoCard(
+                                    title: "Critical Cases",
+                                    value: criticalStr,
+                                    icon: Icons.report_problem_outlined,
+                                    themeColor: AppColors.errorRed,
+                                    bgColor: AppColors.errorBg,
+                                    isSmall: false,
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: CustomInfoCard(
+                                    title: "Active Alerts",
+                                    value: activeAlertsStr,
+                                    icon: Icons.notifications_active_outlined,
+                                    themeColor: AppColors.warningOrange,
+                                    bgColor: AppColors.warningBg,
+                                    isSmall: false,
+                                  ),
+                                ),
+                              ],
+                            );
+                          },
+                        ),
+                        const SizedBox(height: 20),
+                      ],
+                    ),
                   ),
                 ),
 
-              const SliverToBoxAdapter(child: SizedBox(height: 20)),
-            ],
+                // ── Patient List ────────────────────────────────────────────
+                if (isLoading)
+                  const SliverFillRemaining(
+                    hasScrollBody: false,
+                    child: Center(
+                      child: Padding(
+                        padding: EdgeInsets.all(32.0),
+                        child: CircularProgressIndicator(),
+                      ),
+                    ),
+                  )
+                else if (filteredPatients.isEmpty)
+                  SliverFillRemaining(
+                    hasScrollBody: false,
+                    child: Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(32.0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.people_outline,
+                              size: 64,
+                              color: AppColors.textSecondary.withValues(alpha: 0.4),
+                            ),
+                            const SizedBox(height: 16),
+                            Text(
+                              "No patients found matching the criteria.",
+                              style: TextStyle(
+                                color: AppColors.textSecondary,
+                                fontSize: 15,
+                                fontWeight: FontWeight.w500,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  )
+                else
+                  SliverPadding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    sliver: SliverList.builder(
+                      itemCount: filteredPatients.length,
+                      itemBuilder: (context, index) {
+                        final p = filteredPatients[index];
+                        return GestureDetector(
+                          onTap: () => Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (_) => PatientDashboardScreen(
+                                admissionId: p.admissionId ?? '',
+                              ),
+                            ),
+                          ),
+                          child: PatientCard(
+                            name: p.name ?? '—',
+                            patientId: p.fileNumber ?? p.patientId ?? '—',
+                            status: p.status ?? 'Active',
+                            diagnosis: p.diagnosisSummary ?? p.initialDiagnosis ?? '—',
+                            age: p.age?.toString(),
+                            gender: p.gender == 1 ? 'Male' : (p.gender == 2 ? 'Female' : '—'),
+                            bloodType: p.bloodType != null ? 'Type ${p.bloodType}' : null,
+                            phone: p.phone,
+                            email: p.email,
+                            hrValue: p.latestVitalSigns?.heartRate != null ? "${p.latestVitalSigns!.heartRate} bpm" : "—",
+                            tempValue: p.latestVitalSigns?.temperature != null ? "${p.latestVitalSigns!.temperature}°C" : "—",
+                            bpValue: (p.latestVitalSigns?.bpSystolic != null && p.latestVitalSigns?.bpDiastolic != null) ? "${p.latestVitalSigns!.bpSystolic}/${p.latestVitalSigns!.bpDiastolic}" : "—",
+                            spo2Value: p.latestVitalSigns?.pulseOxy != null ? "${p.latestVitalSigns!.pulseOxy}%" : "—",
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+
+                const SliverToBoxAdapter(child: SizedBox(height: 24)),
+              ],
+            ),
           );
         },
       ),
