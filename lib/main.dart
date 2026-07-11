@@ -1,10 +1,16 @@
+import 'package:cortexia/core/di/dependency_injection.dart';
+import 'package:cortexia/core/helpers/shared_pref_helper.dart';
 import 'package:cortexia/core/routing/app_router.dart';
 import 'package:flutter/material.dart';
 
 import 'core/routing/routes.dart';
 import 'core/themes/text_themes.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await SharedPrefHelper.init(); // must be before anything that uses SharedPrefs
+  await setupGetIt();
   runApp(const MyApp());
 }
 

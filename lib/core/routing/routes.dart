@@ -12,6 +12,8 @@ class Routes {
   static const String categoryScreen = '/category'; // Category Products screen
   static const String notificationsScreen =
       '/notifications'; // Notifications screen
+  static const String forgotPasswordScreen = '/forgot-password'; // Forgot Password screen
+  static const String resetPasswordScreen = '/reset-password'; // Reset Password screen
   static const String cartScreen = '/cart'; // Cart screen
   static const String quickOrderScreen = '/quick-order'; // Quick Order screen
 
@@ -62,4 +64,21 @@ class Routes {
       '/fluid-balance'; // Fluid balance screen
   static const String medicationScreen = '/medication'; // Medication screen
   static const String imagingScreen = '/imaging'; // Imaging screen
+  // Newly mapped features
+  static const String chatbotScreen = '/chatbot';
+  static const String newPatientRegistrationScreen =
+      '/new-patient-registration';
+  static const String patientDashboardScreen = '/patient-dashboard';
+  static const String patientListScreen = '/patient-list';
+  static const String physicalExaminationScreen = '/physical-examination';
+  static const String vitalSignsScreen = '/vital-signs';
+  static const String interventionProceduresScreen = '/intervention-procedures';
+
+  // ── Admin Dashboard Routes ─────────────────────────────────────────────────
+  static const String adminDashboardScreen = '/admin-dashboard';
+  static const String adminUsersScreen = '/admin-users';
+  static const String adminRolesScreen = '/admin-roles';
+  static const String adminRoomsScreen = '/admin-rooms';
+  static const String adminBedsScreen = '/admin-beds';
+  static const String adminAuditLogsScreen = '/admin-audit-logs';
 }

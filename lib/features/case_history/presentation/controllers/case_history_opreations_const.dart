@@ -1,0 +1,4 @@
+const String kPostAdmissionsAdmissionidCaseHistory = 'postAdmissionsAdmissionidCaseHistory';
+const String kGetAdmissionsAdmissionidCaseHistory = 'getAdmissionsAdmissionidCaseHistory';
+const String kPutAdmissionsAdmissionidCaseHistory = 'putAdmissionsAdmissionidCaseHistory';
+const String kDeleteAdmissionsAdmissionidCaseHistory = 'deleteAdmissionsAdmissionidCaseHistory';

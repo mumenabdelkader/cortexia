@@ -133,7 +133,12 @@ class SharedPrefHelper {
 
   static Future<String> getSecuredString(String key) async {
     debugPrint("SecureStorage : get : $key");
-    return await _secureStorage.read(key: key) ?? "";
+    try {
+      return await _secureStorage.read(key: key) ?? "";
+    } catch (e) {
+      debugPrint("SecureStorage read error: $e");
+      return "";
+    }
   }
 
   static Future<void> clearAllSecuredData() async {

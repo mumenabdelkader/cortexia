@@ -1,42 +1,176 @@
-
 // Dependency Injection
+import 'package:cortexia/core/di/dependency_injection.dart';
+import 'package:cortexia/features/alerts/presentation/ui/clinical_alerts_screen.dart';
+import 'package:cortexia/features/fluid_balance/presentation/controllers/fluid_balance_cubit.dart';
 import 'package:flutter/material.dart';
+import '../../features/authentication/presentation/ui/login_screen.dart';
+import '../../features/case_history/presentation/ui/case_history_screen.dart';
+import '../../features/ai_assistant/presentation/ui/chatbot_screen.dart';
+import '../../features/patient/presentation/ui/new_patient_registration_screen.dart';
+import '../../features/patient/presentation/ui/patient_dashboard_screen.dart';
+import '../../features/patient/presentation/ui/patient_list_screen.dart';
+import '../../features/physical_examination/presentation/ui/physical_examination_screen.dart';
+import '../../features/doctor/presentation/ui/profile_screen.dart';
 import '../../welcome_screens.dart';
-import '../../features/patient/presentation/ui/clinical_notes_screen.dart';
-import '../../features/patient/presentation/ui/fluid_balance_screen.dart';
-import '../../features/patient/presentation/ui/lab_results_screen.dart';
-import '../../features/patient/presentation/ui/clinical_alerts_screen.dart';
+import 'package:cortexia/features/authentication/presentation/ui/forgot_password_screen.dart';
+import 'package:cortexia/features/authentication/presentation/ui/reset_password_screen.dart';
+import '../../features/nursing_notes/presentation/ui/clinical_notes_screen.dart';
+import '../../features/fluid_balance/presentation/ui/fluid_balance_screen.dart';
+import '../../features/diagnostics/presentation/ui/lab_results_screen.dart';
 import '../../features/patient/presentation/ui/main_navigation_screen.dart';
+import '../../features/medications/presentation/ui/medications_screen.dart';
+import '../../features/diagnostics/presentation/ui/imaging_screen.dart';
+import 'package:cortexia/features/medications/presentation/controllers/medications_cubit.dart';
+import 'package:cortexia/features/diagnostics/presentation/controllers/diagnostics_cubit.dart';
+import 'package:cortexia/features/vital_signs/presentation/ui/vital_signs_screen.dart';
+import 'package:cortexia/features/vital_signs/presentation/controllers/vital_signs_cubit.dart';
+import 'package:cortexia/features/intervention_procedures/presentation/ui/intervention_procedures_screen.dart';
+import 'package:cortexia/features/intervention_procedures/presentation/controllers/intervention_procedures_cubit.dart';
+import 'package:cortexia/features/physical_examination/presentation/controllers/physical_examination_cubit.dart';
+import 'package:cortexia/features/alerts/presentation/controllers/alerts_cubit.dart';
+import 'package:cortexia/features/admin_dashboard/presentation/screens/admin_shell_screen.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get_it/get_it.dart';
 import 'routes.dart';
 
 class AppRouter {
   Route? generateRoute(RouteSettings settings) {
     final arguments = settings.arguments;
+
     switch (settings.name) {
       case Routes.splashScreen:
+        return MaterialPageRoute(builder: (_) => WelcomeScreen());
+      case Routes.loginScreen:
+        return MaterialPageRoute(builder: (_) => const LoginScreen());
+      case Routes.medicalHistoryScreen:
+        final admissionId =
+            (arguments is Map ? arguments['admissionId'] : null) as String? ??
+            '';
         return MaterialPageRoute(
-          builder:
-              (_) => WelcomeScreen()
+          builder: (_) => CaseHistoryScreen(admissionId: admissionId),
+        );
+      case Routes.forgotPasswordScreen:
+        return MaterialPageRoute(builder: (_) => const ForgotPasswordScreen());
+      case Routes.resetPasswordScreen:
+        final email = arguments as String;
+        return MaterialPageRoute(
+          builder: (_) => ResetPasswordScreen(email: email),
         );
       case Routes.clinicalNotesScreen:
+        final admissionId =
+            (arguments is Map ? arguments['admissionId'] : null) as String? ??
+            '';
         return MaterialPageRoute(
-          builder: (_) => const ClinicalNotesScreen(),
+          builder: (_) => ClinicalNotesScreen(admissionId: admissionId),
         );
       case Routes.fluidBalanceScreen:
+        final admissionId =
+            (arguments is Map ? arguments['admissionId'] : null) as String? ??
+            '';
         return MaterialPageRoute(
-          builder: (_) => const FluidBalanceScreen(),
+          builder: (_) => BlocProvider(
+            create: (context) => locator<FluidBalanceCubit>(),
+            child: FluidBalanceScreen(admissionId: admissionId),
+          ),
         );
       case Routes.labResultsScreen:
+        final admissionIdArg =
+            (arguments is Map ? arguments['admissionId'] : null) as String? ??
+            '';
         return MaterialPageRoute(
-          builder: (_) => const LabResultsScreen(),
+          builder: (_) => BlocProvider(
+            create: (context) => DiagnosticsCubit(GetIt.I.get()),
+            child: LabResultsScreen(admissionId: admissionIdArg),
+          ),
         );
       case Routes.clinicalAlertsScreen:
+        final alertsAdmissionId =
+            (arguments is Map ? arguments['admissionId'] : null) as String? ??
+            '';
         return MaterialPageRoute(
-          builder: (_) => const ClinicalAlertsScreen(),
+          builder: (_) => BlocProvider(
+            create: (context) => locator<AlertsCubit>(),
+            child: ClinicalAlertsScreen(admissionId: alertsAdmissionId),
+          ),
         );
       case Routes.mainNavigationScreen:
+        return MaterialPageRoute(builder: (_) => const MainNavigationScreen());
+      case Routes.medicationScreen:
+        final args = arguments as Map<String, dynamic>?;
         return MaterialPageRoute(
-          builder: (_) => const MainNavigationScreen(),
+          builder: (_) => BlocProvider(
+            create: (context) => MedicationsCubit(GetIt.I.get()),
+            child: MedicationsScreen(
+              admissionId: args?['admissionId'] ?? '',
+              doctorId: args?['doctorId'] ?? 'DOC-1436C0633BBD',
+            ),
+          ),
+        );
+      case Routes.imagingScreen:
+        final imagingAdmissionId =
+            (arguments is Map ? arguments['admissionId'] : null) as String? ??
+            '';
+        return MaterialPageRoute(
+          builder: (_) => BlocProvider(
+            create: (context) => DiagnosticsCubit(GetIt.I.get()),
+            child: ImagingScreen(admissionId: imagingAdmissionId),
+          ),
+        );
+      case Routes.chatbotScreen:
+        final args = arguments as Map<String, dynamic>?;
+        return MaterialPageRoute(builder: (_) =>  ChatbotScreen(
+          patientName: args?['patientName'] ?? 'Patient',
+          admissionId: args?['admissionId'] ?? '',
+        ));
+      case Routes.newPatientRegistrationScreen:
+        return MaterialPageRoute(
+          builder: (_) => const NewPatientRegistrationScreen(),
+        );
+      case Routes.patientDashboardScreen:
+        final id = arguments is String
+            ? arguments
+            : (arguments is Map ? arguments['admissionId'] : null);
+        return MaterialPageRoute(
+          builder: (_) => PatientDashboardScreen(admissionId: id as String?),
+        );
+      case Routes.patientListScreen:
+        return MaterialPageRoute(builder: (_) => const PatientListScreen());
+      case Routes.physicalExaminationScreen:
+        final admissionId =
+            (arguments is Map ? arguments['admissionId'] : null) as String? ??
+            '';
+        return MaterialPageRoute(
+          builder: (_) => BlocProvider(
+            create: (_) => locator<PhysicalExaminationCubit>(),
+            child: PhysicalExaminationScreen(admissionId: admissionId),
+          ),
+        );
+      case Routes.profileScreen:
+        return MaterialPageRoute(builder: (_) => const ProfileScreen());
+      case Routes.vitalSignsScreen:
+        final admissionId =
+            (arguments is Map ? arguments['admissionId'] : null) as String? ??
+            'ADM-7A21F7EF3C7D';
+        return MaterialPageRoute(
+          builder: (_) => BlocProvider(
+            create: (context) => VitalSignsCubit(GetIt.I.get()),
+            child: VitalSignsScreen(admissionId: admissionId),
+          ),
+        );
+      case Routes.interventionProceduresScreen:
+        final admId =
+            (arguments is Map ? arguments['admissionId'] : null) as String? ??
+            'ADM-7A21F7EF3C7D';
+        return MaterialPageRoute(
+          builder: (_) => BlocProvider(
+            create: (context) => InterventionProceduresCubit(GetIt.I.get()),
+            child: InterventionProceduresScreen(admissionId: admId),
+          ),
+        );
+
+      case Routes.adminDashboardScreen:
+        return MaterialPageRoute(
+          builder: (_) => const AdminShellScreen(),
         );
 
       default:

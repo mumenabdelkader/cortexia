@@ -1,11 +1,20 @@
 class ApiConstants {
-  static const String baseUrl = "http://abokamelapp.runasp.net";
+  static const String baseUrl = "http://cortexaapp.runasp.net";
 
   // Auth
-  static const String login = "/api/Auth/Login";
-  static const String changePassword = "/api/Auth/ChangePassword";
-  static const String getCurrentUser = "/api/Auth/GetCurrentUser";
-  static const String getAllUsers = "/api/Auth/GetAllUsers"; // Assumed
+  static const String login = "/api/Auth/login";
+  static const String forgotPassword = "/api/Auth/forgot-password";
+  static const String resetPassword = "/api/Auth/reset-password";
+  static const String caseHistory =
+      "/api/admissions/{admissionId}/case-history";
+  static const String createAdmission = "/api/Admission/patients/{patientId}";
+  static const String admitPatient = "/api/Admission/admit";
+  static const String activeAdmissions = "/api/admission/active";
+  static const String admissionById = "/api/admission/{id}";
+  static const String rooms = "/api/Rooms";
+  static const String doctorDetails = "/api/Doctors/{email}/details";
+  static const String createPatientOrGetAll = "/api/Patients"; // Assumed
+
   static const String updateCustomer = "/api/mobile/Customers/UpdateCustomer";
   static String updateCustomerDashboard(String customerId) =>
       "/api/dashboard/Customers/UpdateCustomer/customer/$customerId";
@@ -182,4 +191,75 @@ class ApiConstants {
       "/api/dashboard/Products/LowStock/Count?threshold=$threshold";
   static const String getBestSellingCount =
       "/api/dashboard/Products/BestSelling/Count";
+
+  // ── Diagnostics ────────────────────────────────────────────────────────────
+  static const String diagnosticsLabOrders = '/api/Diagnostics/lab-orders';
+  static const String diagnosticsLabResults = '/api/Diagnostics/lab-results';
+  static const String diagnosticsImaging = '/api/Diagnostics/imaging';
+  static const String diagnosticsLabOrdersByAdmission =
+      '/api/Diagnostics/lab-orders/{admissionId}';
+  static const String diagnosticsLabResultsByOrder =
+      '/api/Diagnostics/lab-results/{orderId}';
+  static const String diagnosticsImagingByAdmission =
+      '/api/Diagnostics/imaging/{admissionId}';
+
+  // ── Fluid Balance ──────────────────────────────────────────────────────────
+  static const String fluidBalance =
+      '/api/admissions/{admissionId}/fluid-balance';
+
+  // ── Intervention Procedures ────────────────────────────────────────────────
+  static const String interventionProcedures =
+      '/api/admissions/{admissionId}/intervention-procedures';
+
+  // ── Medications ────────────────────────────────────────────────────────────
+  static const String admissionMedications =
+      '/api/admissions/{admissionId}/medications';
+
+  // ── Nursing Notes ──────────────────────────────────────────────────────────
+  static const String nursingNotes =
+      '/api/admissions/{admissionId}/nursing-notes';
+
+  // ── Patients ───────────────────────────────────────────────────────────────
+  static const String patients = '/api/Patients';
+  static const String patientById = '/api/Patients/{id}';
+  static const String patientDetails = '/api/Patients/{id}/details';
+  static const String patientAdmissions = '/api/Patients/{id}/admissions';
+
+  // ── Physical Examination ───────────────────────────────────────────────────
+  static const String physicalExamination =
+      '/api/admissions/{admissionId}/physical-examination';
+
+  // ── Vital Signs ────────────────────────────────────────────────────────────
+  static const String vitalSigns = '/api/admissions/{admissionId}/vitals';
+
+  // ── Alerts (SmartAssistant) ────────────────────────────────────────────────
+  static const String activeAlerts = '/api/SmartAssistant/alerts/active';
+  static String overrideAlert(String id) =>
+      '/api/SmartAssistant/alerts/$id/override';
+  static const String askSmartAssistantRag = '/api/SmartAssistant/rag/ask';
+
+  // ── Admin Dashboard ────────────────────────────────────────────────────────
+  static const String adminDashboardSummary = '/api/admin-dashboard/summary';
+  static const String adminAuditLogs = '/api/admin-dashboard/audit-logs';
+  static const String adminCreateAdmin = '/api/admin-dashboard/create-admin';
+  static const String adminRoles = '/api/admin-dashboard/roles';
+  static const String adminCreateRole = '/api/admin-dashboard/create-role';
+  static String adminDeleteRole(String roleId) =>
+      '/api/admin-dashboard/delete-role/$roleId';
+  static const String adminAssignRole = '/api/admin-dashboard/assign-role';
+  static const String adminRemoveRole = '/api/admin-dashboard/remove-role';
+  static const String adminUsersWithRoles =
+      '/api/admin-dashboard/users-with-roles';
+  static const String adminToggleUserStatus =
+      '/api/admin-dashboard/toggle-user-status';
+  static const String adminForceResetPassword =
+      '/api/admin-dashboard/force-reset-password';
+  static const String adminCreateRoom = '/api/admin-dashboard/create-room';
+  static const String adminUpdateRoom = '/api/admin-dashboard/update-room';
+  static const String adminToggleRoomAvailability =
+      '/api/admin-dashboard/toggle-room-availability';
+  static const String adminCreateBed = '/api/admin-dashboard/create-bed';
+  static const String adminUpdateBed = '/api/admin-dashboard/update-bed';
+  static String adminDeleteBed(String bedId) =>
+      '/api/admin-dashboard/delete-bed/$bedId';
 }

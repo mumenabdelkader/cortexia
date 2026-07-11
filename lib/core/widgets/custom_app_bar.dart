@@ -24,13 +24,11 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           end: Alignment.bottomCenter,
           colors: [
             Color.fromRGBO(0, 110, 220, 1), // اللون الفاتح
-            Color.fromRGBO(0, 43, 86, 1),   // اللون الغامق
+            Color.fromRGBO(0, 43, 86, 1), // اللون الغامق
           ],
         ),
         // حواف دائرية من الأسفل بقيمة 20px كما في التصميم
-        borderRadius: BorderRadius.vertical(
-          bottom: Radius.circular(20),
-        ),
+        borderRadius: BorderRadius.vertical(bottom: Radius.circular(20)),
       ),
       child: SafeArea(
         child: Padding(
@@ -39,10 +37,15 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               // زر الرجوع
-              IconButton(
-                icon: const Icon(Icons.arrow_back, color: Colors.white),
-                onPressed: onBackPressed ?? () => Navigator.pop(context),
-              ),
+              if (Navigator.canPop(context))
+                IconButton(
+                  icon: const Icon(Icons.arrow_back, color: Colors.white),
+                  onPressed:
+                      onBackPressed ??
+                      () {
+                        Navigator.pop(context);
+                      },
+                ),
 
               // العنوان والعنوان الفرعي
               Expanded(

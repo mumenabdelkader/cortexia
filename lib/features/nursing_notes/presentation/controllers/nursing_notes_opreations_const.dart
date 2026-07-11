@@ -1,0 +1,4 @@
+const String kPostAdmissionsAdmissionidNursingNotes = 'postAdmissionsAdmissionidNursingNotes';
+const String kGetAdmissionsAdmissionidNursingNotes = 'getAdmissionsAdmissionidNursingNotes';
+const String kPutAdmissionsAdmissionidNursingNotes = 'putAdmissionsAdmissionidNursingNotes';
+const String kDeleteAdmissionsAdmissionidNursingNotes = 'deleteAdmissionsAdmissionidNursingNotes';

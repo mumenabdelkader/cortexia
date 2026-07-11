@@ -1,40 +1,48 @@
 import 'package:flutter/material.dart';
 
 class DashboarPatientCard extends StatelessWidget {
-  final String name;
-  final String id;
-  final String status;
-  final String genderAge;
-  final String room;
-  final String admittedDate;
-  final String diagnosis;
-  final String daysCount;
+  final String? name;
+  final String? id;
+  final String? status;
+  final String? genderAge;
+  final String? room;
+  final String? admittedDate;
+  final String? diagnosis;
+  final String? daysCount;
 
   const DashboarPatientCard({
     super.key,
-    this.name = "John Anderson",
-    this.id = "PT-2024-1547",
-    this.status = "Stable",
-    this.genderAge = "Male, 45y",
-    this.room = "ICU-101",
-    this.admittedDate = "Jan 28, 2026",
-    this.diagnosis = "Pneumonia",
-    this.daysCount = "6 days",
+    this.name,
+    this.id,
+    this.status,
+    this.genderAge,
+    this.room,
+    this.admittedDate,
+    this.diagnosis,
+    this.daysCount,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      width: double.infinity,
+      padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: const Color(0xFFF0F9FF), // لون خلفية مائل للزرقة فاتح جداً
+        color: Colors.white,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.blue.withValues(alpha:0.1)),
+        border: Border.all(color: Colors.blue.withValues(alpha: 0.08)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.03),
+            blurRadius: 20,
+            offset: const Offset(0, 10),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // الجزء العلوي: الصورة، الاسم، الـ ID والحالة
+          // Upper section: Avatar, name, ID, status
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -49,7 +57,7 @@ class DashboarPatientCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      name,
+                      name ?? "N/A",
                       style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -58,22 +66,23 @@ class DashboarPatientCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      "ID: $id",
+                      "ID: ${id ?? "N/A"}",
                       style: const TextStyle(color: Colors.grey, fontSize: 14),
                     ),
                     const SizedBox(height: 8),
-                    // التاجات الصغيرة (Gender/Age & Room)
-                    Row(
+                    // Small tags (Gender/Age & Room)
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 4,
                       children: [
-                        _buildSmallTag(genderAge, const Color(0xFFF1F5F9), Colors.black87),
-                        const SizedBox(width: 8),
-                        _buildSmallTag(room, const Color(0xFFE0F7FA), Colors.cyan[700]!),
+                        _buildSmallTag(genderAge ?? "N/A", const Color(0xFFF1F5F9), Colors.black87),
+                        _buildSmallTag(room ?? "N/A", const Color(0xFFE0F7FA), Colors.cyan[700]!),
                       ],
                     ),
                   ],
                 ),
               ),
-              _buildStatusBadge(status),
+              _buildStatusBadge(status ?? "Stable"),
             ],
           ),
 
@@ -82,21 +91,22 @@ class DashboarPatientCard extends StatelessWidget {
             child: Divider(color: Color(0xFFE2E8F0), thickness: 1),
           ),
 
-          // الجزء السفلي: البيانات الموزعة بالعرض
+          // Lower section: data rows
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              _buildDataColumn("Admitted", admittedDate),
-              _buildDataColumn("Diagnosis", diagnosis),
-              _buildDataColumn("Days", daysCount),
+              Expanded(child: _buildDataColumn("Admitted", admittedDate ?? "N/A")),
+              const SizedBox(width: 16),
+              Expanded(child: _buildDataColumn("Days", daysCount ?? "N/A")),
             ],
           ),
+          const SizedBox(height: 16),
+          _buildDataColumn("Diagnosis", diagnosis ?? "N/A"),
         ],
       ),
     );
   }
 
-  // ميثود بناء العمود الصغير للبيانات
   Widget _buildDataColumn(String label, String value) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -118,14 +128,13 @@ class DashboarPatientCard extends StatelessWidget {
     );
   }
 
-  // ميثود بناء التاجات (Male, 45y / ICU-101)
   Widget _buildSmallTag(String text, Color bgColor, Color textColor) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
         color: bgColor,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: textColor.withValues(alpha:0.1)),
+        border: Border.all(color: textColor.withValues(alpha: 0.1)),
       ),
       child: Text(
         text,
@@ -134,17 +143,35 @@ class DashboarPatientCard extends StatelessWidget {
     );
   }
 
-  // ميثود الـ Status Badge
   Widget _buildStatusBadge(String status) {
+    final statusLower = status.toLowerCase();
+    final isCritical = statusLower == 'critical';
+    final isStable = statusLower == 'stable';
+    
+    final Color badgeColor = isCritical 
+        ? const Color(0xFFEF4444) 
+        : (isStable ? const Color(0xFF10B981) : const Color(0xFF3B82F6));
+        
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: const Color(0xFF4CAF50), // اللون الأخضر كما في الصورة
+        color: badgeColor,
         borderRadius: BorderRadius.circular(10),
+        boxShadow: [
+          BoxShadow(
+            color: badgeColor.withValues(alpha: 0.25),
+            blurRadius: 6,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Text(
         status,
-        style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12),
+        style: const TextStyle(
+          color: Colors.white, 
+          fontWeight: FontWeight.bold, 
+          fontSize: 12,
+        ),
       ),
     );
   }

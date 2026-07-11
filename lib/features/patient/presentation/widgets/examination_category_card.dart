@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 
 class ExaminationCategoryCard extends StatelessWidget {
-  final String title;        // عنوان الفئة (مثل Respiratory)
-  final IconData icon;       // الأيقونة الخاصة بالفئة
-  final Color iconColor;     // لون الأيقونة
-  final String? content;     // النص الذي يظهر داخل الحقل الأبيض (اختياري)
-  final String hintText;     // النص التوجيهي في حال عدم وجود محتوى
+  final String title;
+  final IconData icon;
+  final Color iconColor;
+  final TextEditingController? controller;
+  final String hintText;
 
   const ExaminationCategoryCard({
     super.key,
     required this.title,
     required this.icon,
     required this.iconColor,
-    this.content,
+    this.controller,
     this.hintText = "Enter findings...",
   });
 
@@ -20,16 +20,15 @@ class ExaminationCategoryCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      margin: const EdgeInsets.only(bottom: 12), // مسافة بين الكروت
+      margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: const Color(0xFFF1F5F9), // خلفية زرقاء رمادية فاتحة جداً
+        color: const Color(0xFFF1F5F9),
         borderRadius: BorderRadius.circular(15),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // الصف العلوي: الأيقونة والعنوان
           Row(
             children: [
               Icon(icon, color: iconColor, size: 20),
@@ -45,21 +44,20 @@ class ExaminationCategoryCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 10),
-          // الحقل الأبيض الداخلي (Container يشبه حقل الإدخال)
           Container(
             width: double.infinity,
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(10),
             ),
-            child: Text(
-              (content == null || content!.isEmpty) ? hintText : content!,
-              style: TextStyle(
-                fontSize: 14,
-                color: (content == null || content!.isEmpty)
-                    ? const Color(0xFF94A3B8)
-                    : const Color(0xFF475569),
+            child: TextField(
+              controller: controller,
+              style: const TextStyle(fontSize: 14, color: Color(0xFF475569)),
+              decoration: InputDecoration(
+                hintText: hintText,
+                hintStyle: const TextStyle(color: Color(0xFF94A3B8)),
+                border: InputBorder.none,
               ),
             ),
           ),

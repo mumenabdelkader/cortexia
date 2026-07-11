@@ -1,4 +1,5 @@
-import 'package:cortexia/features/authentication/presentation/ui/login_screen.dart';
+import 'package:cortexia/core/cache/app_cahe.dart';
+import 'package:cortexia/core/routing/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:cortexia/core/themes/color_themes.dart';
 
@@ -13,21 +14,48 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   final PageController _pageController = PageController();
   int _currentPage = 0;
 
+  @override
+  void initState() {
+    super.initState();
+    _checkLoginStatus();
+  }
+
+  Future<void> _checkLoginStatus() async {
+    final loggedIn = await AppCache.isLoggedIn();
+    if (!loggedIn || !mounted) return;
+
+    // Role-based navigation: Admin → Admin Dashboard, others → main app
+    final userData = await AppCache.getUserData();
+    final isAdmin =
+        userData?.roles?.any((r) => r.toLowerCase() == 'admin') ?? false;
+
+    if (!mounted) return;
+
+    if (isAdmin) {
+      Navigator.pushReplacementNamed(context, Routes.adminDashboardScreen);
+    } else {
+      Navigator.pushReplacementNamed(context, Routes.mainNavigationScreen);
+    }
+  }
+
   // البيانات الخاصة بالـ 3 صفحات
   final List<Map<String, String>> _welcomeData = [
     {
       "title": "Smart ICU Patient Monitoring",
-      "subtitle": "Monitor ICU patients in real time with intelligent insights.",
+      "subtitle":
+          "Monitor ICU patients in real time with intelligent insights.",
       "image": "assets/images/Group.png", // حط مسار الصور بتاعتك هنا
     },
     {
       "title": "AI-Powered Clinical Support",
-      "subtitle": "Get smart recommendations and alerts to support medical decisions.",
+      "subtitle":
+          "Get smart recommendations and alerts to support medical decisions.",
       "image": "assets/images/Group2.png",
     },
     {
       "title": "Designed for ICU Teams",
-      "subtitle": "Fast, secure, and easy-to-use system for doctors and nurses.",
+      "subtitle":
+          "Fast, secure, and easy-to-use system for doctors and nurses.",
       "image": "assets/images/Group3.png",
     },
   ];
@@ -57,7 +85,10 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
 
             // الجزء السفلي (Skip, Dots, Next Button)
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 30),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 24.0,
+                vertical: 30,
+              ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -65,6 +96,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                   TextButton(
                     onPressed: () {
                       // أكشن التخطي (يروح للـ Login مثلاً)
+                      Navigator.pushNamed(context, Routes.loginScreen);
                     },
                     child: Text(
                       "Skip",
@@ -79,7 +111,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                   Row(
                     children: List.generate(
                       _welcomeData.length,
-                          (index) => _buildDot(index),
+                      (index) => _buildDot(index),
                     ),
                   ),
 
@@ -92,7 +124,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                           curve: Curves.easeIn,
                         );
                       } else {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) =>  LoginScreen()));
+                        Navigator.pushNamed(context, Routes.loginScreen);
                       }
                     },
                     child: Container(
@@ -117,7 +149,11 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   }
 
   // ويدجت محتوى الصفحة
-  Widget _buildPageContent({required String title, required String subtitle, required String image}) {
+  Widget _buildPageContent({
+    required String title,
+    required String subtitle,
+    required String image,
+  }) {
     return Padding(
       padding: const EdgeInsets.all(40.0),
       child: Column(
@@ -129,7 +165,11 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
             child: Image.asset(
               image,
               fit: BoxFit.contain,
-              errorBuilder: (context, error, stackTrace) => const Icon(Icons.image, size: 100, color: AppColors.primaryBlue),
+              errorBuilder: (context, error, stackTrace) => const Icon(
+                Icons.image,
+                size: 100,
+                color: AppColors.primaryBlue,
+              ),
             ),
           ),
           const SizedBox(height: 40),
@@ -137,7 +177,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
           Text(
             title,
             textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.displayLarge,
+            style: Theme.of(context).textTheme.displayLarge,
           ),
           const SizedBox(height: 16),
           // النص الفرعي
